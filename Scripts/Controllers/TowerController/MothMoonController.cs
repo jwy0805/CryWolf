@@ -85,6 +85,23 @@ public class MothMoonController : TowerController
         SkillInit(); 
     }
 
+    protected override void UpdateAttack()
+    {
+        if (_stat.Mp >= _stat.maxMp)
+        {
+            if (_healSheep || _removeDebuff)
+            {
+                State = Define.State.Skill;
+            }
+            else
+            {
+                _stat.Mp = 0;
+            }
+        }
+        
+        base.UpdateAttack();
+    }
+    
     protected override void SetTarget(string[] tags)
     {
         float closestDist = 5000.0f;
@@ -105,23 +122,6 @@ public class MothMoonController : TowerController
                 }
             }   
         }
-    }
-
-    protected override void UpdateAttack()
-    {
-        if (_stat.Mp >= _stat.maxMp)
-        {
-            if (_healSheep || _removeDebuff)
-            {
-                State = Define.State.Skill;
-            }
-            else
-            {
-                _stat.Mp = 0;
-            }
-        }
-        
-        base.UpdateAttack();
     }
 
     protected override void OnHitEvent()

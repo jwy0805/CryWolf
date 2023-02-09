@@ -8,10 +8,11 @@ using Random = UnityEngine.Random;
 public class SheepController : BaseController
 {
     private Stat _stat;
-    
+    private int _yield;
     private Vector3 _point;
     private float _lastMoveTime = 0.0f;
     private float _moveTime = 0.0f;
+    private float _lastYieldTime = 0.0f;
     private NavMeshAgent _nma;
 
     protected override void Init()
@@ -32,8 +33,8 @@ public class SheepController : BaseController
         _stat.Attack = 5;
         _stat.Defense = 0;
         _stat.MoveSpeed = 0.4f;
-        
-        // DropWool();
+
+        _yield = 30;
     }
 
     protected override void UpdateIdle()
@@ -44,6 +45,12 @@ public class SheepController : BaseController
             State = Define.State.Moving;
             _lastMoveTime = Time.time;
             _moveTime = Random.Range(6, 9);
+        }
+
+        if (Time.time > _lastYieldTime + GameData.RoundTime)
+        {
+            _lastYieldTime = Time.time;
+            YieldCoin(_yield);
         }
     }
     
@@ -77,9 +84,29 @@ public class SheepController : BaseController
         StartCoroutine(Despawn(gameObject, 2.0f));
     }
 
-    private void DropWool()
+    private void YieldCoin(int yield)
     {
-        GameObject wool = Managers.Resource.Instanciate("WorldObjects/Wool");
-        wool.transform.position = gameObject.transform.position + Vector3.up;
+        GameObject coin;
+        
+        switch (yield)
+        {
+            case < 30:
+                coin = Managers.Resource.Instanciate("Items/CoinStarSilver");
+                break;
+            case < 50:
+                coin = Managers.Resource.Instanciate("Items/CoinStarGold");
+                break;
+            case < 100:
+                coin = Managers.Resource.Instanciate("Items/PouchGreen");
+                break;
+            case < 200:
+                coin = Managers.Resource.Instanciate("Items/PouchRed");
+                break;
+            default:
+                coin = Managers.Resource.Instanciate("Items/ChestGold");
+                break;
+        }
+        
+        coin.transform.position = gameObject.transform.position;
     }
 }

@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class MothMoonAttackController : ProjectileControllerTower
+public class MothCelestialPoisonController : ProjectileControllerTower
 {
     protected override void OnCollisionEnter(Collision collision)
     {
@@ -18,6 +18,11 @@ public class MothMoonAttackController : ProjectileControllerTower
         {
             targetStat.OnFaint();
             targetStat.OnAttakced(_stat);
+        }
+
+        if (collision.gameObject.TryGetComponent(out BaseController baseController))
+        {
+            baseController.Condition = Define.Condition.Addicted;
         }
 
         _stat.Mp += 4;

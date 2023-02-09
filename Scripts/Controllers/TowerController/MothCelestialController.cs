@@ -5,6 +5,16 @@ using UnityEngine;
 
 public class MothCelestialController : TowerController
 {
+    private bool _sheepHealth = false;
+    private bool _poison = false;
+    private bool _breedSheep = false;
+    private int _removeProb;
+    private int _breedProb;
+    private int _heal;
+
+    private int _mask = 1 << (int)Define.Layer.Sheep;
+    private int _level = 1;
+    
     protected override string NewSkill
     {
         get => _newSkill;
@@ -16,18 +26,25 @@ public class MothCelestialController : TowerController
             switch (skill)
             {
                 case Define.Skill.MothCelestialSheepHealth:
+                    _sheepHealth = true;
                     break;
                 case Define.Skill.MothCelestialSheepDefence:
+                    tags = new[] { "MonsterAir", "Monster" };
                     break;
                 case Define.Skill.MothCelestialAccuracy:
+                    _stat.Accuracy += 10;
                     break;
                 case Define.Skill.MothCelestialPoisonResist:
+                    _stat.PoisonResist = 15;
                     break;
                 case Define.Skill.MothCelestialFireResist:
+                    _stat.FireResist = 15;
                     break;
                 case Define.Skill.MothCelestialPoison:
+                    _poison = true;
                     break;
                 case Define.Skill.MothCelestialBreedSheep:
+                    _breedSheep = true;
                     break;
             }
         }
@@ -56,26 +73,46 @@ public class MothCelestialController : TowerController
         _stat.Hp = 180;
         _stat.MaxHp = 180;
         _stat.Mp = 0;
-        _stat.maxMp = 30;
+        _stat.maxMp = 50;
         _stat.Attack = 30;
         _stat.Defense = 3;
         _stat.AttackRange = 7;
         _stat.AttackSpeed = 0.8f;
         _anim.SetFloat(_attackSpeed, _stat.AttackSpeed);
-
         _stat.Accuracy = 105;
 
+        _removeProb = 25;
+        _breedProb = 3;
+        _heal = 15;
         tags = new[] { "MonsterAir" };
 
         SkillInit();
     }
-    
+
+    protected override void UpdateAttack()
+    {
+        if (_stat.Mp >= _stat.maxMp)
+        {
+            if (_sheepHealth || _breedSheep)
+            {
+                State = Define.State.Skill;
+            }
+            else
+            {
+                _stat.Mp = 0;
+            }
+        }
+        
+        base.UpdateAttack();
+    }
+
     protected override void SetTarget(string[] tags)
     {
         float closestDist = 5000.0f;
-        foreach (var tag in tags)
+        int length = tags.Length;
+        for (int i = 0; i < length; i++)
         {
-            _tagged = GameObject.FindGameObjectsWithTag(tag);
+            _tagged = GameObject.FindGameObjectsWithTag(tags[i]);
             foreach (var tagged in _tagged)
             {
                 Vector3 targetPos = tagged.transform.position;
@@ -88,7 +125,73 @@ public class MothCelestialController : TowerController
                     closestDist = dist;
                     _lockTarget = tagged;
                 }
-            }   
+            }
+
+            // 공중 우선 공격 
+            if (_lockTarget != null && closestDist <= _stat.AttackRange) return;
+        }
+    }
+
+    protected override void OnHitEvent()
+    {
+        if (_poison)
+        {
+            Managers.Resource.Instanciate("Effects/MothCelestialPoison", gameObject.transform);
+        }
+        else
+        {
+            Managers.Resource.Instanciate("Effects/MothMoonAttack", gameObject.transform);
+        }
+    }
+
+    private void OnSkillEvent()
+    {
+        Collider[] colliders = Physics.OverlapBox(transform.position, GameData.FenceSize[_level] / 2,
+            Quaternion.identity, _mask);
+        List<Collider> sheeps = new List<Collider>();
+
+        int cLength = colliders.Length;
+        for (int i = 0; i < cLength; i++)
+        {
+            if (colliders[i].CompareTag("Sheep"))
+            {
+                sheeps.Add(colliders[i]); 
+            }    
+        }
+
+        int sLength = sheeps.Count;
+        int ranHealth = UnityEngine.Random.Range(0, sLength);
+        for (int i = 0; i < sLength; i++)
+        {
+            int randBreed = UnityEngine.Random.Range(0, 100);
+            if (randBreed < _breedProb)
+            {
+                Managers.Game.Spawn(Define.WorldObject.Sheep, "Sheep");
+            }
+            
+            if (sheeps[i].TryGetComponent(out BaseController baseController))
+            {
+                if (baseController.Condition != Define.Condition.Good)
+                {
+                    int ranRemove = UnityEngine.Random.Range(0, 100);
+                    if (ranRemove < _removeProb)
+                    {
+                        baseController.Condition = Define.Condition.Good;
+                    }
+                }
+            }
+            
+            // MothMoon output 스킬 계승
+            
+            // 이 위에 스킬 만들것
+            if (!sheeps[i].TryGetComponent(out Stat sheepStat)) continue;
+            sheepStat.Heal(_heal);
+            
+            if (i == ranHealth)
+            {
+                sheepStat.Hp += 100;
+                sheepStat.MaxHp += 100;
+            }
         }
     }
 }
