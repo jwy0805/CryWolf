@@ -8,7 +8,7 @@ public class GameData
     // Game 초기 설정
     // 가변
     public int[] SpawnMonsterCnt { get; set; } = { 1, 1, 0 }; // { West, North, East }
-    public int SpawnSheepCnt { get; set; } = 10;
+    public int SpawnSheepCnt { get; set; } = 5;
     
     // 불변
     public static Vector3 center = new Vector3(0.0f, 6.0f, 0.0f); // Center of the Map
@@ -20,7 +20,7 @@ public class GameData
         new Vector3(45.0f, 4.0f, 0.0f)  // East
     };
     
-    public static float RoundTime = 1.0f;
+    public static float RoundTime = 10.0f;
     
     #region FenceData
 

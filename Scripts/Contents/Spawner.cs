@@ -84,7 +84,7 @@ public class Spawner : MonoBehaviour
     {
         _bounds = new Bounds(GameData.FenceCenter[1], GameData.FenceSize[1]);
         ReserveSpawnFence(GameData.FenceCnt[1], GameData.FenceName[1]);
-        StartCoroutine(ReserveSpawnMonster(Define.MonsterId.MosquitoBug));
+        StartCoroutine(ReserveSpawnMonster(Define.MonsterId.SnakeNaga));
         
         for (int i = 0; i < _sheepCnt; i++)
         {
@@ -109,7 +109,9 @@ public class Spawner : MonoBehaviour
 
     IEnumerator ReserveSpawnMonster(Define.MonsterId id)
     {
-        yield return new WaitForSeconds(GameData.RoundTime);
+        float tmp = 1;
+        yield return new WaitForSeconds(tmp);
+        // yield return new WaitForSeconds(GameData.RoundTime);
         Define.MonsterId monsterId = id;
         // ReSharper disable once HeapView.BoxingAllocation
         string monsterName = monsterId.ToString();

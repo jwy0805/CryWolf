@@ -1,9 +1,8 @@
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class CoinController : MonoBehaviour
+public class ChestController : MonoBehaviour
 {
     private Define.State _state = Define.State.Idle;
     private Animator _anim;
@@ -20,7 +19,12 @@ public class CoinController : MonoBehaviour
             _state = value;
 
             _anim = GetComponent<Animator>();
-            _anim.CrossFade("IDLE", 0.1f);
+            switch (_state)
+            {
+                case Define.State.Moving:
+                    _anim.CrossFade("RUN", 0.1f, 0);
+                    break;
+            }
         }
     }
 
@@ -62,7 +66,7 @@ public class CoinController : MonoBehaviour
         Vector3 dir = _destPos - transform.position;
         if (dir.magnitude < 0.3f)
         {
-            // 골드 증가, 코인은 사라짐
+            // 골드 증가, Chest 사라짐
             Managers.Resource.Destroy(gameObject);
         }
         else

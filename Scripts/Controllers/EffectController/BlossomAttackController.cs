@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class BlossomAttackController : ProjectileControllerTower
+public class BlossomAttackController : ProjectileController
 {
     private BlossomController _blossomController;
     protected override void Init()
@@ -11,76 +11,41 @@ public class BlossomAttackController : ProjectileControllerTower
         _blossomController = GetComponentInParent<BlossomController>();
     }
 
-    protected override void OnCollisionEnter(Collision collision)
+    protected override void UpdateAttack()
     {
-        switch (collision.gameObject.layer)
+        _destPos = _lockTarget.transform.position;
+        Vector3 dir = _destPos - transform.position;
+        if (dir.magnitude < 0.2f)
         {
-            case (int)Define.Layer.Tower:
-            case (int)Define.Layer.Sheep:
-            case (int)Define.Layer.Fence:
-                return;
-        }
-
-        #region Effect
-
-        //Lock all axes movement and rotation
-        rb.constraints = RigidbodyConstraints.FreezeAll;
-        speed = 0;
-
-        ContactPoint contact = collision.contacts[0];
-        Quaternion rot = Quaternion.FromToRotation(Vector3.up, contact.normal);
-        Vector3 pos = contact.point + contact.normal * hitOffset;
-        
-        //Spawn hit effect on collision
-        hit = Managers.Resource.Instanciate($"Effects/Hits/{gameObject.name}Hit");
-        if (hit != null)
-        {
-            var hitInstance = Instantiate(hit, pos, rot);
-            if (UseFirePointRotation) { hitInstance.transform.rotation = gameObject.transform.rotation * Quaternion.Euler(0, 180f, 0); }
-            else if (rotationOffset != Vector3.zero) { hitInstance.transform.rotation = Quaternion.Euler(rotationOffset); }
-            else { hitInstance.transform.LookAt(contact.point + contact.normal); }
-
-            //Destroy hit effects depending on particle Duration time
-            var hitPs = hitInstance.GetComponent<ParticleSystem>();
-            if (hitPs != null)
+            if (_lockTarget.TryGetComponent(out Stat targetStat))
             {
-                Destroy(hitInstance, hitPs.main.duration);
-            }
-            else
-            {
-                var hitPsParts = hitInstance.transform.GetChild(0).GetComponent<ParticleSystem>();
-                Destroy(hitInstance, hitPsParts.main.duration);
+                if (_blossomController._blossomDeath)
+                {
+                    var random = new System.Random();
+                    int randVal = random.Next(100);
+                    if (randVal < _blossomController._deadParameter)
+                    {
+                        targetStat.Hp = 0;
+                        targetStat.OnDead();
+                        HitEffect();
+                    }
+                    else
+                    {
+                        targetStat.OnAttakced(_stat);
+                        HitEffect();
+                    }
+                }
+                else
+                {
+                    targetStat.OnAttakced(_stat);
+                    HitEffect();
+                }
             }
         }
-
-        //Removing trail from the projectile on collision enter or smooth removing. Detached elements must have "AutoDestroying script"
-        foreach (var detachedPrefab in Detached)
+        else
         {
-            if (detachedPrefab != null)
-            {
-                detachedPrefab.transform.parent = null;
-            }
-        }
-        //Destroy projectile on collision
-        Destroy(gameObject);
-
-        #endregion
-        
-        Stat targetStat = collision.gameObject.GetComponent<Stat>();
-        if (targetStat != null)
-        {
-            var random = new System.Random();
-            int randVal = random.Next(100);
-            
-            if (_blossomController._blossomDeath && randVal < _blossomController._deadParameter)
-            {
-                targetStat.Hp = 0;
-                targetStat.OnDead();
-            }
-            else
-            {
-                targetStat.OnAttakced(_stat);
-            }
+            float moveDist = Mathf.Clamp(speed * Time.deltaTime, 0, dir.magnitude);
+            transform.position += dir.normalized * moveDist;   
         }
     }
 }
