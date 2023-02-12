@@ -168,4 +168,20 @@ public class Stat : MonoBehaviour
             Hp = MaxHp;
         }
     }
+
+    IEnumerator HealthInRounds(int health)
+    {
+        float roundTime = GameData.RoundTime;
+        float remainTime = Time.time % roundTime;
+
+        Hp += health;
+        MaxHp += health;
+        yield return new WaitForSeconds(remainTime);
+        
+        MaxHp -= health;
+        if (Hp > MaxHp)
+        {
+            Hp = MaxHp;
+        }
+    }
 }

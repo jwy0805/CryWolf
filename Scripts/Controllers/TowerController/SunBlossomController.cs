@@ -67,7 +67,39 @@ public class SunBlossomController : TowerController
 
     private void OnSkillEvent()
     {
-        
+        float height = 4f;
+        Vector3 pos = transform.position;
+        Vector3 pos1 = new Vector3(pos.x, pos.y - height, pos.z);
+        Vector3 pos2 = new Vector3(pos.x, pos.y + height, pos.z);
+        Collider[] colliders = Physics.OverlapCapsule(pos1, pos2, _stat.AttackRange);
+        int length = colliders.Length;
+
+        for (int i = 0; i < length; i++)
+        {
+            if (_health && (colliders[i].CompareTag("Tower") || colliders[i].CompareTag("TowerAir")))
+            {
+                if (colliders[i].TryGetComponent(out Stat towerStat))
+                {
+                    
+                }
+                if (_heal)
+                {
+                    
+                }
+            }
+
+            if (_slow && (colliders[i].CompareTag("Monster") || colliders[i].CompareTag("MonsterAir")))
+            {
+                if (colliders[i].TryGetComponent(out Stat monsterStat))
+                {
+                    
+                }
+                if (_slowAttack)
+                {
+                
+                }
+            }   
+        }
     }
 
     protected override void OnEndEvent()
