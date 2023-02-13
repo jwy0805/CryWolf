@@ -50,7 +50,6 @@ public class SoulController : TowerController
         _stat.MoveSpeed = 4.0f;
         _stat.AttackRange = 1.5f;
         _stat.AttackSpeed = 0.75f;
-        _anim.SetFloat(_attackSpeed, _stat.AttackSpeed);
         
         SkillInit();
     }

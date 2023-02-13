@@ -26,11 +26,9 @@ public class BloomController : TowerController
                     break;
                 case Define.Skill.BloomAttackSpeed:
                     _stat.AttackSpeed = 1f;
-                    _anim.SetFloat(_attackSpeed, _stat.AttackSpeed);
                     break;
                 case Define.Skill.BloomAttackSpeed2:
                     _stat.AttackSpeed = 1.25f;
-                    _anim.SetFloat(_attackSpeed, _stat.AttackSpeed);
                     break;
                 case Define.Skill.Bloom3Combo:
                     _stat.Attack = 24;
@@ -53,7 +51,6 @@ public class BloomController : TowerController
         _stat.Defense = 0;
         _stat.AttackRange = 6.0f;
         _stat.AttackSpeed = 0.85f;
-        _anim.SetFloat(_attackSpeed, _stat.AttackSpeed);
         SkillInit();
     }
     

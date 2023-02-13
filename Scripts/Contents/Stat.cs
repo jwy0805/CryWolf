@@ -30,6 +30,16 @@ public class Stat : MonoBehaviour
     protected bool _reflectionSkill;
     protected float _reflectionRate;
 
+    private bool _healthInRound = false;
+    private bool _slowInRound = false;
+    private bool _slowAttackInRound = false;
+    private bool _attackInRound = false;
+    private bool _defenceInRound = false;
+    private bool _attackDebuffInRound = false;
+    private bool _defenceDebuffInRound = false;
+    
+    private static readonly int AnimAttackSpeed = Animator.StringToHash("AttackSpeed");
+
     public int Level { get { return _level; } set { _level = value; } }
     public int Hp { get { return _hp; } set { _hp = value; } }
     public int MaxHp { get { return _maxHp; } set { _maxHp = value; } }
@@ -41,7 +51,16 @@ public class Stat : MonoBehaviour
     public int PoisonResist { get { return _poisonResist; } set { _poisonResist = value; } }
     public int Skill { get { return _skill; } set { _skill = value; } }
     public float MoveSpeed { get { return _moveSpeed; } set { _moveSpeed = value; } }
-    public float AttackSpeed { get { return _attackSpeed; } set { _attackSpeed = value; } }
+    public float AttackSpeed 
+    {
+        get => _attackSpeed;
+        set
+        {
+            _attackSpeed = value;
+            Animator anim = gameObject.GetComponent<Animator>();
+            anim.SetFloat(AnimAttackSpeed, _attackSpeed);
+        } 
+    }
     public float AttackRange { get { return _attackRange; } set { _attackRange = value; } }
     public float CriticalChance { get { return _criticalChance; } set { _criticalChance = value; } }
     public float CriticalMultiplier { get { return _criticalMultiplier; } set { _criticalMultiplier = value; } }
@@ -169,19 +188,111 @@ public class Stat : MonoBehaviour
         }
     }
 
-    IEnumerator HealthInRounds(int health)
+    public IEnumerator HealthInRounds(int health)
     {
+        if (_healthInRound) yield break;
+        _healthInRound = true;
+
         float roundTime = GameData.RoundTime;
         float remainTime = Time.time % roundTime;
 
         Hp += health;
         MaxHp += health;
-        yield return new WaitForSeconds(remainTime);
         
+        yield return new WaitForSeconds(remainTime);
+        _healthInRound = false;
         MaxHp -= health;
         if (Hp > MaxHp)
         {
             Hp = MaxHp;
         }
+    }
+
+    public IEnumerator AttackInRounds(float param)
+    {
+        if (_attackInRound) yield break;
+        _attackInRound = true;
+        
+        float roundTime = GameData.RoundTime;
+        float remainTime = Time.time % roundTime;
+        int attack = (int)(Attack * param);
+        Attack += attack;
+
+        yield return new WaitForSeconds(remainTime);
+        _attackInRound = false;
+        Attack -= attack;
+    }
+
+    public IEnumerator DefenceInRound(int param)
+    {
+        if (_defenceInRound) yield break;
+        _defenceInRound = true;
+        
+        float roundTime = GameData.RoundTime;
+        float remainTime = Time.time % roundTime;
+        Defense += param;
+
+        yield return new WaitForSeconds(remainTime);
+        _defenceInRound = false;
+        Defense -= param;
+    }
+
+    public IEnumerator AttackDebuffInRounds(float param)
+    {
+        if(_attackDebuffInRound) yield break;
+        _attackDebuffInRound = true;
+        
+        float roundTime = GameData.RoundTime;
+        float remainTime = Time.time % roundTime;
+        int attack = (int)(Attack * param);
+        Attack -= attack;
+
+        yield return new WaitForSeconds(remainTime);
+        _attackDebuffInRound = false;
+        Attack += attack;
+    }
+
+    public IEnumerator DefenceDebuffInRounds(int param)
+    {
+        if (_defenceDebuffInRound) yield break;
+        _defenceDebuffInRound = true;
+        
+        float roundTime = GameData.RoundTime;
+        float remainTime = Time.time % roundTime;
+        Defense -= param;
+
+        yield return new WaitForSeconds(remainTime);
+        _defenceInRound = false;
+    }
+
+    public IEnumerator SlowInRounds(float param)
+    {
+        if (_slowInRound) yield break;
+        _slowInRound = true;
+
+        float roundTime = GameData.RoundTime;
+        float remainTime = Time.time % roundTime;
+        float moveSpeed = MoveSpeed * param;
+        MoveSpeed -= moveSpeed;
+        
+        yield return new WaitForSeconds(remainTime);
+        _slowInRound = false;
+        MoveSpeed += moveSpeed;
+    }
+
+    public IEnumerator SlowAttackInRounds(float param)
+    {
+        if (_slowAttackInRound) yield break;
+        _slowAttackInRound = true;
+        
+        float roundTime = GameData.RoundTime;
+        float remainTime = Time.time % roundTime;
+        float attackSpeed = AttackSpeed;
+
+        AttackSpeed *= (1f - param);
+        
+        yield return new WaitForSeconds(remainTime);
+        _slowAttackInRound = false;
+        AttackSpeed = attackSpeed;
     }
 }

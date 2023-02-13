@@ -11,6 +11,7 @@ public class MothCelestialController : TowerController
     private int _removeProb;
     private int _breedProb;
     private int _heal;
+    private int _health;
 
     private int _mask = 1 << (int)Define.Layer.Sheep;
     private int _level = 1;
@@ -78,7 +79,6 @@ public class MothCelestialController : TowerController
         _stat.Defense = 3;
         _stat.AttackRange = 7;
         _stat.AttackSpeed = 0.8f;
-        _anim.SetFloat(_attackSpeed, _stat.AttackSpeed);
         _stat.Accuracy = 105;
 
         _removeProb = 25;

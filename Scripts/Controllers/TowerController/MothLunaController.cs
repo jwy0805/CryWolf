@@ -63,7 +63,6 @@ public class MothLunaController : TowerController
         _stat.Defense = 0;
         _stat.AttackRange = 2;
         _stat.AttackSpeed = 0.7f;
-        _anim.SetFloat(_attackSpeed, _stat.AttackSpeed);
 
         tags = new[] { "MonsterAir" };
         

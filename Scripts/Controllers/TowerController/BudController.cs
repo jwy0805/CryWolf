@@ -23,7 +23,6 @@ public class BudController : TowerController
                     break;
                 case Define.Skill.BudAttackSpeed:
                     _stat.AttackSpeed = 1f;
-                    _anim.SetFloat(_attackSpeed, _stat.AttackSpeed);
                     break;
                 case Define.Skill.BudRange:
                     _stat.AttackRange = 6;
@@ -34,7 +33,6 @@ public class BudController : TowerController
                 case Define.Skill.BudDouble:
                     _stat.Attack = 12;
                     _stat.AttackSpeed = 0.9f;
-                    _anim.SetFloat(_attackSpeed, _stat.AttackSpeed);
                     _double = true;
                     break;
             }
@@ -53,7 +51,6 @@ public class BudController : TowerController
         _stat.Defense = 0;
         _stat.AttackRange = 4.0f;
         _stat.AttackSpeed = 0.75f;
-        _anim.SetFloat(_attackSpeed, _stat.AttackSpeed);
         SkillInit();
     }
 

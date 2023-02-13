@@ -25,7 +25,6 @@ public class HauntController : TowerController
                     break;
                 case Define.Skill.HauntAttackSpeed:
                     _stat.AttackSpeed += 0.15f;
-                    _anim.SetFloat(_attackSpeed, _stat.AttackSpeed);
                     break;
                 case Define.Skill.HauntAttack:
                     _stat.Attack += 10;
@@ -59,7 +58,6 @@ public class HauntController : TowerController
         _stat.MoveSpeed = 4.0f;
         _stat.AttackRange = 1.5f;
         _stat.AttackSpeed = 0.9f;
-        _anim.SetFloat(_attackSpeed, _stat.AttackSpeed);
         
         SkillInit();
     }

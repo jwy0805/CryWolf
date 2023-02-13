@@ -31,7 +31,6 @@ public class BlossomController : TowerController
                     break;
                 case Define.Skill.BlossomAttackSpeed:
                     _stat.AttackSpeed = 1.25f;
-                    _anim.SetFloat(_attackSpeed, _stat.AttackSpeed);
                     break;
                 case Define.Skill.BlossomPoison:
                     _blossomPoison = true;
@@ -54,7 +53,6 @@ public class BlossomController : TowerController
         _stat.Defense = 0;
         _stat.AttackRange = 9.0f;
         _stat.AttackSpeed = 0.9f;
-        _anim.SetFloat(_attackSpeed, _stat.AttackSpeed);
         SkillInit();
     }
 

@@ -84,7 +84,7 @@ public class Spawner : MonoBehaviour
     {
         _bounds = new Bounds(GameData.FenceCenter[1], GameData.FenceSize[1]);
         ReserveSpawnFence(GameData.FenceCnt[1], GameData.FenceName[1]);
-        StartCoroutine(ReserveSpawnMonster(Define.MonsterId.SnakeNaga));
+        StartCoroutine(ReserveSpawnMonster(Define.MonsterId.WolfPup));
         
         for (int i = 0; i < _sheepCnt; i++)
         {
