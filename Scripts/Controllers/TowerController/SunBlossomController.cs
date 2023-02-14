@@ -9,8 +9,8 @@ public class SunBlossomController : TowerController
     private float _lastMpTime = 0f;
     private int _numHeal = 20;
     private int _numHealth = 50;
-    private float _numSlow = 0.1f;
-    private float _numSlowAttack = 0.1f;
+    private float _numSlow = 0.3f;
+    private float _numSlowAttack = 0.3f;
     private bool _heal = false;
     private bool _health = false;
     private bool _slow = false;
@@ -49,7 +49,7 @@ public class SunBlossomController : TowerController
         _stat.Hp = 80;
         _stat.MaxHp = 80;
         _stat.Mp = 0;
-        _stat.maxMp = 40;
+        _stat.maxMp = 50;
         _stat.Defense = 0;
         _stat.AttackRange = 10;
 
@@ -78,6 +78,7 @@ public class SunBlossomController : TowerController
         Vector3 pos2 = new Vector3(pos.x, pos.y + height, pos.z);
         Collider[] colliders = Physics.OverlapCapsule(pos1, pos2, _stat.AttackRange);
         int length = colliders.Length;
+        List<Collider> monsters = new List<Collider>();
 
         for (int i = 0; i < length; i++)
         {
@@ -93,17 +94,21 @@ public class SunBlossomController : TowerController
                 }
             }
 
-            if (_slow && (colliders[i].CompareTag("Monster") || colliders[i].CompareTag("MonsterAir")))
+            if ((colliders[i].CompareTag("Monster") || colliders[i].CompareTag("MonsterAir")))
             {
-                if (colliders[i].TryGetComponent(out Stat monsterStat))
-                {
-                    StartCoroutine(monsterStat.SlowInRounds(_numSlow));
-                    if (_slowAttack)
-                    {
-                        StartCoroutine(monsterStat.SlowAttackInRounds(_numSlowAttack));
-                    }
-                }
+                monsters.Add(colliders[i]);
             }   
+        }
+
+        int lenMon = monsters.Count;
+        int ran = UnityEngine.Random.Range(0, lenMon);
+        if (monsters[ran].TryGetComponent(out Stat monsterStat) && _slow)
+        {
+            StartCoroutine(monsterStat.SlowInRounds(_numSlow));
+            if (_slowAttack)
+            {
+                StartCoroutine(monsterStat.SlowAttackInRounds(_numSlowAttack));
+            }
         }
     }
 

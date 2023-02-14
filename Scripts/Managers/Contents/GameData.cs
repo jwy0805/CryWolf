@@ -227,27 +227,27 @@ public class GameData
         { "SunBlossomHeal", new[] { "SunBlossomHealth" } },
         { "SunBlossomSlowAttack", new[] { "SunBlossomSlow" } },
 
-        { "SunfloraPixieCurse", new[] { "free" } },
+        { "SunfloraPixieFaint", new[] { "free" } },
         { "SunfloraPixieHeal", new[] { "free" } },
         { "SunfloraPixieRange", new[] { "free" } },
-        { "SunfloraPixieFireResist", new[] { "SunfloraPixieCurse", "SunfloraPixieHeal" } },
-        { "SunfloraPixiePoisonResist", new[] { "SunfloraPixieCurse", "SunfloraPixieHeal" } },
-        { "SunfloraPixieRange2", new[] { "SunfloraPixieRange" } },
+        { "SunfloraPixieCurse", new[] { "SunfloraPixieFaint", "SunfloraPixieHeal" } },
+        { "SunfloraPixieAttackSpeed", new[] { "SunfloraPixieFaint", "SunfloraPixieHeal" } },
+        { "SunfloraPixieTriple", new[] { "SunfloraPixieRange" } },
         {
             "SunfloraPixieDebuffRemove",
-            new[] { "SunfloraPixieFireResist", "SunfloraPixiePoisonResist", "SunfloraPixieRange2" }
+            new[] { "SunfloraPixieCurse", "SunfloraPixieAttackSpeed", "SunfloraPixieTriple" }
         },
         {
             "SunfloraPixieAttack",
-            new[] { "SunfloraPixieFireResist", "SunfloraPixiePoisonResist", "SunfloraPixieRange2" }
+            new[] { "SunfloraPixieCurse", "SunfloraPixieAttackSpeed", "SunfloraPixieTriple" }
         },
         { "SunfloraPixieInvincible", new[] { "SunfloraPixieDebuffRemove", "SunfloraPixieAttack" } },
 
         { "SunflowerFairyAttack", new[] { "free" } },
-        { "SunflowerFairyDefence", new[] { "free" } },
-        { "SunflowerFairyAttackDebuff", new[] { "SunflowerFairyAttack" } },
-        { "SunflowerFairyDefenceDebuff", new[] { "SunflowerFairyDefence" } },
-        { "SunflowerFairyFenceHeal", new[] { "SunflowerFairyAttackDebuff", "SunflowerFairyDefenceDebuff" } },
+        { "SunflowerFairyDouble", new[] { "free" } },
+        { "SunflowerFairyDefence", new[] { "SunflowerFairyAttack" } },
+        { "SunflowerFairyMpDown", new[] { "SunflowerFairyDouble" } },
+        { "SunflowerFairyFenceHeal", new[] { "SunflowerFairyDefence", "SunflowerFairyMpDown" } },
 
         { "TargetDummyHealth", new[] { "free" } },
         { "TargetDummyHeal", new[] { "free" } },

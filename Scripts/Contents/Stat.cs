@@ -34,6 +34,7 @@ public class Stat : MonoBehaviour
     private bool _slowInRound = false;
     private bool _slowAttackInRound = false;
     private bool _attackInRound = false;
+    private bool _attackSpeedInRound = false;
     private bool _defenceInRound = false;
     private bool _attackDebuffInRound = false;
     private bool _defenceDebuffInRound = false;
@@ -223,6 +224,21 @@ public class Stat : MonoBehaviour
         Attack -= attack;
     }
 
+    public IEnumerator AttackSpeedInRounds(float param)
+    {
+        if (_attackSpeedInRound) yield break;
+        _attackSpeedInRound = true;
+        
+        float roundTime = GameData.RoundTime;
+        float remainTime = Time.time % roundTime;
+        int attackSpeed = (int)(AttackSpeed * param);
+        AttackSpeed += attackSpeed;
+
+        yield return new WaitForSeconds(remainTime);
+        _attackSpeedInRound = false;
+        AttackSpeed -= attackSpeed;
+    }
+    
     public IEnumerator DefenceInRound(int param)
     {
         if (_defenceInRound) yield break;
