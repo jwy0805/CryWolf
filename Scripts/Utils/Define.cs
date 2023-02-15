@@ -242,5 +242,20 @@ public class Define
         Item,
     }
 
+    public enum Buff
+    {
+        Attack,
+        AttackSpeed,
+        Health,
+        Defence,
+    }
+
+    public enum Debuff
+    {
+        Attack,
+        Defence,
+        Slow,
+        AttackSpeed,
+    }
 }
 
