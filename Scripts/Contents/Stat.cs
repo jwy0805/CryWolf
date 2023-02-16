@@ -1,5 +1,7 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Serialization;
@@ -25,19 +27,13 @@ public class Stat : MonoBehaviour
     [SerializeField] protected float _accuracy;
     [SerializeField] protected float _evasion;
     [SerializeField] protected bool _targetable;
-    
+
     protected bool _reflection;
     protected bool _reflectionSkill;
     protected float _reflectionRate;
 
-    private bool _healthInRound = false;
-    private bool _slowInRound = false;
-    private bool _slowAttackInRound = false;
-    private bool _attackInRound = false;
-    private bool _attackSpeedInRound = false;
-    private bool _defenceInRound = false;
-    private bool _attackDebuffInRound = false;
-    private bool _defenceDebuffInRound = false;
+    private float _time = 0f;
+    private float _param = 0f;
     
     private static readonly int AnimAttackSpeed = Animator.StringToHash("AttackSpeed");
 
@@ -72,6 +68,11 @@ public class Stat : MonoBehaviour
     public bool ReflectionSkill { get { return _reflectionSkill; } set { _reflectionSkill = value; } }
     public float ReflectionRate { get { return _reflectionRate; } set { _reflectionRate = value; } }
 
+    private List<Define.Buff> _buffList = new List<Define.Buff>();
+    private List<Define.Debuff> _debuffList = new List<Define.Debuff>();
+    private Dictionary<Define.Buff, IEnumerator> _buffDict = new Dictionary<Define.Buff, IEnumerator>();    
+    private Dictionary<Define.Debuff, IEnumerator> _debuffDict = new Dictionary<Define.Debuff, IEnumerator>();
+
     void Start()
     {
         Targetable = true;
@@ -84,6 +85,8 @@ public class Stat : MonoBehaviour
         Reflection = false;
         ReflectionSkill = false;
         ReflectionRate = 0f;
+        
+        RegisterBuff();
     }
 
     public virtual void OnAttakced(Stat attacker)
@@ -179,7 +182,7 @@ public class Stat : MonoBehaviour
             attacker.OnDead();
         }
     }
-
+    
     public virtual void Heal(int heal)
     {
         Hp += heal;
@@ -188,129 +191,154 @@ public class Stat : MonoBehaviour
             Hp = MaxHp;
         }
     }
-
     
-    
-    public IEnumerator HealthInRounds(int health)
+    private void RegisterBuff()
     {
-        if (_healthInRound) yield break;
-        _healthInRound = true;
+        IEnumerator[] buffArr =
+        {
+            AttackBuff(Define.Buff.Attack), AttackSpeedBuff(Define.Buff.AttackSpeed),
+            HealthBuff(Define.Buff.Health), DefenceBuff(Define.Buff.Defence), MoveSpeedBuff(Define.Buff.MoveSpeed)
+        };
+        IEnumerator[] debuffArr =
+        {
+            AttackDebuff(Define.Debuff.Attack), AttackSpeedDebuff(Define.Debuff.AttackSpeed),
+            DefenceDebuff(Define.Debuff.Defence), MoveSpeedDebuff(Define.Debuff.MoveSpeed),
+        };
+        Array buffEnum = Enum.GetValues(typeof(Define.Buff));
+        Array debuffEnum = Enum.GetValues(typeof(Define.Buff));
 
-        float roundTime = GameData.RoundTime;
-        float remainTime = Time.time % roundTime;
+        for (int i = 0; i < buffArr.Length; i++)
+        {
+            _buffDict.Add((Define.Buff)buffEnum.GetValue(i), buffArr[i]);
+        }
 
-        Hp += health;
-        MaxHp += health;
-        
-        yield return new WaitForSeconds(remainTime);
-        _healthInRound = false;
-        MaxHp -= health;
+        for (int i = 0; i < debuffArr.Length; i++)
+        {
+            _debuffDict.Add((Define.Debuff)debuffEnum.GetValue(i), debuffArr[i]);
+        }
+    }
+
+    public void SetBuffParams(float time, float param, Define.Buff buff)
+    {
+        SetParams(time, param);
+        if (_buffList.Contains(buff))
+        {
+            _buffList.Remove(buff);
+        }
+
+        StartCoroutine(_buffDict[buff]);
+    }
+    
+    public void SetDebuffParams(float time, float param, Define.Debuff debuff)
+    {
+        SetParams(time, param);
+        if (_debuffList.Contains(debuff))
+        {
+            _debuffList.Remove(debuff);
+        }
+
+        StartCoroutine(_debuffDict[debuff]);
+    }
+
+    public void SetParams(float time, float param)
+    {
+        _time = time;
+        _param = param;
+    }
+    
+    public IEnumerator AttackBuff(Define.Buff buff)
+    {
+        _buffList.Add(buff);
+        int p = (int)(Attack * _param);
+        Attack += p;
+        yield return new WaitForSeconds(_time);
+        _buffList.Remove(buff);
+        Attack -= p;
+    }
+    
+    public IEnumerator AttackSpeedBuff(Define.Buff buff)
+    {
+        Debug.Log(gameObject.name);
+        _buffList.Add(buff);
+        float p = AttackSpeed * _param;
+        AttackSpeed += p;
+        yield return new WaitForSeconds(_time);
+        _buffList.Remove(buff);
+        AttackSpeed -= p;
+    }
+
+    public IEnumerator HealthBuff(Define.Buff buff)
+    {
+        _buffList.Add(buff);
+        int p = (int)(MaxHp * _param);
+        Hp += p;
+        MaxHp += p;
+        yield return new WaitForSeconds(_time);
+        _buffList.Remove(buff);
+        MaxHp -= p;
         if (Hp > MaxHp)
         {
             Hp = MaxHp;
         }
     }
 
-    public IEnumerator AttackInRounds(float param)
+    public IEnumerator DefenceBuff(Define.Buff buff)
     {
-        if (_attackInRound) yield break;
-        _attackInRound = true;
-        
-        float roundTime = GameData.RoundTime;
-        float remainTime = Time.time % roundTime;
-        int attack = (int)(Attack * param);
-        Attack += attack;
-
-        yield return new WaitForSeconds(remainTime);
-        _attackInRound = false;
-        Attack -= attack;
-    }
-
-    public IEnumerator AttackSpeedInRounds(float param)
-    {
-        if (_attackSpeedInRound) yield break;
-        _attackSpeedInRound = true;
-        
-        float roundTime = GameData.RoundTime;
-        float remainTime = Time.time % roundTime;
-        int attackSpeed = (int)(AttackSpeed * param);
-        AttackSpeed += attackSpeed;
-
-        yield return new WaitForSeconds(remainTime);
-        _attackSpeedInRound = false;
-        AttackSpeed -= attackSpeed;
+        _buffList.Add(buff);
+        int p = (int)_param;
+        Defense += p;
+        yield return new WaitForSeconds(_time);
+        _buffList.Remove(buff);
+        Defense -= p;
     }
     
-    public IEnumerator DefenceInRound(int param)
+    public IEnumerator MoveSpeedBuff(Define.Buff buff)
     {
-        if (_defenceInRound) yield break;
-        _defenceInRound = true;
-        
-        float roundTime = GameData.RoundTime;
-        float remainTime = Time.time % roundTime;
-        Defense += param;
-
-        yield return new WaitForSeconds(remainTime);
-        _defenceInRound = false;
-        Defense -= param;
+        _buffList.Add(buff);
+        float p = MoveSpeed * _param;
+        MoveSpeed += p;
+        yield return new WaitForSeconds(_time);
+        _buffList.Remove(buff);
+        MoveSpeed -= p;
     }
-
-    public IEnumerator AttackDebuffInRounds(float param)
+    
+    public IEnumerator AttackDebuff(Define.Debuff debuff)
     {
-        if(_attackDebuffInRound) yield break;
-        _attackDebuffInRound = true;
-        
-        float roundTime = GameData.RoundTime;
-        float remainTime = Time.time % roundTime;
-        int attack = (int)(Attack * param);
-        Attack -= attack;
-
-        yield return new WaitForSeconds(remainTime);
-        _attackDebuffInRound = false;
-        Attack += attack;
+        _debuffList.Add(debuff);
+        int p = (int)(Attack * _param);
+        Attack -= p;
+        yield return new WaitForSeconds(_time);
+        _debuffList.Remove(debuff);
+        Attack += p;
     }
-
-    public IEnumerator DefenceDebuffInRounds(int param)
+    
+    public IEnumerator AttackSpeedDebuff(Define.Debuff debuff)
     {
-        if (_defenceDebuffInRound) yield break;
-        _defenceDebuffInRound = true;
-        
-        float roundTime = GameData.RoundTime;
-        float remainTime = Time.time % roundTime;
-        Defense -= param;
-
-        yield return new WaitForSeconds(remainTime);
-        _defenceInRound = false;
+        _debuffList.Add(debuff);
+        float p = AttackSpeed * _param;
+        AttackSpeed -= p;
+        yield return new WaitForSeconds(_time);
+        _debuffList.Remove(debuff);
+        AttackSpeed += p;
     }
-
-    public IEnumerator SlowInRounds(float param)
+    
+    public IEnumerator DefenceDebuff(Define.Debuff debuff)
     {
-        if (_slowInRound) yield break;
-        _slowInRound = true;
-
-        float roundTime = GameData.RoundTime;
-        float remainTime = Time.time % roundTime;
-        float moveSpeed = MoveSpeed * param;
-        MoveSpeed -= moveSpeed;
-        
-        yield return new WaitForSeconds(remainTime);
-        _slowInRound = false;
-        MoveSpeed += moveSpeed;
+        _debuffList.Add(debuff);
+        int p = (int)_param;
+        Defense -= p;
+        yield return new WaitForSeconds(_time);
+        _debuffList.Remove(debuff);
+        Defense += p;
     }
-
-    public IEnumerator SlowAttackInRounds(float param)
+    
+    public IEnumerator MoveSpeedDebuff(Define.Debuff debuff)
     {
-        if (_slowAttackInRound) yield break;
-        _slowAttackInRound = true;
-        
-        float roundTime = GameData.RoundTime;
-        float remainTime = Time.time % roundTime;
-        float attackSpeed = AttackSpeed;
-
-        AttackSpeed *= (1f - param);
-        
-        yield return new WaitForSeconds(remainTime);
-        _slowAttackInRound = false;
-        AttackSpeed = attackSpeed;
+        _debuffList.Add(debuff);
+        float p = MoveSpeed * _param;
+        MoveSpeed -= p;
+        yield return new WaitForSeconds(_time);
+        _debuffList.Remove(debuff);
+        MoveSpeed += p;
     }
 }

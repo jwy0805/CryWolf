@@ -9,7 +9,7 @@ public class SunflowerFairyController : TowerController
     private float _lastMpTime = 0f;
     private int _numHeal = 20;
     private int _numFenceHeal = 90;
-    private int _numHealth = 50;
+    private float _numHealth = 0.25f;
     private float _numAttack = 0.1f;
     private int _numDefence = 8;
     private float _numSlow = 0.1f;
@@ -113,15 +113,15 @@ public class SunflowerFairyController : TowerController
                 if (colliders[i].TryGetComponent(out Stat towerStat))
                 {
                     towerStat.Heal(_numHeal);
-                    StartCoroutine(towerStat.HealthInRounds(_numHealth));
+                    towerStat.SetBuffParams(10, _numHealth, Define.Buff.Health);
                     if (_attack)
                     {
-                        StartCoroutine(towerStat.AttackInRounds(_numAttack));
+                        towerStat.SetBuffParams(10, _numAttack, Define.Buff.Attack);
                     }
 
                     if (_defence)
                     {
-                        StartCoroutine(towerStat.DefenceInRound(_numDefence));
+                        towerStat.SetBuffParams(10, _numDefence, Define.Buff.Defence);
                     }
                 }
             }
@@ -150,7 +150,7 @@ public class SunflowerFairyController : TowerController
             {
                 if (monsterDebuff[i].TryGetComponent(out Stat monsterStat))
                 {
-                    StartCoroutine(monsterStat.SlowInRounds(_numSlow));
+                    monsterStat.SetDebuffParams(10, _numSlow, Define.Debuff.MoveSpeed);
                 }
             }
             
@@ -161,7 +161,7 @@ public class SunflowerFairyController : TowerController
             {
                 if (monsterDebuff[i].TryGetComponent(out Stat monsterStat))
                 {
-                    StartCoroutine(monsterStat.SlowInRounds(_numSlow));
+                    monsterStat.SetDebuffParams(10, _numSlow, Define.Debuff.MoveSpeed);
                 }
             }
         }
@@ -174,7 +174,7 @@ public class SunflowerFairyController : TowerController
             {
                 if (monsterDebuff[i].TryGetComponent(out Stat monsterStat))
                 {
-                    StartCoroutine(monsterStat.SlowInRounds(_numSlow));
+                    monsterStat.SetDebuffParams(10, _numSlow, Define.Debuff.MoveSpeed);
                 }
             }
             
@@ -185,7 +185,7 @@ public class SunflowerFairyController : TowerController
             {
                 if (monsterDebuff[i].TryGetComponent(out Stat monsterStat))
                 {
-                    StartCoroutine(monsterStat.SlowInRounds(_numSlow));
+                    monsterStat.SetDebuffParams(10, _numSlow, Define.Debuff.MoveSpeed);
                 }
             }
         }

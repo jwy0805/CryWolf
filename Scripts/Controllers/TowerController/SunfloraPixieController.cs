@@ -161,9 +161,9 @@ public class SunfloraPixieController : TowerController
                 if (colliders[i].TryGetComponent(out Stat towerStat))
                 {
                     towerStat.Heal(_numHeal);
-                    StartCoroutine(towerStat.HealthInRounds(_numHealth));
-                    StartCoroutine(towerStat.AttackInRounds(_numAttack));
-                    StartCoroutine(towerStat.DefenceInRound(_numDefence));
+                    towerStat.SetBuffParams(10, _numHealth, Define.Buff.Health);
+                    towerStat.SetBuffParams(10, _numAttack, Define.Buff.Attack);
+                    towerStat.SetBuffParams(10, _numDefence, Define.Buff.Defence);
                     if (_attackSpeed)
                     {
                         
@@ -195,7 +195,7 @@ public class SunfloraPixieController : TowerController
             {
                 if (monsterDebuff[i].TryGetComponent(out Stat monsterStat))
                 {
-                    StartCoroutine(monsterStat.SlowInRounds(_numSlow));
+                    monsterStat.SetDebuffParams(10, _numSlow, Define.Debuff.MoveSpeed);
                 }
             }
             
@@ -206,7 +206,7 @@ public class SunfloraPixieController : TowerController
             {
                 if (monsterDebuff[i].TryGetComponent(out Stat monsterStat))
                 {
-                    StartCoroutine(monsterStat.SlowInRounds(_numSlow));
+                    monsterStat.SetDebuffParams(10, _numSlow, Define.Debuff.MoveSpeed);
                 }
             }
 
@@ -219,7 +219,7 @@ public class SunfloraPixieController : TowerController
                 {
                     if (monsterDebuff[i].TryGetComponent(out Stat monsterStat))
                     {
-                        StartCoroutine(monsterStat.SlowInRounds(_numSlow));
+                        monsterStat.SetDebuffParams(10, _numSlow, Define.Debuff.MoveSpeed);
                     }
                 }
             }
@@ -233,7 +233,7 @@ public class SunfloraPixieController : TowerController
             {
                 if (monsterDebuff[i].TryGetComponent(out Stat monsterStat))
                 {
-                    StartCoroutine(monsterStat.SlowInRounds(_numSlow));
+                    monsterStat.SetDebuffParams(10, _numSlow, Define.Debuff.MoveSpeed);
                 }
             }
             
@@ -244,7 +244,7 @@ public class SunfloraPixieController : TowerController
             {
                 if (monsterDebuff[i].TryGetComponent(out Stat monsterStat))
                 {
-                    StartCoroutine(monsterStat.SlowInRounds(_numSlow));
+                    monsterStat.SetDebuffParams(10, _numSlow, Define.Debuff.MoveSpeed);
                 }
             }
         }

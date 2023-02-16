@@ -248,14 +248,17 @@ public class Define
         AttackSpeed,
         Health,
         Defence,
+        MoveSpeed,
+        Invincible,
     }
 
     public enum Debuff
     {
         Attack,
-        Defence,
-        Slow,
         AttackSpeed,
+        Defence,
+        MoveSpeed,
+        Curse,
     }
 }
 

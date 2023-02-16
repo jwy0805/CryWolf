@@ -8,7 +8,7 @@ public class SunBlossomController : TowerController
     private float _mpTime = 1f;
     private float _lastMpTime = 0f;
     private int _numHeal = 20;
-    private int _numHealth = 50;
+    private float _numHealth = 0.25f;
     private float _numSlow = 0.3f;
     private float _numSlowAttack = 0.3f;
     private bool _heal = false;
@@ -86,7 +86,7 @@ public class SunBlossomController : TowerController
             {
                 if (colliders[i].TryGetComponent(out Stat towerStat))
                 {
-                    StartCoroutine(towerStat.HealthInRounds(_numHealth));
+                    towerStat.SetBuffParams(10f, _numHealth, Define.Buff.Health);
                     if (_heal)
                     {
                         towerStat.Heal(_numHeal);
@@ -104,10 +104,10 @@ public class SunBlossomController : TowerController
         int ran = UnityEngine.Random.Range(0, lenMon);
         if (monsters[ran].TryGetComponent(out Stat monsterStat) && _slow)
         {
-            StartCoroutine(monsterStat.SlowInRounds(_numSlow));
+            monsterStat.SetDebuffParams(10f, _numSlow, Define.Debuff.MoveSpeed);
             if (_slowAttack)
             {
-                StartCoroutine(monsterStat.SlowAttackInRounds(_numSlowAttack));
+                monsterStat.SetDebuffParams(10f, _numSlowAttack, Define.Debuff.AttackSpeed);
             }
         }
     }

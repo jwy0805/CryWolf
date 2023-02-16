@@ -263,7 +263,7 @@ public class GameData
         { "TrainingDummyPoisonResist", new[] { "TrainingDummyAggro", "TrainingDummyHeal" } },
         { "TrainingDummyFireResist", new[] { "TrainingDummyAggro", "TrainingDummyHeal" } },
     };
-
+    
     public static List<string> SkillUpgradedList = new List<string>();
 }
 
