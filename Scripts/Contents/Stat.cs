@@ -183,9 +183,9 @@ public class Stat : MonoBehaviour
         }
     }
     
-    public virtual void Heal(int heal)
+    public virtual void Heal(float heal)
     {
-        Hp += heal;
+        Hp += (int)heal;
         if (Hp > MaxHp)
         {
             Hp = MaxHp;

@@ -7,11 +7,11 @@ public class SunflowerFairyController : TowerController
 {
     private float _mpTime = 1f;
     private float _lastMpTime = 0f;
-    private int _numHeal = 20;
-    private int _numFenceHeal = 90;
+    private float _numHeal = 20;
+    private float _numFenceHeal = 90;
     private float _numHealth = 0.25f;
     private float _numAttack = 0.1f;
-    private int _numDefence = 8;
+    private float _numDefence = 8;
     private float _numSlow = 0.1f;
     private float _numSlowAttack = 0.1f;
 
@@ -106,6 +106,7 @@ public class SunflowerFairyController : TowerController
         int length = colliders.Length;
         List<Collider> monsters = new List<Collider>();
 
+        // tower 버프 -> 많은 대상에게 약간의 버프 / fence 회복
         for (int i = 0; i < length; i++)
         {
             if (colliders[i].CompareTag("Tower") || colliders[i].CompareTag("TowerAir"))
@@ -140,13 +141,13 @@ public class SunflowerFairyController : TowerController
             }
         }
 
+        // monster 디버프 -> 적은 대상에게 강한 디버프
         List<Collider> monsterDebuff = new List<Collider>();
         if (_double)
         {
             monsterDebuff = GetMonsterOrTower(2, monsters);
             if (monsterDebuff == null) return;
-            int cnt = monsterDebuff.Count;
-            for (int i = 0; i < cnt; i++)
+            for (int i = 0; i < monsterDebuff.Count; i++)
             {
                 if (monsterDebuff[i].TryGetComponent(out Stat monsterStat))
                 {
@@ -156,12 +157,11 @@ public class SunflowerFairyController : TowerController
             
             monsterDebuff = GetMonsterOrTower(2, monsters);
             if (monsterDebuff == null) return;
-            cnt = monsterDebuff.Count;
-            for (int i = 0; i < cnt; i++)
+            for (int i = 0; i < monsterDebuff.Count; i++)
             {
                 if (monsterDebuff[i].TryGetComponent(out Stat monsterStat))
                 {
-                    monsterStat.SetDebuffParams(10, _numSlow, Define.Debuff.MoveSpeed);
+                    monsterStat.SetDebuffParams(10, _numSlowAttack, Define.Debuff.AttackSpeed);
                 }
             }
         }
@@ -169,8 +169,7 @@ public class SunflowerFairyController : TowerController
         {
             monsterDebuff = GetMonsterOrTower(1, monsters);
             if (monsterDebuff == null) return;
-            int cnt = monsterDebuff.Count;
-            for (int i = 0; i < cnt; i++)
+            for (int i = 0; i < monsterDebuff.Count; i++)
             {
                 if (monsterDebuff[i].TryGetComponent(out Stat monsterStat))
                 {
@@ -180,17 +179,14 @@ public class SunflowerFairyController : TowerController
             
             monsterDebuff = GetMonsterOrTower(1, monsters);
             if (monsterDebuff == null) return;
-            cnt = monsterDebuff.Count;
-            for (int i = 0; i < cnt; i++)
+            for (int i = 0; i < monsterDebuff.Count; i++)
             {
                 if (monsterDebuff[i].TryGetComponent(out Stat monsterStat))
                 {
-                    monsterStat.SetDebuffParams(10, _numSlow, Define.Debuff.MoveSpeed);
+                    monsterStat.SetDebuffParams(10, _numSlowAttack, Define.Debuff.AttackSpeed);
                 }
             }
         }
-
-        
     }
 
     protected override void OnEndEvent()
