@@ -100,11 +100,12 @@ public class Spawner : MonoBehaviour
         //     ReserveSpawnSheep();
         //     cnt++;
         // }
-        // if (Time.time > _lastSpawnTime + _roundTime)
-        // {
-        //     _lastSpawnTime = Time.time;
-        //     Summon += 1;
-        // }
+        
+        if (Time.time > _lastSpawnTime + _roundTime)
+        {
+            _lastSpawnTime = Time.time;
+            Summon += 1;
+        }
     }
 
     IEnumerator ReserveSpawnMonster(Define.MonsterId id)
