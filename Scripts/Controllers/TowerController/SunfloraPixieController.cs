@@ -12,6 +12,7 @@ public class SunfloraPixieController : TowerController
     private int _numFenceHeal = 90;
     private int _numHealth = 50;
     private float _numAttack = 0.1f;
+    private float _numAttackSpeed = 0.15f;
     private int _numDefence = 8;
     private float _numSlow = 0.1f;
     private float _numSlowAttack = 0.1f;
@@ -56,6 +57,7 @@ public class SunfloraPixieController : TowerController
                     _attack = true;
                     break;
                 case Define.Skill.SunfloraPixieInvincible:
+                    _invincible = true;
                     break;
             }
         }
@@ -120,7 +122,7 @@ public class SunfloraPixieController : TowerController
         }
     }
     
-    private List<Collider> GetMonsterOrTower(int num, List<Collider> monsters)
+    private List<Collider> PickUnits(int num, List<Collider> monsters)
     {
         int cnt = monsters.Count;
         List<Collider> randomMonsters = new List<Collider>();
@@ -166,7 +168,7 @@ public class SunfloraPixieController : TowerController
                     towerStat.SetBuffParams(10, _numDefence, Define.Buff.Defence);
                     if (_attackSpeed)
                     {
-                        
+                        towerStat.SetBuffParams(10, _numAttackSpeed, Define.Buff.AttackSpeed);
                     }
                 }
             }
@@ -185,74 +187,39 @@ public class SunfloraPixieController : TowerController
             }
         }
 
-        List<Collider> monsterDebuff = new List<Collider>();
-        if (_triple)
+        if (_debuffRemove)
         {
-            monsterDebuff = GetMonsterOrTower(3, monsters);
-            if (monsterDebuff == null) return;
-            int cnt = monsterDebuff.Count;
-            for (int i = 0; i < cnt; i++)
+            List<Collider> tower = PickUnits(1, towers);
+            if (tower[0].TryGetComponent(out Stat towerStat))
             {
-                if (monsterDebuff[i].TryGetComponent(out Stat monsterStat))
-                {
-                    monsterStat.SetDebuffParams(10, _numSlow, Define.Debuff.MoveSpeed);
-                }
-            }
-            
-            monsterDebuff = GetMonsterOrTower(3, monsters);
-            if (monsterDebuff == null) return;
-            cnt = monsterDebuff.Count;
-            for (int i = 0; i < cnt; i++)
-            {
-                if (monsterDebuff[i].TryGetComponent(out Stat monsterStat))
-                {
-                    monsterStat.SetDebuffParams(10, _numSlow, Define.Debuff.MoveSpeed);
-                }
-            }
-
-            if (_curse)
-            {
-                monsterDebuff = GetMonsterOrTower(3, monsters);
-                if (monsterDebuff == null) return;
-                cnt = monsterDebuff.Count;
-                for (int i = 0; i < cnt; i++)
-                {
-                    if (monsterDebuff[i].TryGetComponent(out Stat monsterStat))
-                    {
-                        monsterStat.SetDebuffParams(10, _numSlow, Define.Debuff.MoveSpeed);
-                    }
-                }
-            }
-        }
-        else
-        {
-            monsterDebuff = GetMonsterOrTower(2, monsters);
-            if (monsterDebuff == null) return;
-            int cnt = monsterDebuff.Count;
-            for (int i = 0; i < cnt; i++)
-            {
-                if (monsterDebuff[i].TryGetComponent(out Stat monsterStat))
-                {
-                    monsterStat.SetDebuffParams(10, _numSlow, Define.Debuff.MoveSpeed);
-                }
-            }
-            
-            monsterDebuff = GetMonsterOrTower(2, monsters);
-            if (monsterDebuff == null) return;
-            cnt = monsterDebuff.Count;
-            for (int i = 0; i < cnt; i++)
-            {
-                if (monsterDebuff[i].TryGetComponent(out Stat monsterStat))
-                {
-                    monsterStat.SetDebuffParams(10, _numSlow, Define.Debuff.MoveSpeed);
-                }
+                towerStat.RemoveDebuff();
             }
         }
 
-        int debuffCnt = monsterDebuff.Count;
-        for (int i = 0; i < debuffCnt; i++)
+        if (_invincible)
         {
-            
+            List<Collider> tower = PickUnits(1, towers);
+            if (tower[0].TryGetComponent(out Stat towerStat))
+            {
+                towerStat.SetBuffParams(3, 0, Define.Buff.Invincible);
+            }
+        }
+        
+        // return 있음 -> 코드 순서 바꾸지 말것
+        List<Collider> monsterDebuff = PickUnits(_triple ? 3 : 2, monsters);
+        if (monsterDebuff == null) return;
+        int cnt = monsterDebuff.Count;
+        for (int i = 0; i < cnt; i++)
+        {
+            if (monsterDebuff[i].TryGetComponent(out Stat monsterStat))
+            {
+                monsterStat.SetDebuffParams(10, _numSlow, Define.Debuff.MoveSpeed);
+                monsterStat.SetDebuffParams(10, _numSlowAttack, Define.Debuff.AttackSpeed);
+                if (_curse)
+                {
+                    monsterStat.SetDebuffParams(5,0, Define.Debuff.Curse);
+                }
+            }
         }
     }
 

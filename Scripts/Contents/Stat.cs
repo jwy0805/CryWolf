@@ -91,6 +91,7 @@ public class Stat : MonoBehaviour
 
     public virtual void OnAttakced(Stat attacker)
     {
+        if (_buffList.Contains(Define.Buff.Invincible)) return;
         int damage = 0;
         var random = new System.Random();
         int randVal = random.Next(100);
@@ -122,6 +123,7 @@ public class Stat : MonoBehaviour
 
     public virtual void OnSkilled(Stat attacker)
     {
+        if (_buffList.Contains(Define.Buff.Invincible)) return;
         int damage = 0;
         var random = new System.Random();
         int randVal = random.Next(100);
@@ -191,7 +193,7 @@ public class Stat : MonoBehaviour
             Hp = MaxHp;
         }
     }
-    
+
     private void RegisterBuff()
     {
         IEnumerator[] buffArr =
@@ -239,13 +241,24 @@ public class Stat : MonoBehaviour
 
         StartCoroutine(_debuffDict[debuff]);
     }
-
+    
     public void SetParams(float time, float param)
     {
         _time = time;
         _param = param;
     }
     
+    public void RemoveDebuff()
+    {
+        for (int i = 0; i < _debuffList.Count; i++)
+        {
+            Define.Debuff debuff = _debuffList[i];
+            StopCoroutine(_debuffDict[debuff]);
+        }
+        
+        _debuffList.Clear();
+    }
+
     public IEnumerator AttackBuff(Define.Buff buff)
     {
         _buffList.Add(buff);
@@ -301,6 +314,13 @@ public class Stat : MonoBehaviour
         _buffList.Remove(buff);
         MoveSpeed -= p;
     }
+
+    public IEnumerator Invincible(Define.Buff buff)
+    {
+        _buffList.Add(buff);
+        yield return new WaitForSeconds(_time);
+        _buffList.Remove(buff);
+    }
     
     public IEnumerator AttackDebuff(Define.Debuff debuff)
     {
@@ -340,5 +360,13 @@ public class Stat : MonoBehaviour
         yield return new WaitForSeconds(_time);
         _debuffList.Remove(debuff);
         MoveSpeed += p;
+    }
+
+    public IEnumerator Curse(Define.Debuff debuff)
+    {
+        _debuffList.Add(debuff);
+        yield return new WaitForSeconds(_time);
+        Hp /= 2;
+        _debuffList.Remove(debuff);
     }
 }
