@@ -9,59 +9,62 @@ public class SeedController : MonoBehaviour
     private Stat _stat;
     private RaycastHit _hitLayerMask;
     private Vector3 _destPos;
+    private GameObject _lockTarget;
     private float _speed;
-    private float _validTime;
-    private float _initTime;
 
     private void Start()
     {
-        Transform parent = transform.parent.GetComponent<Transform>();;
-        _stat = parent.GetComponent<Stat>();
-        _baseController = parent.GetComponent<BaseController>();
-        transform.position = parent.position + Vector3.up;
-        _speed = 15.0f;
-        _validTime = _stat.AttackRange / _speed;
-        _destPos = _baseController._lockTarget.transform.position;
-
-        _initTime = Time.time;
+        Init();
     }
     
-    private void Update()
+    private void FixedUpdate()
     {
         Vector3 dir = _destPos - transform.position;
         float moveDist = Mathf.Clamp(_speed * Time.deltaTime, 0, dir.magnitude);
+        float distParent = (transform.position - transform.parent.transform.position).magnitude;
         transform.position += dir.normalized * moveDist;
+        if (distParent > _stat.AttackRange) Managers.Resource.Destroy(gameObject);
+    }
 
-        if (Time.time - _initTime > _validTime)
-        {
-            Managers.Resource.Destroy(gameObject);
-        }
+    private void Init()
+    {
+        Transform parent = transform.parent.GetComponent<Transform>();
+        _stat = parent.GetComponent<Stat>();
+        _baseController = parent.GetComponent<BaseController>();
+        transform.position = parent.position + Vector3.up;
+        _lockTarget = _baseController._lockTarget;
+
+        Collider targetCollider = _baseController._lockTarget.GetComponent<Collider>();
+        _destPos = targetCollider.ClosestPoint(transform.position);
+        _speed = 15.0f;
     }
     
-    private void OnTriggerEnter(Collider collision)
+    private void OnTriggerEnter(Collider collider)
     {
-        GameObject go = collision.gameObject;
-        int layer = go.layer;
-        
-        if (layer == (int)Define.Layer.Monsters)
+        GameObject go = collider.gameObject;
+
+        if (!go.CompareTag(_lockTarget.tag))
         {
-            bool get = go.TryGetComponent(out Stat targetStat);
-            if (!get || _stat.Targetable == false) return;
-            
-            if (_stat.gameObject.name == "Bud")
+            if (go.CompareTag("Terrain"))
             {
-                targetStat.OnSkilled(_stat);
+                Managers.Resource.Destroy(gameObject);
             }
-            else
-            {
-                targetStat.OnAttakced(_stat);
-            }
-            
-            Managers.Resource.Destroy(gameObject);
         }
-        else if (layer == (int)Define.Layer.Ground)
+        else
         {
-            Managers.Resource.Destroy(gameObject);
+            if (go.TryGetComponent(out Stat targetStat))
+            {
+                if (!targetStat.Targetable) return;
+                if (_stat.gameObject.name == "Bud")
+                {
+                    targetStat.OnSkilled(_stat);
+                }
+                else
+                {
+                    targetStat.OnAttakced(_stat);
+                }                
+                Managers.Resource.Destroy(gameObject);
+            }
         }
     }
 }

@@ -92,7 +92,7 @@ public class Define
         HauntFire,
         
         MothCelestialSheepHealth,
-        MothCelestialSheepDefence,
+        MothCelestialGroundAttack,
         MothCelestialAccuracy,
         MothCelestialFireResist,
         MothCelestialPoisonResist,
@@ -259,6 +259,7 @@ public class Define
         Defence,
         MoveSpeed,
         Curse,
+        Addicted,
     }
 }
 

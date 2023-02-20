@@ -11,14 +11,22 @@ public class BlossomAttackController : ProjectileController
         _blossomController = GetComponentInParent<BlossomController>();
     }
 
-    protected override void UpdateAttack()
+    protected override void OnTriggerEnter(Collider collider)
     {
-        _destPos = _lockTarget.transform.position;
-        Vector3 dir = _destPos - transform.position;
-        if (dir.magnitude < 0.2f)
-        {
-            if (_lockTarget.TryGetComponent(out Stat targetStat))
+        GameObject go = collider.gameObject;
+
+        if (!go.CompareTag(_lockTarget.tag))
+        {            
+            if (go.CompareTag("Terrain"))
             {
+                HitEffect();
+            }
+        }
+        else
+        {            
+            if (go.TryGetComponent(out Stat targetStat))
+            {
+                if (!targetStat.Targetable) return;
                 if (_blossomController._blossomDeath)
                 {
                     var random = new System.Random();
@@ -41,11 +49,6 @@ public class BlossomAttackController : ProjectileController
                     HitEffect();
                 }
             }
-        }
-        else
-        {
-            float moveDist = Mathf.Clamp(speed * Time.deltaTime, 0, dir.magnitude);
-            transform.position += dir.normalized * moveDist;   
         }
     }
 }

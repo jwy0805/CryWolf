@@ -184,10 +184,10 @@ public class GameData
         { "HauntFire", new[] { "HauntPoisonResist", "HauntFireResist" } },
 
         { "MothCelestialSheepHealth", new[] { "free" } },
-        { "MothCelestialSheepDefence", new[] { "free" } },
+        { "MothCelestialGroundAttack", new[] { "free" } },
         { "MothCelestialAccuracy", new[] { "free" } },
-        { "MothCelestialFireResist", new[] { "MothCelestialSheepHealth", "MothCelestialSheepDefence" } },
-        { "MothCelestialPoisonResist", new[] { "MothCelestialSheepHealth", "MothCelestialSheepDefence" } },
+        { "MothCelestialFireResist", new[] { "MothCelestialSheepHealth", "MothCelestialGroundAttack" } },
+        { "MothCelestialPoisonResist", new[] { "MothCelestialSheepHealth", "MothCelestialGroundAttack" } },
         { "MothCelestialPoison", new[] { "MothCelestialAccuracy" } },
         { "MothCelestialBreedSheep", new[] { "MothCelestialPoisonResist", "MothCelestialFireResist" } },
 
@@ -230,16 +230,16 @@ public class GameData
         { "SunfloraPixieFaint", new[] { "free" } },
         { "SunfloraPixieHeal", new[] { "free" } },
         { "SunfloraPixieRange", new[] { "free" } },
-        { "SunfloraPixieCurse", new[] { "SunfloraPixieFaint", "SunfloraPixieHeal" } },
-        { "SunfloraPixieAttackSpeed", new[] { "SunfloraPixieFaint", "SunfloraPixieHeal" } },
+        { "SunfloraPixieCurse", new[] { "SunfloraPixieFaint" } },
+        { "SunfloraPixieAttackSpeed", new[] { "SunfloraPixieHeal" } },
         { "SunfloraPixieTriple", new[] { "SunfloraPixieRange" } },
         {
             "SunfloraPixieDebuffRemove",
-            new[] { "SunfloraPixieCurse", "SunfloraPixieAttackSpeed", "SunfloraPixieTriple" }
+            new[] { "SunfloraPixieCurse", "SunfloraPixieAttackSpeed" }
         },
         {
             "SunfloraPixieAttack",
-            new[] { "SunfloraPixieCurse", "SunfloraPixieAttackSpeed", "SunfloraPixieTriple" }
+            new[] { "SunfloraPixieCurse", "SunfloraPixieAttackSpeed" }
         },
         { "SunfloraPixieInvincible", new[] { "SunfloraPixieDebuffRemove", "SunfloraPixieAttack" } },
 

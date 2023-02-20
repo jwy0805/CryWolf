@@ -196,15 +196,18 @@ public class Stat : MonoBehaviour
 
     private void RegisterBuff()
     {
+        // Define.Buff 와 순서 맞출것
         IEnumerator[] buffArr =
         {
             AttackBuff(Define.Buff.Attack), AttackSpeedBuff(Define.Buff.AttackSpeed),
-            HealthBuff(Define.Buff.Health), DefenceBuff(Define.Buff.Defence), MoveSpeedBuff(Define.Buff.MoveSpeed)
+            HealthBuff(Define.Buff.Health), DefenceBuff(Define.Buff.Defence), MoveSpeedBuff(Define.Buff.MoveSpeed),
+            Invincible(Define.Buff.Invincible)
         };
         IEnumerator[] debuffArr =
         {
             AttackDebuff(Define.Debuff.Attack), AttackSpeedDebuff(Define.Debuff.AttackSpeed),
             DefenceDebuff(Define.Debuff.Defence), MoveSpeedDebuff(Define.Debuff.MoveSpeed),
+            Curse(Define.Debuff.Curse), Addicted(Define.Debuff.Addicted), 
         };
         Array buffEnum = Enum.GetValues(typeof(Define.Buff));
         Array debuffEnum = Enum.GetValues(typeof(Define.Buff));
@@ -225,6 +228,7 @@ public class Stat : MonoBehaviour
         SetParams(time, param);
         if (_buffList.Contains(buff))
         {
+            StopCoroutine(_buffDict[buff]);
             _buffList.Remove(buff);
         }
 
@@ -236,6 +240,7 @@ public class Stat : MonoBehaviour
         SetParams(time, param);
         if (_debuffList.Contains(debuff))
         {
+            StartCoroutine(_debuffDict[debuff]);
             _debuffList.Remove(debuff);
         }
 
@@ -367,6 +372,25 @@ public class Stat : MonoBehaviour
         _debuffList.Add(debuff);
         yield return new WaitForSeconds(_time);
         Hp /= 2;
+        _debuffList.Remove(debuff);
+    }
+
+    public IEnumerator Addicted(Define.Debuff debuff)
+    {
+        Debug.Log("a");
+        _debuffList.Add(debuff);
+        float intervalTime = 1.0f;
+        float time = Time.time;
+        int posion = (int)(MaxHp * _param);
+        for (int i = 0; i < (int)(_time + 0.1); i++)
+        {
+            if (Time.time > time + intervalTime)
+            {
+                time = Time.time;
+                Hp -= posion;
+            }
+        }
+        yield return new WaitForSeconds(_time);
         _debuffList.Remove(debuff);
     }
 }

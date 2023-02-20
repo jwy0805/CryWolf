@@ -4,30 +4,28 @@ using UnityEngine;
 
 public class MothCelestialPoisonController : ProjectileController
 {
-    protected override void UpdateAttack()
+    protected override void OnTriggerEnter(Collider collider)
     {
-        _destPos = _lockTarget.transform.position;
-        Vector3 dir = _destPos - transform.position;
-        if (dir.magnitude < 0.2f)
-        {
-            if (_lockTarget.TryGetComponent(out Stat targetStat))
+        GameObject go = collider.gameObject;
+
+        if (!go.CompareTag(_lockTarget.tag))
+        {            
+            if (go.CompareTag("Terrain"))
             {
-                targetStat.OnFaint();
-                targetStat.OnAttakced(_stat);
                 HitEffect();
             }
-
-            if (_lockTarget.TryGetComponent(out BaseController baseController))
-            {
-                baseController.Condition = Define.Condition.Addicted;
-            }
-
-            GetMp();
         }
         else
-        {
-            float moveDist = Mathf.Clamp(speed * Time.deltaTime, 0, dir.magnitude);
-            transform.position += dir.normalized * moveDist;   
+        {            
+            if (go.TryGetComponent(out Stat targetStat))
+            {
+                if (!targetStat.Targetable) return;
+                GetMp();
+                targetStat.OnFaint();
+                targetStat.OnAttakced(_stat);
+                targetStat.SetDebuffParams(10, 0.05f, Define.Debuff.Addicted);
+                HitEffect();
+            }
         }
     }
 }

@@ -214,7 +214,7 @@ public class UI_GameSheep : UI_Scene
         MothMoonAttackSpeedButton,
         
         MothCelestialSheepHealthButton,
-        MothCelestialSheepDefenceButton,
+        MothCelestialGroundAttackButton,
         MothCelestialAccuracyButton,
         MothCelestialFireResistButton,
         MothCelestialPoisonResistButton,
@@ -324,7 +324,7 @@ public class UI_GameSheep : UI_Scene
         MothMoonAttackSpeedPanel,
         
         MothCelestialSheepHealthPanel,
-        MothCelestialSheepDefencePanel,
+        MothCelestialGroundAttackPanel,
         MothCelestialAccuracyPanel,
         MothCelestialFireResistPanel,
         MothCelestialPoisonResistPanel,

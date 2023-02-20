@@ -106,6 +106,8 @@ public class SunflowerFairyController : TowerController
         int length = colliders.Length;
         List<Collider> monsters = new List<Collider>();
 
+        _stat.Mp = 0;
+
         // tower 버프 -> 많은 대상에게 약간의 버프 / fence 회복
         for (int i = 0; i < length; i++)
         {

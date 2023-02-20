@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -17,8 +18,6 @@ public class ProjectileController : MonoBehaviour
     protected Vector3 _destPos;
     protected GameObject _lockTarget;
     public float speed = 15f;
-    protected float _validTime;
-    protected float _initTime;
     private string[] effects;
     private bool _getMp = false;
     
@@ -29,21 +28,26 @@ public class ProjectileController : MonoBehaviour
 
     private void FixedUpdate ()
     {
-        UpdateAttack();
+        Vector3 dir = _destPos - transform.position;
+        float moveDist = Mathf.Clamp(speed * Time.deltaTime, 0, dir.magnitude);
+        float distParent = (transform.position - transform.parent.transform.position).magnitude;
+        transform.position += dir.normalized * moveDist;
+        if (transform.parent.name == "SunfloraPixie")
+        {
+            Debug.Log(_lockTarget);
+        }
     }
-
+        
     protected virtual void Init()
     {
         Transform parent = transform.parent.GetComponent<Transform>();
         _stat = parent.GetComponent<Stat>();
         _baseController = parent.GetComponent<BaseController>();
+        transform.position = parent.position + Vector3.up / 2;
         _lockTarget = _baseController._lockTarget;
-        if (_lockTarget == null)
-        {
-            return;
-        }
-        _destPos = _lockTarget.transform.position;
-
+        
+        Collider targetCollider = _baseController._lockTarget.GetComponent<Collider>();
+        _destPos = targetCollider.ClosestPoint(transform.position) + Vector3.up * 0.25f;        
         #region Effect
 
         rb = GetComponent<Rigidbody>();
@@ -70,31 +74,6 @@ public class ProjectileController : MonoBehaviour
         Destroy(gameObject,5);
 
         #endregion
-    }
-
-    protected virtual void UpdateAttack()
-    {
-        Vector3 dir = _destPos - transform.position;
-        if (dir.magnitude < 0.2f)
-        {
-            if (_lockTarget == null)
-            {
-                Managers.Resource.Destroy(gameObject);
-            }
-            else
-            {
-                if (_lockTarget.TryGetComponent(out Stat targetStat))
-                {
-                    targetStat.OnAttakced(_stat);
-                    HitEffect();
-                }
-            }
-        }
-        else
-        {
-            float moveDist = Mathf.Clamp(speed * Time.deltaTime, 0, dir.magnitude);
-            transform.position += dir.normalized * moveDist;   
-        }
     }
 
     protected void GetMp()
@@ -150,5 +129,38 @@ public class ProjectileController : MonoBehaviour
                 Managers.Resource.Destroy(gameObject);
                 
                 #endregion
+    }
+
+    protected virtual void OnTriggerEnter(Collider collider)
+    {
+        GameObject go = collider.gameObject;
+
+        if (_lockTarget == null) {
+            Managers.Resource.Destroy(gameObject);
+            return;
+        }
+        
+        if (!go.CompareTag(_lockTarget.tag))
+        {            
+            if (go.CompareTag("Terrain"))
+            {
+                HitEffect();
+            }
+        }
+        else
+        {            
+            if (go.TryGetComponent(out Stat targetStat))
+            {
+                if (targetStat.Targetable)
+                {
+                    targetStat.OnAttakced(_stat);
+                    if (_stat.maxMp > 0)
+                    {
+                        GetMp();
+                    }
+                }
+                HitEffect();
+            }
+        }
     }
 }

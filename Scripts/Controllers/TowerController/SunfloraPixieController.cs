@@ -22,7 +22,7 @@ public class SunfloraPixieController : TowerController
     private bool _triple = false;
     private bool _debuffRemove = false;
     private bool _attack = false;
-    private bool _attackSpeed = false;
+    private bool _attackSpeedSkill = false;
     private bool _invincible = false;
     protected override string NewSkill
     {
@@ -47,7 +47,7 @@ public class SunfloraPixieController : TowerController
                     _curse = true;
                     break;
                 case Define.Skill.SunfloraPixieAttackSpeed:
-                    _attackSpeed = true;
+                    _attackSpeedSkill = true;
                     break;
                 case Define.Skill.SunfloraPixieTriple:
                     break;
@@ -71,6 +71,8 @@ public class SunfloraPixieController : TowerController
         _stat.MaxHp = 320;
         _stat.Mp = 0;
         _stat.maxMp = 40;
+        _stat.Attack = 50;
+        _stat.AttackSpeed = 0.7f;
         _stat.Defense = 0;
         _stat.AttackRange = 16;
 
@@ -111,6 +113,10 @@ public class SunfloraPixieController : TowerController
     {
         base.UpdateAttack();
         MpUp();
+        if (_stat.Mp >= _stat.maxMp)
+        {
+            State = Define.State.Skill;
+        }
     }
 
     private void MpUp()
@@ -140,7 +146,7 @@ public class SunfloraPixieController : TowerController
 
     protected override void OnHitEvent()
     {
-        
+        Managers.Resource.Instanciate("Effects/SunfloraPixieAttack", gameObject.transform);
     }
     
     private void OnSkillEvent()
@@ -153,6 +159,8 @@ public class SunfloraPixieController : TowerController
         int length = colliders.Length;
         List<Collider> monsters = new List<Collider>();
         List<Collider> towers = new List<Collider>();
+
+        _stat.Mp = 0;
         
         for (int i = 0; i < length; i++)
         {
@@ -166,7 +174,7 @@ public class SunfloraPixieController : TowerController
                     towerStat.SetBuffParams(10, _numHealth, Define.Buff.Health);
                     towerStat.SetBuffParams(10, _numAttack, Define.Buff.Attack);
                     towerStat.SetBuffParams(10, _numDefence, Define.Buff.Defence);
-                    if (_attackSpeed)
+                    if (_attackSpeedSkill)
                     {
                         towerStat.SetBuffParams(10, _numAttackSpeed, Define.Buff.AttackSpeed);
                     }
@@ -218,6 +226,11 @@ public class SunfloraPixieController : TowerController
                 if (_curse)
                 {
                     monsterStat.SetDebuffParams(5,0, Define.Debuff.Curse);
+                }
+
+                if (_faint)
+                {
+                    monsterStat.OnFaint();
                 }
             }
         }

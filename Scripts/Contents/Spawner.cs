@@ -101,11 +101,11 @@ public class Spawner : MonoBehaviour
         //     cnt++;
         // }
         
-        // if (Time.time > _lastSpawnTime + _roundTime)
-        // {
-        //     _lastSpawnTime = Time.time;
-        //     Summon += 1;
-        // }
+        if (Time.time > _lastSpawnTime + _roundTime)
+        {
+            _lastSpawnTime = Time.time;
+            Summon += 1;
+        }
     }
 
     IEnumerator ReserveSpawnMonster(Define.MonsterId id)
