@@ -10,20 +10,20 @@ public class GameScene : BaseScene
         base.Init();
         
         SceneType = Define.Scene.Game;
+
+        switch (Util.SheepOrWolf)
+        {
+            case "Sheep":
+                Managers.UI.ShowSceneUI<UI_GameSheep>();
+                break;
+            case "Wolf":
+                Managers.UI.ShowSceneUI<UI_GameWolf>();
+                break;
+            default:
+                return;
+        }
         
-        Util.SheepOrWolf = "Sheep";
-        if (Util.SheepOrWolf == "Sheep")
-        {
-            Managers.UI.ShowSceneUI<UI_GameSheep>();
-        }
-        else
-        {
-            Managers.UI.ShowSceneUI<UI_GameWolf>();
-        }
-
-        Util.SheepOrWolf = null;
-
-        InitObjects();
+        InitObjects(Util.SheepOrWolf);
     }
     
     public override void Clear()
@@ -31,9 +31,22 @@ public class GameScene : BaseScene
         
     }
 
-    private void InitObjects()
+    private void InitObjects(string side)
     {
-        GameObject player = Managers.Game.Spawn(Define.WorldObject.Player, "PlayerCharacter");
+        GameObject player;
+        
+        switch (side)
+        {
+            case "Sheep":
+                player = Managers.Game.Spawn(Define.WorldObject.Player, "PlayerCharacter");
+                break;
+            case "Wolf":
+                player = Managers.Game.Spawn(Define.WorldObject.Player, "PoisonBomb");
+                break;
+            default:
+                player = Managers.Game.Spawn(Define.WorldObject.Player, "PlayerCharacter");
+                break;
+        }
         
         GameObject virtualCamera = GameObject.Find("FollowCam");
         CinemachineVirtualCamera followCam = virtualCamera.GetComponent<CinemachineVirtualCamera>();

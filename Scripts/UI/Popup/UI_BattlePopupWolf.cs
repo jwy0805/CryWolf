@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.SceneManagement;
 using UnityEngine.UIElements;
 using Button = UnityEngine.UI.Button;
 using Image = UnityEngine.UI.Image;
@@ -36,7 +37,9 @@ public class UI_BattlePopupWolf : UI_Popup
 
     private void OnRankGameClicked(PointerEventData data)
     {
-        
+        SceneManager.LoadScene("Scenes/Game/Game");
+        Util.SheepOrWolf = "Wolf";
+        Managers.Clear();
     }
 
     private void OnExhibitionGameClicked(PointerEventData data)

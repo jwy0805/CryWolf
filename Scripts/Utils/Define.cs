@@ -92,7 +92,7 @@ public class Define
         HauntFire,
         
         MothCelestialSheepHealth,
-        MothCelestialSheepDefence,
+        MothCelestialGroundAttack,
         MothCelestialAccuracy,
         MothCelestialFireResist,
         MothCelestialPoisonResist,
@@ -138,17 +138,17 @@ public class Define
         SunfloraPixieCurse,
         SunfloraPixieHeal,
         SunfloraPixieRange,
-        SunfloraPixieFireResist,
-        SunfloraPixiePoisonResist,
-        SunfloraPixieRange2,
+        SunfloraPixieFaint,
+        SunfloraPixieAttackSpeed,
+        SunfloraPixieTriple,
         SunfloraPixieDebuffRemove,
         SunfloraPixieAttack,
         SunfloraPixieInvincible,
         
         SunflowerFairyAttack,
         SunflowerFairyDefence,
-        SunflowerFairyAttackDebuff,
-        SunflowerFairyDefenceDebuff,
+        SunflowerFairyDouble,
+        SunflowerFairyMpDown,
         SunflowerFairyFenceHeal,
         
         TargetDummyHealth,
@@ -165,6 +165,99 @@ public class Define
         TrainingDummyPoisonResist,
         TrainingDummyFireResist,
         TrainingDummyDebuffRemove,
+        
+        WolfPupSpeed,
+        WolfPupHealth,
+        WolfPupAttack,
+        WolfPupAttackSpeed,
+        
+        WolfDrain,
+        WolfDefence,
+        WolfAvoid,
+        WolfCritical,
+        WolfFireResist,
+        WolfPoisonResist,
+        WolfDna,
+        
+        WerewolfThunder,
+        WerewolfDebuffResist,
+        WerewolfFaint,
+        WerewolfHealth,
+        WerewolfEnhance,
+        
+        LurkerSpeed,
+        LurkerHealth,
+        LurkerDefence,
+        LurkerHealth2,
+        
+        CreeperSpeed,
+        CreeperAttackSpeed,
+        CreeperAttack,
+        CreeperRoll,
+        CreeperPoison,
+        
+        HorrorRollPoison,
+        HorrorPoisonStack,
+        HorrorHealth,
+        HorrorPoisonResist,
+        HorrorDefence,
+        HorrorPoisonBelt,
+        
+        SnakeletSpeed,
+        SnakeletRange,
+        SnakeletAttackSpeed,
+        SnakeletAttack,
+        
+        SnakeAttack,
+        SnakeAttackSpeed,
+        SnakeRange,
+        SnakeAccuracy,
+        SnakeFire,
+        
+        SnakeNagaAttack,
+        SnakeNagaRange,
+        SnakeNagaFireResist,
+        SnakeNagaCritical,
+        SnakeNagaDrain,
+        SnakeNagaMeteor,
+        
+        MosquitoBugSpeed,
+        MosquitoBugDefence,
+        MosquitoBugAvoid,
+        MosquitoBugWoolDown,
+        
+        MosquitoPesterAttack,
+        MosquitoPesterHealth,
+        MosquitoPesterWoolDown2,
+        MosquitoPesterWoolRate,
+        MosquitoPesterWoolStop,
+        
+        MosquitoStingerLongAttack,
+        MosquitoStingerHealth,
+        MosquitoStingerAvoid,
+        MosquitoStingerPoison,
+        MosquitoStingerPoisonResist,
+        MosquitoStingerInfection,
+        MosquitoStingerSheepDeath,
+        
+        ShellAttackSpeed,
+        ShellSpeed,
+        ShellHealth,
+        ShellRoll,
+        
+        SpikeSelfDefence,
+        SpikeLostHeal,
+        SpikeDefence,
+        SpikeAttack,
+        SpikeDoubleBuff,
+        
+        HermitFireResist,
+        HermitPoisonResist,
+        HermitDebuffRemove,
+        HermitRange,
+        HermitAggro,
+        HermitReflection,
+        HermitFaint,
     }
     
     public enum State
@@ -242,5 +335,24 @@ public class Define
         Item,
     }
 
+    public enum Buff
+    {
+        Attack,
+        AttackSpeed,
+        Health,
+        Defence,
+        MoveSpeed,
+        Invincible,
+    }
+
+    public enum Debuff
+    {
+        Attack,
+        AttackSpeed,
+        Defence,
+        MoveSpeed,
+        Curse,
+        Addicted,
+    }
 }
 

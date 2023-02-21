@@ -188,16 +188,16 @@ public class UI_GameSheep : UI_Scene
         
         SunflowerFairyAttackButton,
         SunflowerFairyDefenceButton,
-        SunflowerFairyAttackDebuffButton,
-        SunflowerFairyDefenceDebuffButton,
+        SunflowerFairyDoubleButton,
+        SunflowerFairyMpDownButton,
         SunflowerFairyFenceHealButton,
         
         SunfloraPixieCurseButton,
         SunfloraPixieHealButton,
         SunfloraPixieRangeButton,
-        SunfloraPixieFireResistButton,
-        SunfloraPixiePoisonResistButton,
-        SunfloraPixieRange2Button,
+        SunfloraPixieFaintButton,
+        SunfloraPixieAttackSpeedButton,
+        SunfloraPixieTripleButton,
         SunfloraPixieDebuffRemoveButton,
         SunfloraPixieAttackButton,
         SunfloraPixieInvincibleButton,
@@ -214,7 +214,7 @@ public class UI_GameSheep : UI_Scene
         MothMoonAttackSpeedButton,
         
         MothCelestialSheepHealthButton,
-        MothCelestialSheepDefenceButton,
+        MothCelestialGroundAttackButton,
         MothCelestialAccuracyButton,
         MothCelestialFireResistButton,
         MothCelestialPoisonResistButton,
@@ -298,16 +298,16 @@ public class UI_GameSheep : UI_Scene
         
         SunflowerFairyAttackPanel,
         SunflowerFairyDefencePanel,
-        SunflowerFairyAttackDebuffPanel,
-        SunflowerFairyDefenceDebuffPanel,
+        SunflowerFairyDoublePanel,
+        SunflowerFairyMpDownPanel,
         SunflowerFairyFenceHealPanel,
 
         SunfloraPixieCursePanel,
         SunfloraPixieHealPanel,
         SunfloraPixieRangePanel,
-        SunfloraPixieFireResistPanel,
-        SunfloraPixiePoisonResistPanel,
-        SunfloraPixieRange2Panel,
+        SunfloraPixieFaintPanel,
+        SunfloraPixieAttackSpeedPanel,
+        SunfloraPixieTriplePanel,
         SunfloraPixieDebuffRemovePanel,
         SunfloraPixieAttackPanel,
         SunfloraPixieInvinciblePanel,
@@ -324,7 +324,7 @@ public class UI_GameSheep : UI_Scene
         MothMoonAttackSpeedPanel,
         
         MothCelestialSheepHealthPanel,
-        MothCelestialSheepDefencePanel,
+        MothCelestialGroundAttackPanel,
         MothCelestialAccuracyPanel,
         MothCelestialFireResistPanel,
         MothCelestialPoisonResistPanel,
@@ -563,7 +563,7 @@ public class UI_GameSheep : UI_Scene
             
             if (level == "0")
             {
-                SetAlpha(_dictPortrait[$"{item.Value}Button"], 0.6f);
+                _dictPortrait[$"{item.Value}Button"].GetComponent<UI_Portrait>().IsActive = true;
             }
             else
             {
@@ -617,8 +617,8 @@ public class UI_GameSheep : UI_Scene
     
     private string GetLevelFromUIObject(GameObject go, string oldValue)
     {
-        string monsterName = go.name.Replace(oldValue, "");
-        string num = GameData.MonsterSheep.FirstOrDefault(item => item.Value == monsterName).Key;
+        string towerName = go.name.Replace(oldValue, "");
+        string num = GameData.MonsterSheep.FirstOrDefault(item => item.Value == towerName).Key;
         string level = num.Substring(1, 1);
 
         return level;
@@ -626,11 +626,11 @@ public class UI_GameSheep : UI_Scene
     
     private void PortraitOn(GameObject portraits)
     {
-        string monsterName = portraits.name.Replace("Button", "");
+        string towerName = portraits.name.Replace("Button", "");
         var parent = portraits.transform.parent;
         RectTransform rectTransform = _dictImg["UnitFrame"].GetComponent<RectTransform>();
 
-        _dictSkillPanel[$"{monsterName}SkillPanel"].SetActive(true);
+        _dictSkillPanel[$"{towerName}SkillPanel"].SetActive(true);
         
         _dictImg["UnitFrame"].transform.SetParent(parent, false);
         _dictImg["UnitFrame"].SetActive(true);
@@ -639,8 +639,8 @@ public class UI_GameSheep : UI_Scene
 
     private void PortraitOff(GameObject portraits)
     {
-        string monsterName = portraits.name.Replace("Button", ""); 
-        _dictSkillPanel[$"{monsterName}SkillPanel"].SetActive(false);
+        string towerName = portraits.name.Replace("Button", ""); 
+        _dictSkillPanel[$"{towerName}SkillPanel"].SetActive(false);
     }
     
     #region ButtonFunction

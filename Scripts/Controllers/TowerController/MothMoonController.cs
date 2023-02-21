@@ -42,7 +42,6 @@ public class MothMoonController : TowerController
                     break;
                 case Define.Skill.MothMoonAttackSpeed:
                     _stat.AttackSpeed = 0.95f;
-                    _anim.SetFloat(_attackSpeed, _stat.AttackSpeed);
                     break;
             }
         }
@@ -76,7 +75,6 @@ public class MothMoonController : TowerController
         _stat.Defense = 3;
         _stat.AttackRange = 7;
         _stat.AttackSpeed = 0.8f;
-        _anim.SetFloat(_attackSpeed, _stat.AttackSpeed);
 
         _stat.Accuracy = 105;
 

@@ -84,7 +84,6 @@ public class PlayerController : BaseController
                     if (layer == (int)Define.Layer.Ground)
                     {
                         _destPos = hit.point;
-                        Debug.Log(hit.point);
                         State = Define.State.Moving;
                     }
                     else

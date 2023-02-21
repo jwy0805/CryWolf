@@ -34,7 +34,7 @@ public class SheepController : BaseController
         _stat.Defense = 0;
         _stat.MoveSpeed = 0.4f;
 
-        _yield = 30;
+        _yield = 2500;
     }
 
     protected override void UpdateIdle()
@@ -94,7 +94,7 @@ public class SheepController : BaseController
                 coin = Managers.Resource.Instanciate("Items/CoinStarSilver");
                 break;
             case < 50:
-                coin = Managers.Resource.Instanciate("Items/CoinStarGold");
+                coin = Managers.Resource.Instanciate("Items/CoinStarGolden");
                 break;
             case < 100:
                 coin = Managers.Resource.Instanciate("Items/PouchGreen");
@@ -107,6 +107,6 @@ public class SheepController : BaseController
                 break;
         }
         
-        coin.transform.position = gameObject.transform.position;
+        coin.transform.position = gameObject.transform.position + Vector3.up * 0.5f;
     }
 }

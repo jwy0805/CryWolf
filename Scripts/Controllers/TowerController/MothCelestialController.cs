@@ -11,6 +11,7 @@ public class MothCelestialController : TowerController
     private int _removeProb;
     private int _breedProb;
     private int _heal;
+    private int _health;
 
     private int _mask = 1 << (int)Define.Layer.Sheep;
     private int _level = 1;
@@ -28,7 +29,7 @@ public class MothCelestialController : TowerController
                 case Define.Skill.MothCelestialSheepHealth:
                     _sheepHealth = true;
                     break;
-                case Define.Skill.MothCelestialSheepDefence:
+                case Define.Skill.MothCelestialGroundAttack:
                     tags = new[] { "MonsterAir", "Monster" };
                     break;
                 case Define.Skill.MothCelestialAccuracy:
@@ -76,9 +77,8 @@ public class MothCelestialController : TowerController
         _stat.maxMp = 50;
         _stat.Attack = 30;
         _stat.Defense = 3;
-        _stat.AttackRange = 7;
+        _stat.AttackRange = 15;
         _stat.AttackSpeed = 0.8f;
-        _anim.SetFloat(_attackSpeed, _stat.AttackSpeed);
         _stat.Accuracy = 105;
 
         _removeProb = 25;
@@ -182,7 +182,6 @@ public class MothCelestialController : TowerController
             }
             
             // MothMoon output 스킬 계승
-            
             // 이 위에 스킬 만들것
             if (!sheeps[i].TryGetComponent(out Stat sheepStat)) continue;
             sheepStat.Heal(_heal);

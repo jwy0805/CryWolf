@@ -56,7 +56,6 @@ public class SoulMageController : TowerController
         _stat.MoveSpeed = 6.0f;
         _stat.AttackRange = 5.0f;
         _stat.AttackSpeed = 1.0f;
-        _anim.SetFloat(_attackSpeed, _stat.AttackSpeed);
         
         SkillInit();
     }

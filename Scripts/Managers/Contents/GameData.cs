@@ -8,7 +8,7 @@ public class GameData
     // Game 초기 설정
     // 가변
     public int[] SpawnMonsterCnt { get; set; } = { 1, 1, 0 }; // { West, North, East }
-    public int SpawnSheepCnt { get; set; } = 10;
+    public int SpawnSheepCnt { get; set; } = 5;
     
     // 불변
     public static Vector3 center = new Vector3(0.0f, 6.0f, 0.0f); // Center of the Map
@@ -20,7 +20,7 @@ public class GameData
         new Vector3(45.0f, 4.0f, 0.0f)  // East
     };
     
-    public static float RoundTime = 1.0f;
+    public static float RoundTime = 10.0f;
     
     #region FenceData
 
@@ -184,10 +184,10 @@ public class GameData
         { "HauntFire", new[] { "HauntPoisonResist", "HauntFireResist" } },
 
         { "MothCelestialSheepHealth", new[] { "free" } },
-        { "MothCelestialSheepDefence", new[] { "free" } },
+        { "MothCelestialGroundAttack", new[] { "free" } },
         { "MothCelestialAccuracy", new[] { "free" } },
-        { "MothCelestialFireResist", new[] { "MothCelestialSheepHealth", "MothCelestialSheepDefence" } },
-        { "MothCelestialPoisonResist", new[] { "MothCelestialSheepHealth", "MothCelestialSheepDefence" } },
+        { "MothCelestialFireResist", new[] { "MothCelestialSheepHealth", "MothCelestialGroundAttack" } },
+        { "MothCelestialPoisonResist", new[] { "MothCelestialSheepHealth", "MothCelestialGroundAttack" } },
         { "MothCelestialPoison", new[] { "MothCelestialAccuracy" } },
         { "MothCelestialBreedSheep", new[] { "MothCelestialPoisonResist", "MothCelestialFireResist" } },
 
@@ -227,27 +227,27 @@ public class GameData
         { "SunBlossomHeal", new[] { "SunBlossomHealth" } },
         { "SunBlossomSlowAttack", new[] { "SunBlossomSlow" } },
 
-        { "SunfloraPixieCurse", new[] { "free" } },
+        { "SunfloraPixieFaint", new[] { "free" } },
         { "SunfloraPixieHeal", new[] { "free" } },
         { "SunfloraPixieRange", new[] { "free" } },
-        { "SunfloraPixieFireResist", new[] { "SunfloraPixieCurse", "SunfloraPixieHeal" } },
-        { "SunfloraPixiePoisonResist", new[] { "SunfloraPixieCurse", "SunfloraPixieHeal" } },
-        { "SunfloraPixieRange2", new[] { "SunfloraPixieRange" } },
+        { "SunfloraPixieCurse", new[] { "SunfloraPixieFaint" } },
+        { "SunfloraPixieAttackSpeed", new[] { "SunfloraPixieHeal" } },
+        { "SunfloraPixieTriple", new[] { "SunfloraPixieRange" } },
         {
             "SunfloraPixieDebuffRemove",
-            new[] { "SunfloraPixieFireResist", "SunfloraPixiePoisonResist", "SunfloraPixieRange2" }
+            new[] { "SunfloraPixieCurse", "SunfloraPixieAttackSpeed" }
         },
         {
             "SunfloraPixieAttack",
-            new[] { "SunfloraPixieFireResist", "SunfloraPixiePoisonResist", "SunfloraPixieRange2" }
+            new[] { "SunfloraPixieCurse", "SunfloraPixieAttackSpeed" }
         },
         { "SunfloraPixieInvincible", new[] { "SunfloraPixieDebuffRemove", "SunfloraPixieAttack" } },
 
         { "SunflowerFairyAttack", new[] { "free" } },
-        { "SunflowerFairyDefence", new[] { "free" } },
-        { "SunflowerFairyAttackDebuff", new[] { "SunflowerFairyAttack" } },
-        { "SunflowerFairyDefenceDebuff", new[] { "SunflowerFairyDefence" } },
-        { "SunflowerFairyFenceHeal", new[] { "SunflowerFairyAttackDebuff", "SunflowerFairyDefenceDebuff" } },
+        { "SunflowerFairyDouble", new[] { "free" } },
+        { "SunflowerFairyDefence", new[] { "SunflowerFairyAttack" } },
+        { "SunflowerFairyMpDown", new[] { "SunflowerFairyDouble" } },
+        { "SunflowerFairyFenceHeal", new[] { "SunflowerFairyDefence", "SunflowerFairyMpDown" } },
 
         { "TargetDummyHealth", new[] { "free" } },
         { "TargetDummyHeal", new[] { "free" } },
@@ -263,7 +263,7 @@ public class GameData
         { "TrainingDummyPoisonResist", new[] { "TrainingDummyAggro", "TrainingDummyHeal" } },
         { "TrainingDummyFireResist", new[] { "TrainingDummyAggro", "TrainingDummyHeal" } },
     };
-
+    
     public static List<string> SkillUpgradedList = new List<string>();
 }
 

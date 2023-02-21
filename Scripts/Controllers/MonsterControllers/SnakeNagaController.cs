@@ -26,7 +26,10 @@ public class SnakeNagaController : MonsterController
             _stat.Mp = 0;
             State = Define.State.Skill;
         }
-        base.UpdateAttack();
+        else
+        {
+            base.UpdateAttack();
+        }
     }
     
     protected override void OnHitEvent()

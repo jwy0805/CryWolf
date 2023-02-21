@@ -19,7 +19,8 @@ public abstract class BaseController : MonoBehaviour, IObserver
     protected string _newSkill;
     protected readonly int _attackSpeed = Animator.StringToHash("AttackSpeed");
     protected virtual string NewSkill { get; set; }
-    
+    protected Queue<Coroutine> conditionQueue = new Queue<Coroutine>();
+
     public Define.WorldObject WorldObjectType { get; protected set; } = Define.WorldObject.Unknown;
     
     public virtual Define.State State
