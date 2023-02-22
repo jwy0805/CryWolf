@@ -45,8 +45,13 @@ public class ProjectileController : MonoBehaviour
         _baseController = parent.GetComponent<BaseController>();
         transform.position = parent.position + Vector3.up / 2;
         _lockTarget = _baseController._lockTarget;
+        if (_lockTarget == null)
+        {
+            Managers.Resource.Destroy(gameObject);
+            return;
+        }
         
-        Collider targetCollider = _baseController._lockTarget.GetComponent<Collider>();
+        Collider targetCollider = _lockTarget.GetComponent<Collider>();
         _destPos = targetCollider.ClosestPoint(transform.position) + Vector3.up * 0.25f;        
         #region Effect
 

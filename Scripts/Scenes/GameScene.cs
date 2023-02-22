@@ -11,6 +11,7 @@ public class GameScene : BaseScene
         
         SceneType = Define.Scene.Game;
 
+        Util.SheepOrWolf = "Sheep";
         switch (Util.SheepOrWolf)
         {
             case "Sheep":

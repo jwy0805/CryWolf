@@ -18,10 +18,12 @@ public class UI_Portrait : MonoBehaviour
         }
     }
 
-    private void func(bool val)
+    private void func(bool active)
     {
         string monsterName = gameObject.name.Replace("Button", "");
-        string num = GameData.MonsterSheep.FirstOrDefault(item => item.Value == monsterName).Key;
+        string num = GameData.TowerList.Contains(monsterName)
+            ? GameData.Tower.FirstOrDefault(item => item.Value == monsterName).Key
+            : GameData.Monster.FirstOrDefault(item => item.Value == monsterName).Key;
         string level = num.Substring(1, 1);
 
         gameObject.SetActive(false);
@@ -30,7 +32,7 @@ public class UI_Portrait : MonoBehaviour
         {
             case "0":
                 gameObject.SetActive(true);
-                if (val == false)
+                if (active == false)
                 {
                     Image img = gameObject.GetComponent<Image>();
                     img.color = new Color(img.color.r, img.color.g, img.color.b, 0.6f);
@@ -43,7 +45,7 @@ public class UI_Portrait : MonoBehaviour
                 break;
             
             default:
-                if (val)
+                if (active)
                 {
                     gameObject.SetActive(true);
                 }

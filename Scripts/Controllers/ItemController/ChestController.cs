@@ -53,6 +53,11 @@ public class ChestController : MonoBehaviour
 
     private void UpdateIdle()
     {
+        if (_player == null)
+        {
+            Managers.Resource.Destroy(gameObject);
+            return;
+        }
         float dist = (_player.transform.position - transform.position).sqrMagnitude;
         if (dist < _dist)
         {

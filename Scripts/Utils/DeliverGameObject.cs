@@ -23,12 +23,22 @@ public class DeliverGameObject : MonoBehaviour
         set
         {
             _selected = value;
-            UI_GameSheep uiGameSheep = GameObject.Find("UI_GameSheep").GetComponent<UI_GameSheep>();
-            uiGameSheep.SelectedObj = _selected;
+            
+            if (Enum.IsDefined(typeof(Define.SheepCharacter), gameObject.name))
+            {
+                UI_GameSheep uiGameSheep = GameObject.Find("UI_GameSheep").GetComponent<UI_GameSheep>();
+                uiGameSheep.SelectedObj = _selected;
+            }
+            else
+            {
+                UI_GameWolf uiGameWolf = GameObject.Find("UI_GameWolf").GetComponent<UI_GameWolf>();
+                uiGameWolf.SelectedObj = _selected;
+            }
         }
     }
 
-    // UI_GameSheep -> Spawner
+    // UI_GameSheep or UI_GameWolf -> Spawner
+    // Spawn, Way 설정 후 SetSpawn() 호출 -> 클릭한 Way에서 Unit 생성됨
     public GameObject Spawn
     {
         get => _spawn;

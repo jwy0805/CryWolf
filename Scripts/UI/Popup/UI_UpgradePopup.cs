@@ -60,7 +60,7 @@ public class UI_UpgradePopup : UI_Popup
             GameObject currentSkillButton = ui.OnSelectedSkill;
             _skillName = currentSkillButton.name.Replace("Button", "");
 
-            List<string> precedeSkills = GameData.SkillTreeSheep[_skillName].ToList();
+            List<string> precedeSkills = GameData.SkillTree[_skillName].ToList();
             List<string> result = (from s in GameData.SkillUpgradedList select s).Intersect(precedeSkills).ToList();
             bool isEqual = precedeSkills.OrderBy(a => a).SequenceEqual(result.OrderBy(a => a));
             

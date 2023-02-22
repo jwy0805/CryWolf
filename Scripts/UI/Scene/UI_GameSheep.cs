@@ -557,7 +557,7 @@ public class UI_GameSheep : UI_Scene
     private void SetButtons()
     {
         // 0단계 초상화만 패널에 뜨고 나머지는 비활성화
-        foreach (var item in GameData.MonsterSheep)
+        foreach (var item in GameData.Tower)
         {
             string level = item.Key.Substring(1, 1);
             
@@ -618,7 +618,7 @@ public class UI_GameSheep : UI_Scene
     private string GetLevelFromUIObject(GameObject go, string oldValue)
     {
         string towerName = go.name.Replace(oldValue, "");
-        string num = GameData.MonsterSheep.FirstOrDefault(item => item.Value == towerName).Key;
+        string num = GameData.Tower.FirstOrDefault(item => item.Value == towerName).Key;
         string level = num.Substring(1, 1);
 
         return level;

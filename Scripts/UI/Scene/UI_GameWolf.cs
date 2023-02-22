@@ -379,6 +379,7 @@ public class UI_GameWolf : UI_Scene
         ShellLine1,
         SpikeLine1,
         HermitLine1,
+        HermitLine2,
     }
 
     enum Texts
@@ -456,7 +457,7 @@ public class UI_GameWolf : UI_Scene
             item.Value.GetComponent<Button>().onClick.AddListener(OnSkillClicked);
         }
         
-        _dictBtn["TulipButton"].BindEvent(OnTulipClicked);
+        _dictBtn["DnaButton"].BindEvent(OnDnaClicked);
         _dictBtn["WestSpawnButton"].BindEvent(OnWestSpawnClicked);
         _dictBtn["NorthSpawnButton"].BindEvent(OnNorthSpawnClicked);
     }
@@ -464,8 +465,8 @@ public class UI_GameWolf : UI_Scene
     private void SetDnaButton(GameObject go)
     {
         string level = GetLevelFromUIObject(go, "Button");
-        Transform tf = _dictBtn["TulipButton"].transform;
-        Button btn = _dictBtn["TulipButton"].GetComponent<Button>();
+        Transform tf = _dictBtn["DnaButton"].transform;
+        Button btn = _dictBtn["DnaButton"].GetComponent<Button>();
         btn.interactable = true;
 
         for (int i = 0; i < tf.childCount; i++)
@@ -525,14 +526,13 @@ public class UI_GameWolf : UI_Scene
     private void SetButtons()
     {
         // 0단계 초상화만 패널에 뜨고 나머지는 비활성화
-        foreach (var item in GameData.MonsterSheep)
+        foreach (var item in GameData.Monster)
         {
             string level = item.Key.Substring(1, 1);
             
             if (level == "0")
             {
-                SetAlpha(_dictPortrait[$"{item.Value}Button"], 0.6f);
-            }
+                _dictPortrait[$"{item.Value}Button"].GetComponent<UI_Portrait>().IsActive = true;            }
             else
             {
                 _dictPortrait[$"{item.Value}Button"].SetActive(false);
@@ -572,7 +572,7 @@ public class UI_GameWolf : UI_Scene
     {
         float[] lineSize = new[] 
         {
-            0.6f, 0.6f, 0.3f, 0.6f, 0.6f, 0.6f, 0.3f, 0.6f, 0.6f, 0.6f,
+            0.3f, 0.6f, 0.3f, 0.6f, 0.6f, 0.6f, 0.3f, 0.6f, 0.6f, 0.6f,
             0.6f, 0.3f, 0.6f, 0.6f, 0.3f, 0.6f, 0.6f,
         };
         string[] lineName = Enum.GetNames(typeof(Lines));
@@ -586,7 +586,9 @@ public class UI_GameWolf : UI_Scene
     private string GetLevelFromUIObject(GameObject go, string oldValue)
     {
         string monsterName = go.name.Replace(oldValue, "");
-        string num = GameData.MonsterSheep.FirstOrDefault(item => item.Value == monsterName).Key;
+        string num = GameData.TowerList.Contains(monsterName)
+            ? GameData.Tower.FirstOrDefault(item => item.Value == monsterName).Key
+            : GameData.Monster.FirstOrDefault(item => item.Value == monsterName).Key;
         string level = num.Substring(1, 1);
 
         return level;
@@ -630,7 +632,7 @@ public class UI_GameWolf : UI_Scene
     {
         // 스킬 활성화, 튤립버튼 fill 적용
         SelectedObj = EventSystem.current.currentSelectedGameObject;
-
+        
         if (OnSelectedSkill != null)
         {
             OffSelectedSkill = OnSelectedSkill;
@@ -641,7 +643,7 @@ public class UI_GameWolf : UI_Scene
         Managers.UI.ShowPopupUI<UI_UpgradePopup>();
     }
 
-    private void OnTulipClicked(PointerEventData data)
+    private void OnDnaClicked(PointerEventData data)
     {
         if (OnSelectedPortrait != null)
         {

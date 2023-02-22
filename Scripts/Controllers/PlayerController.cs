@@ -18,8 +18,6 @@ public class PlayerController : BaseController
         WorldObjectType = Define.WorldObject.Player;
         Managers.Input.MouseAction -= OnMouseEvent;
         Managers.Input.MouseAction += OnMouseEvent;
-        
-        
     }
 
     protected override void UpdateMoving()

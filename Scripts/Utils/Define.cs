@@ -354,5 +354,15 @@ public class Define
         Curse,
         Addicted,
     }
+
+    public enum SheepCharacter
+    {
+        PlayerCharacter
+    }
+
+    public enum WolfCharacter
+    {
+        PoisonBomb
+    }
 }
 

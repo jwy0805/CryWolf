@@ -130,7 +130,7 @@ public class GameData
 
     #endregion
 
-    public static readonly Dictionary<string, string> MonsterSheep = new Dictionary<string, string>()
+    public static readonly Dictionary<string, string> Tower = new Dictionary<string, string>()
     {
         { "00", "Bud" }, { "01", "Bloom" }, { "02", "Blossom" },
         { "10", "PracticeDummy" }, { "11", "TargetDummy" }, { "12", "TrainingDummy" },
@@ -139,7 +139,7 @@ public class GameData
         { "40", "Soul" }, { "41", "Haunt" }, { "42", "SoulMage" },
     };
     
-    public static readonly Dictionary<string, string> MonsterWolf = new Dictionary<string, string>()
+    public static readonly Dictionary<string, string> Monster = new Dictionary<string, string>()
     {
         { "50", "WolfPup" }, { "51", "Wolf" }, { "52", "Werewolf" },
         { "60", "Lurker" }, { "61", "Creeper" }, { "62", "Horror" },
@@ -148,13 +148,13 @@ public class GameData
         { "90", "Shell" }, { "91", "Spike" }, { "92", "Hermit" },
     };
     
-    public static readonly List<string> MonsterSheepList = new List<string>(MonsterSheep.Values);
+    public static readonly List<string> TowerList = new List<string>(Tower.Values);
 
-    public static readonly List<string> MonsterWolfList = new List<string>(MonsterWolf.Values);
+    public static readonly List<string> MonsterList = new List<string>(Monster.Values);
 
-    public static readonly List<string> MonsterList = MonsterSheepList.Concat(MonsterWolfList).ToList();
+    public static readonly List<string> UnitList = TowerList.Concat(MonsterList).ToList();
 
-    public static readonly Dictionary<string, string[]> SkillTreeSheep = new Dictionary<string, string[]>()
+    public static readonly Dictionary<string, string[]> SkillTree = new Dictionary<string, string[]>()
     {
         { "BloomAttack", new[] { "free" } },
         { "BloomAttackSpeed", new[] { "free" } },
