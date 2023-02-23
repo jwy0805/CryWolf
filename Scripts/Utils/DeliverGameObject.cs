@@ -60,7 +60,8 @@ public class DeliverGameObject : MonoBehaviour
 
     public void SetSpawn()
     {
-        _spawner.SpawnTower = Spawn;
+        _spawner.UIType = gameObject;
+        _spawner.SpawnUnit = Spawn;
         _spawner.SpawnWay = Way;
     }
 }

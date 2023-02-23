@@ -109,12 +109,10 @@ public class MonsterController : BaseController
 
     protected override void UpdateAttack()
     {
-        if (_lockTarget != null)
-        {
-            Vector3 dir = _lockTarget.transform.position - transform.position;
-            Quaternion quaternion = Quaternion.LookRotation(dir);
-            transform.rotation = Quaternion.Lerp(transform.rotation, quaternion, 20 * Time.deltaTime);
-        }
+        if (_lockTarget == null) return;
+        Vector3 dir = _lockTarget.transform.position - transform.position;
+        Quaternion quaternion = Quaternion.LookRotation(dir);
+        transform.rotation = Quaternion.Lerp(transform.rotation, quaternion, 20 * Time.deltaTime);
     }
 
     protected override void UpdateDie()
@@ -152,11 +150,10 @@ public class MonsterController : BaseController
     // Animation Event
     protected virtual void OnHitEvent()
     {
-        if (_lockTarget != null)
-        {
-            Stat targetStat = _lockTarget.GetComponent<Stat>();
-            targetStat.OnAttakced(_stat);
-        }
+        if (_lockTarget == null) return;
+        Stat targetStat = _lockTarget.GetComponent<Stat>();
+        targetStat.OnAttakced(_stat);
+        
     }
 
     protected virtual void OnEndEvent()
@@ -170,14 +167,7 @@ public class MonsterController : BaseController
             if (targetStat.Hp > 0)
             {
                 float distance = (targetCollider.ClosestPoint(position) - position).magnitude;
-                if (distance <= _stat.AttackRange)
-                {
-                    State = Define.State.Attack;
-                }
-                else
-                {
-                    State = Define.State.Moving;
-                }
+                State = distance <= _stat.AttackRange ? Define.State.Attack : Define.State.Moving;
             }
             else
             {

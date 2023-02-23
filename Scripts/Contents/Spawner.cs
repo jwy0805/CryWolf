@@ -14,7 +14,6 @@ public class Spawner : MonoBehaviour
     [SerializeField] private int[] _spawnMonsterCntArr = _gameData.SpawnMonsterCnt;
 
     [SerializeField] private Vector3[] _spawnPosArr = GameData.SpawnerPos;
-    private GameObject _spawnTower;
     private Define.Way _spawnWay;
 
     public void AddWolfCount(int value) { _wolfCount += value; }
@@ -53,20 +52,14 @@ public class Spawner : MonoBehaviour
             _summon = value;
             if (_summon < _monsterList.Length)
             {
-                StartCoroutine(ReserveSpawnMonster(_monsterList[_summon]));
+                StartCoroutine(ReserveSpawnMonsterEx(_monsterList[_summon]));
             }
         }
     }
     #endregion
 
-    public GameObject SpawnTower
-    {
-        get => _spawnTower;
-        set
-        {
-            _spawnTower = value;
-        }
-    }
+    public GameObject SpawnUnit { get; set; }
+    public GameObject UIType { get; set; }
 
     public Define.Way SpawnWay
     {
@@ -74,9 +67,18 @@ public class Spawner : MonoBehaviour
         set
         {
             _spawnWay = value;
-            string towerName = SpawnTower.name.Replace("Button", "");
-            Define.TowerId towerId = (Define.TowerId)Enum.Parse(typeof(Define.TowerId), towerName);
-            StartCoroutine(ReserveSpawnTower(towerId, _spawnWay, 1));
+            if (UIType.name == "UI_GameSheep")
+            {
+                string towerName = SpawnUnit.name.Replace("Button", "");
+                Define.TowerId towerId = (Define.TowerId)Enum.Parse(typeof(Define.TowerId), towerName);
+                StartCoroutine(ReserveSpawnTower(towerId, _spawnWay, 1));
+            }
+            else
+            {
+                string monsterName = SpawnUnit.name.Replace("Button", "");
+                Define.MonsterId monsterId = (Define.MonsterId)Enum.Parse(typeof(Define.MonsterId), monsterName);
+                StartCoroutine(ReserveSpawnMonster(monsterId, _spawnWay));
+            }
         }
     }
     
@@ -84,7 +86,7 @@ public class Spawner : MonoBehaviour
     {
         _bounds = new Bounds(GameData.FenceCenter[1], GameData.FenceSize[1]);
         ReserveSpawnFence(GameData.FenceCnt[1], GameData.FenceName[1]);
-        StartCoroutine(ReserveSpawnMonster(Define.MonsterId.WolfPup));
+        // StartCoroutine(ReserveSpawnMonsterEx(Define.MonsterId.WolfPup));
         
         for (int i = 0; i < _sheepCnt; i++)
         {
@@ -94,21 +96,69 @@ public class Spawner : MonoBehaviour
 
     void Update()
     {
-        // if (Time.time > _lastSpawnTime + _sheepSpawnTime && cnt < _sheepCnt)
-        // {
-        //     _lastSpawnTime = Time.time;
-        //     ReserveSpawnSheep();
-        //     cnt++;
-        // }
-        
-        if (Time.time > _lastSpawnTime + _roundTime)
-        {
-            _lastSpawnTime = Time.time;
-            Summon += 1;
-        }
+        // // Tower Test 용도
+        // SummonMonster();
+        //
+        // // Wolf Test 용도
+        // SummonTower();
     }
 
-    IEnumerator ReserveSpawnMonster(Define.MonsterId id)
+    IEnumerator ReserveSpawnMonster(Define.MonsterId id, Define.Way way)
+    {
+        string monsterName = Convert.ToString(id);
+        Vector3 monsterSpawnPos;
+        switch (way)
+        {
+            case Define.Way.West:
+                monsterSpawnPos = Managers.Game.GetRandomPointOnNavMesh(_spawnPosArr[0]);
+                break;
+            case Define.Way.North:
+                monsterSpawnPos = Managers.Game.GetRandomPointOnNavMesh(_spawnPosArr[1]);
+                break;
+            case Define.Way.East:
+                monsterSpawnPos = Managers.Game.GetRandomPointOnNavMesh(_spawnPosArr[2]);
+                break;
+            default:
+                monsterSpawnPos = Vector3.zero;
+                break;
+        }
+
+        GameObject obj = Managers.Game.Spawn(id, Define.WorldObject.Monster, $"Monsters/{monsterName}");
+        obj.transform.position = monsterSpawnPos;
+        yield break;
+    }
+    
+
+    IEnumerator ReserveSpawnTower(Define.TowerId id, Define.Way way, int fenceLevel)
+    {
+        string towerName = Convert.ToString(id);
+        Vector3 towerSpawnPos;
+        switch (way)
+        {
+            case Define.Way.West:
+                towerSpawnPos = new Vector3(-GameData.FenceSize[fenceLevel].x / 2, 6, 0);
+                break;
+            
+            case Define.Way.North:
+                towerSpawnPos = new Vector3(0, 6, GameData.FenceSize[fenceLevel].z / 2);
+                break;
+            
+            case Define.Way.East:
+                towerSpawnPos = new Vector3(GameData.FenceSize[fenceLevel].x / 2, 6, 0);
+                break;
+            default:
+                towerSpawnPos = Vector3.zero;
+                break;
+        }
+
+        GameObject obj = Managers.Game.Spawn(id, Define.WorldObject.Tower, $"Towers/{towerName}");
+        obj.transform.position = towerSpawnPos;
+        
+        yield break;
+    }
+    
+    
+    IEnumerator ReserveSpawnMonsterEx(Define.MonsterId id)
     {
         float tmp = 1;
         yield return new WaitForSeconds(tmp);
@@ -131,33 +181,8 @@ public class Spawner : MonoBehaviour
         }
     }
 
-    IEnumerator ReserveSpawnTower(Define.TowerId id, Define.Way way, int fenceLevel)
+    IEnumerator ReserveSpawnTowerEx(Define.TowerId id)
     {
-        Define.TowerId towerId = id;
-        string towerName = towerId.ToString();
-
-        Vector3 towerSpawnPos;
-        switch (way)
-        {
-            case Define.Way.West:
-                towerSpawnPos = new Vector3(-GameData.FenceSize[fenceLevel].x / 2, 6, 0);
-                break;
-            
-            case Define.Way.North:
-                towerSpawnPos = new Vector3(0, 6, GameData.FenceSize[fenceLevel].z / 2);
-                break;
-            
-            case Define.Way.East:
-                towerSpawnPos = new Vector3(GameData.FenceSize[fenceLevel].x / 2, 6, 0);
-                break;
-            default:
-                towerSpawnPos = Vector3.zero;
-                break;
-        }
-
-        GameObject obj = Managers.Game.Spawn(towerId, Define.WorldObject.Tower, $"Towers/{towerName}");
-        obj.transform.position = towerSpawnPos;
-        
         yield break;
     }
     
@@ -181,5 +206,19 @@ public class Spawner : MonoBehaviour
             gameobject.transform.position = fencePos[i];
             gameobject.transform.rotation = Quaternion.Euler(0, fenceRotation[i], 0);
         }
+    }
+
+    private void SummonMonster()
+    {
+        if (Time.time > _lastSpawnTime + _roundTime)
+        {
+            _lastSpawnTime = Time.time;
+            Summon += 1;
+        }
+    }
+
+    private void SummonTower()
+    {
+        
     }
 }

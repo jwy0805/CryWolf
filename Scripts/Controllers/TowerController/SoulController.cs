@@ -8,6 +8,7 @@ public class SoulController : TowerController
 {
     private int _mask = (1 << (int)Define.Layer.Ground);
     private bool _drain = false;
+    private float _drainParam = 0.25f;
 
     protected override string NewSkill
     {
@@ -118,8 +119,8 @@ public class SoulController : TowerController
             targetStat.OnAttakced(_stat);
             if (_drain)
             {
-                int recoverHp = ((_stat.Attack - targetStat.Defense)/4);
-                if (_stat.Hp + recoverHp <= 60)
+                int recoverHp = (int)((_stat.Attack - targetStat.Defense) * _drainParam);
+                if (_stat.Hp + recoverHp <= _stat.MaxHp)
                 {
                     _stat.Hp += recoverHp;
                 }

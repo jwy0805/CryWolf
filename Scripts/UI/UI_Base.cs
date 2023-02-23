@@ -87,6 +87,7 @@ public abstract class UI_Base : MonoBehaviour
         }
     }
     
+    // Square
     protected void SetObjectSize(GameObject gameObject, float sizeParam = 1.0f)
     {
         Transform parent = gameObject.transform.parent;
@@ -101,6 +102,7 @@ public abstract class UI_Base : MonoBehaviour
         rt.sizeDelta = new Vector2(side * sizeParam, side * sizeParam);
     }
     
+    // Rectangular
     protected void SetObjectSize(GameObject gameObject, float xParam = 1.0f, float yParam = 1.0f)
     {
         Transform parent = gameObject.transform.parent;
