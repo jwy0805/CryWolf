@@ -115,6 +115,9 @@ public class UI_GameWolf : UI_Scene
         WestSpawnButton,
         NorthSpawnButton,
         EastSpawnButton,
+        
+        ResourceButton,
+        CapacityButton,
     }
 
     enum Portraits
@@ -386,6 +389,12 @@ public class UI_GameWolf : UI_Scene
     {
         CurrentName,
         CurrentPercent,
+        
+        ResourceText,
+        WestCapacityText,
+        NorthCapacityText,
+        EastCapacityText,
+        MaxCapacityText,
     }
     
     protected override void Init()

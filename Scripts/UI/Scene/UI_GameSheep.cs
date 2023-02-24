@@ -117,6 +117,9 @@ public class UI_GameSheep : UI_Scene
         WestSpawnButton,
         NorthSpawnButton,
         EastSpawnButton,
+        
+        GoldButton,
+        CapacityButton,
     }
 
     enum Portraits
@@ -417,6 +420,12 @@ public class UI_GameSheep : UI_Scene
     {
         CurrentName,
         CurrentPercent,
+        
+        GoldText,
+        WestCapacityText,
+        NorthCapacityText,
+        EastCapacityText,
+        MaxCapacityText,
     }
 
     protected override void Init()
@@ -426,11 +435,13 @@ public class UI_GameSheep : UI_Scene
         BindObjects();
         SetButtonEvents();
         SetUI();
-        
+        SetTexts();
+
         _dgo = gameObject.GetComponent<DeliverGameObject>();
         _gold = 500;
     }
 
+    // Bind하여 UI Objects를 Code에서 접근
     protected override void BindObjects()
     {
         BindData<Button>(typeof(Buttons), _dictBtn);
@@ -464,7 +475,7 @@ public class UI_GameSheep : UI_Scene
                 dict.Add(img.name, img);
             }
         }
-        else if (typeof(T) == typeof(Text))
+        else if (typeof(T) == typeof(TextMeshProUGUI))
         {
             for (int i = 0; i < _objects[typeof(T)].Length; i++)
             {
@@ -529,6 +540,11 @@ public class UI_GameSheep : UI_Scene
                 btn.interactable = false;
                 break;
         }
+    }
+    
+    private void SetTexts()
+    {
+        _dictTxt["GoldText"].GetComponent<TextMeshProUGUI>().text = "0";
     }
     
     protected override void SetUI()

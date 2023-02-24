@@ -86,7 +86,7 @@ public class Spawner : MonoBehaviour
     {
         _bounds = new Bounds(GameData.FenceCenter[1], GameData.FenceSize[1]);
         ReserveSpawnFence(GameData.FenceCnt[1], GameData.FenceName[1]);
-        // StartCoroutine(ReserveSpawnMonsterEx(Define.MonsterId.WolfPup));
+        StartCoroutine(ReserveSpawnMonsterEx(Define.MonsterId.WolfPup));
         
         for (int i = 0; i < _sheepCnt; i++)
         {
@@ -96,8 +96,8 @@ public class Spawner : MonoBehaviour
 
     void Update()
     {
-        // // Tower Test 용도
-        // SummonMonster();
+        // Tower Test 용도
+        SummonMonster();
         //
         // // Wolf Test 용도
         // SummonTower();
