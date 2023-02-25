@@ -10,6 +10,7 @@ public class ChestController : MonoBehaviour
     private GameObject _player;
     private readonly float _dist = 4f;
     private readonly float _moveSpeed = 3f;
+    public int gold;
 
     public Define.State State
     {
@@ -72,6 +73,7 @@ public class ChestController : MonoBehaviour
         if (dir.magnitude < 0.3f)
         {
             // 골드 증가, Chest 사라짐
+            
             Managers.Resource.Destroy(gameObject);
         }
         else

@@ -11,6 +11,7 @@ public class CoinController : MonoBehaviour
     private GameObject _player;
     private readonly float _dist = 4f;
     private readonly float _moveSpeed = 3f;
+    public int gold = 0;
 
     public Define.State State
     {

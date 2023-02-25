@@ -5,7 +5,7 @@ using System.Diagnostics;
 using TMPro;
 using UnityEngine;
 
-public abstract class BaseController : MonoBehaviour, IObserver
+public abstract class BaseController : MonoBehaviour, ISkillObserver
 {
     [SerializeField] protected Vector3 _destPos;
     [SerializeField] protected Define.State _state = Define.State.Idle;

@@ -87,23 +87,29 @@ public class SheepController : BaseController
     private void YieldCoin(int yield)
     {
         GameObject coin;
+        int gold;
         
         switch (yield)
         {
             case < 30:
                 coin = Managers.Resource.Instanciate("Items/CoinStarSilver");
+                coin.GetComponent<CoinController>().gold = yield;
                 break;
             case < 50:
                 coin = Managers.Resource.Instanciate("Items/CoinStarGolden");
+                coin.GetComponent<CoinController>().gold = yield;
                 break;
             case < 100:
                 coin = Managers.Resource.Instanciate("Items/PouchGreen");
+                coin.GetComponent<CoinController>().gold = yield;
                 break;
             case < 200:
                 coin = Managers.Resource.Instanciate("Items/PouchRed");
+                coin.GetComponent<CoinController>().gold = yield;
                 break;
             default:
                 coin = Managers.Resource.Instanciate("Items/ChestGold");
+                coin.GetComponent<ChestController>().gold = yield;
                 break;
         }
         

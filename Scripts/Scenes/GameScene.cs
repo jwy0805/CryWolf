@@ -58,7 +58,7 @@ public class GameScene : BaseScene
         spawner.GetOrAddComponent<Spawner>();
         spawner.GetOrAddComponent<DeliverGameObject>();
 
-        GameObject skillSubject = new GameObject { name = "SkillSubject" };
-        skillSubject.GetOrAddComponent<SkillSubject>();
+        GameObject Subject = new GameObject { name = "Subject" };
+        Subject.GetOrAddComponent<SkillSubject>();
     }
 }

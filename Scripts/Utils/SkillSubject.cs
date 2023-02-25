@@ -3,17 +3,17 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SkillSubject : MonoBehaviour, ISubject
+public class SkillSubject : MonoBehaviour, ISkillSubject
 {
-    private List<IObserver> _observers = new List<IObserver>();
+    private List<ISkillObserver> _observers = new List<ISkillObserver>();
     private string _skillName;
     
-    public void AddObserver(IObserver observer)
+    public void AddObserver(ISkillObserver observer)
     {
         _observers.Add(observer);
     }
 
-    public void RemoveObserver(IObserver observer)
+    public void RemoveObserver(ISkillObserver observer)
     {
         if (_observers.IndexOf(observer) > 0)
         {
