@@ -18,8 +18,9 @@ public class UI_GameSheep : UI_Scene
     private GameObject _offSelectedPortrait;
     private GameObject _onSelectedSkill;
     private GameObject _offSelectedSkill;
+    private bool _capacityButton;
     private DeliverGameObject _dgo;
-    
+
     private int _gold;
     private UI_Portrait _isActive;
 
@@ -28,17 +29,14 @@ public class UI_GameSheep : UI_Scene
     private Dictionary<string, GameObject> _dictBtn = new ();
     private Dictionary<string, GameObject> _dictImg = new ();
     private Dictionary<string, GameObject> _dictTxt = new ();
-    private Dictionary<string, GameObject> _dictSkillBtn = new ();
     private Dictionary<string, GameObject> _dictSkillBtnPanel = new ();
     private Dictionary<string, GameObject> _dictSkillPanel = new ();
     private Dictionary<string, GameObject> _dictLine = new ();
     private Dictionary<string, GameObject> _dictPortrait = new ();
 
-    public Dictionary<string, GameObject> DictSkillBtn
-    {
-        get => _dictSkillBtn;
-        set => _dictSkillBtn = value;
-    }
+    public Dictionary<string, GameObject> DictSkillBtn { get; set; } = new ();
+
+    public Dictionary<string, GameObject> DictTxt => _dictTxt;
 
     #endregion
 
@@ -53,7 +51,7 @@ public class UI_GameSheep : UI_Scene
             }
             
             _selectedObj = value;
-            // Debug.Log(_selectedObj.name);
+            Debug.Log(_selectedObj.name);
         }
     }
 
@@ -72,6 +70,7 @@ public class UI_GameSheep : UI_Scene
         set
         {
             _onSelectedPortrait = value;
+            // 
             PortraitOn(_onSelectedPortrait);
             SetTulipButton(_onSelectedPortrait);
         }
@@ -107,6 +106,16 @@ public class UI_GameSheep : UI_Scene
             Managers.UI.ClosePopupUI();
             Image frame = _offSelectedSkill.transform.parent.parent.GetChild(1).GetComponent<Image>();
             frame.color = Color.green;
+        }
+    }
+
+    public bool CapacityButton
+    {
+        get => _capacityButton;
+        set
+        {
+            _capacityButton = value;
+            _dictSkillPanel["SheepSkillPanel"].SetActive(_capacityButton);
         }
     }
     
@@ -359,6 +368,7 @@ public class UI_GameSheep : UI_Scene
 
     enum SkillPanels
     {
+        SheepSkillPanel,
         BudSkillPanel,
         BloomSkillPanel,  
         BlossomSkillPanel,
@@ -374,7 +384,6 @@ public class UI_GameSheep : UI_Scene
         SoulSkillPanel,
         HauntSkillPanel,  
         SoulMageSkillPanel,
-
     }
     
     enum Images
@@ -450,7 +459,7 @@ public class UI_GameSheep : UI_Scene
         BindData<TextMeshProUGUI>(typeof(Texts), _dictTxt);
         BindData<Image>(typeof(SkillPanels), _dictSkillPanel);
         
-        BindData<Button>(typeof(SkillButtons), _dictSkillBtn);
+        BindData<Button>(typeof(SkillButtons), DictSkillBtn);
         BindData<Image>(typeof(SkillButtonPanels), _dictSkillBtnPanel);
         BindData<Image>(typeof(Lines), _dictLine);
     }
@@ -494,11 +503,12 @@ public class UI_GameSheep : UI_Scene
             item.Value.GetComponent<Button>().onClick.AddListener(OnPortraitClicked);
         }
 
-        foreach (var item in _dictSkillBtn)
+        foreach (var item in DictSkillBtn)
         {
             item.Value.GetComponent<Button>().onClick.AddListener(OnSkillClicked);
         }
         
+        _dictBtn["CapacityButton"].BindEvent(OnCapacityClicked);
         _dictBtn["TulipButton"].BindEvent(OnTulipClicked);
         _dictBtn["WestSpawnButton"].BindEvent(OnWestSpawnClicked);
         _dictBtn["NorthSpawnButton"].BindEvent(OnNorthSpawnClicked);
@@ -597,7 +607,7 @@ public class UI_GameSheep : UI_Scene
             SetObjectSize(item.Value, 0.22f);    
         }
         
-        foreach (var item in _dictSkillBtn)
+        foreach (var item in DictSkillBtn)
         {
             SetAlpha(item.Value, 0.6f);
         }
@@ -642,6 +652,7 @@ public class UI_GameSheep : UI_Scene
     
     private void PortraitOn(GameObject portraits)
     {
+        CapacityButton = false;
         string towerName = portraits.name.Replace("Button", "");
         var parent = portraits.transform.parent;
         RectTransform rectTransform = _dictImg["UnitFrame"].GetComponent<RectTransform>();
@@ -672,6 +683,11 @@ public class UI_GameSheep : UI_Scene
         }
     
         OnSelectedPortrait = SelectedObj;
+    }
+
+    private void OnCapacityClicked(PointerEventData data)
+    {
+        CapacityButton = true;
     }
     
     private void OnSkillClicked()

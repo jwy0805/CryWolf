@@ -122,7 +122,7 @@ public abstract class BaseController : MonoBehaviour, ISkillObserver
 
     protected virtual void Init()
     {
-        _skillSubject = GameObject.Find("SkillSubject").GetComponent<SkillSubject>();
+        _skillSubject = GameObject.Find("Subject").GetComponent<SkillSubject>();
         _skillSubject.AddObserver(this);
         _rigidbody = gameObject.GetComponent<Rigidbody>();
         _rigidbody.constraints = RigidbodyConstraints.FreezeAll;

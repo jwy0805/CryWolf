@@ -36,7 +36,7 @@ public class UI_UpgradePopup : UI_Popup
         upgradeSkillEvent = new UnityEvent();
         upgradeSkillEvent.AddListener(DeliverSkillUpgraded);
         
-        _skillSubject = GameObject.Find("SkillSubject").GetComponent<SkillSubject>();
+        _skillSubject = GameObject.Find("Subject").GetComponent<SkillSubject>();
     }
 
     protected override void BindObjects()

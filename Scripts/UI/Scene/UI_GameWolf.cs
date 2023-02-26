@@ -16,6 +16,7 @@ public class UI_GameWolf : UI_Scene
     private GameObject _offSelectedPortrait;
     private GameObject _onSelectedSkill;
     private GameObject _offSelectedSkill;
+    private bool _capacityButton;
     private DeliverGameObject _dgo;
     
     private int _gold;
@@ -107,7 +108,17 @@ public class UI_GameWolf : UI_Scene
             frame.color = Color.green;
         }
     }
-
+    
+    public bool CapacityButton
+    {
+        get => _capacityButton;
+        set
+        {
+            _capacityButton = value;
+            _dictSkillPanel["SheepSkillPanel"].SetActive(_capacityButton);
+        }
+    }
+    
     enum Buttons
     {
         DnaButton,
@@ -333,6 +344,7 @@ public class UI_GameWolf : UI_Scene
 
     enum SkillPanels
     {
+        DnaSkillPanel,
         WolfPupSkillPanel,
         WolfSkillPanel,
         WerewolfSkillPanel,
@@ -466,6 +478,7 @@ public class UI_GameWolf : UI_Scene
             item.Value.GetComponent<Button>().onClick.AddListener(OnSkillClicked);
         }
         
+        _dictBtn["CapacityButton"].BindEvent(OnCapacityClicked);
         _dictBtn["DnaButton"].BindEvent(OnDnaClicked);
         _dictBtn["WestSpawnButton"].BindEvent(OnWestSpawnClicked);
         _dictBtn["NorthSpawnButton"].BindEvent(OnNorthSpawnClicked);
@@ -605,6 +618,7 @@ public class UI_GameWolf : UI_Scene
     
     private void PortraitOn(GameObject portraits)
     {
+        CapacityButton = false;
         string monsterName = portraits.name.Replace("Button", "");
         var parent = portraits.transform.parent;
         RectTransform rectTransform = _dictImg["UnitFrame"].GetComponent<RectTransform>();
@@ -623,6 +637,11 @@ public class UI_GameWolf : UI_Scene
     }
     
     #region ButtonFunction
+    
+    private void OnCapacityClicked(PointerEventData data)
+    {
+        CapacityButton = true;
+    }
     
     private void OnPortraitClicked()
     {

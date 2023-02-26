@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 
 public class ChestController : MonoBehaviour
@@ -10,7 +11,7 @@ public class ChestController : MonoBehaviour
     private GameObject _player;
     private readonly float _dist = 4f;
     private readonly float _moveSpeed = 3f;
-    public int gold;
+    public int gold = 0;
 
     public Define.State State
     {
@@ -73,7 +74,10 @@ public class ChestController : MonoBehaviour
         if (dir.magnitude < 0.3f)
         {
             // 골드 증가, Chest 사라짐
-            
+            GameObject go = GameObject.FindWithTag("UI").GetComponent<UI_GameSheep>().DictTxt["GoldText"];
+            int.TryParse(go.GetComponent<TextMeshProUGUI>().text, out int goldUi);
+            goldUi += gold;
+            go.GetComponent<TextMeshProUGUI>().text = goldUi.ToString();
             Managers.Resource.Destroy(gameObject);
         }
         else
