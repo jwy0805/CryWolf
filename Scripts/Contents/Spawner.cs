@@ -8,10 +8,9 @@ using Random = UnityEngine.Random;
 
 public class Spawner : MonoBehaviour
 {
-    private static readonly GameData _gameData = new ();
     [SerializeField] private int _wolfCount = 0;
     [SerializeField] private int _snakeCount = 0;
-    [SerializeField] private int[] _spawnMonsterCntArr = _gameData.SpawnMonsterCnt;
+    [SerializeField] private int[] _spawnMonsterCntArr = GameData.SpawnMonsterCnt;
 
     [SerializeField] private Vector3[] _spawnPosArr = GameData.SpawnerPos;
     private Define.Way _spawnWay;
@@ -27,7 +26,7 @@ public class Spawner : MonoBehaviour
     private float _roundTime = 10f;
     private float _lastSpawnTime = 0.0f;
     private int _cnt = 0;
-    private int _sheepCnt = _gameData.SpawnSheepCnt;
+    private int _sheepCnt = GameData.SpawnSheepCnt;
     public static Bounds _bounds;
 
     private Define.MonsterId[] _monsterList =

@@ -28,7 +28,6 @@ public class UI_GameWolf : UI_Scene
     private Dictionary<string, GameObject> _dictImg = new ();
     private Dictionary<string, GameObject> _dictTxt = new ();
     private Dictionary<string, GameObject> _dictSkillBtn = new ();
-    private Dictionary<string, GameObject> _dictSkillBtnPanel = new ();
     private Dictionary<string, GameObject> _dictSkillPanel = new ();
     private Dictionary<string, GameObject> _dictLine = new ();
     private Dictionary<string, GameObject> _dictPortrait = new ();
@@ -38,6 +37,8 @@ public class UI_GameWolf : UI_Scene
         get => _dictSkillBtn;
         set => _dictSkillBtn = value;
     }
+    public Dictionary<string, GameObject> DictTxt => _dictTxt;
+
 
     #endregion
 
@@ -246,102 +247,6 @@ public class UI_GameWolf : UI_Scene
         HermitFaintButton,
     }
 
-    enum SkillButtonPanels
-    {
-        WolfPupSpeedPanel,
-        WolfPupHealthPanel,
-        WolfPupAttackPanel,
-        WolfPupAttackSpeedPanel,
-        
-        WolfDrainPanel,
-        WolfDefencePanel,
-        WolfAvoidPanel,
-        WolfCriticalPanel,
-        WolfFireResistPanel,
-        WolfPoisonResistPanel,
-        WolfDnaPanel,
-        
-        WerewolfThunderPanel,
-        WerewolfDebuffResistPanel,
-        WerewolfFaintPanel,
-        WerewolfHealthPanel,
-        WerewolfEnhancePanel,
-        
-        LurkerSpeedPanel,
-        LurkerHealthPanel,
-        LurkerDefencePanel,
-        LurkerHealth2Panel,
-        
-        CreeperSpeedPanel,
-        CreeperAttackSpeedPanel,
-        CreeperAttackPanel,
-        CreeperRollPanel,
-        CreeperPoisonPanel,
-        
-        HorrorRollPoisonPanel,
-        HorrorPoisonStackPanel,
-        HorrorHealthPanel,
-        HorrorPoisonResistPanel,
-        HorrorDefencePanel,
-        HorrorPoisonBeltPanel,
-        
-        SnakeletSpeedPanel,
-        SnakeletRangePanel,
-        SnakeletAttackSpeedPanel,
-        SnakeletAttackPanel,
-        
-        SnakeAttackPanel,
-        SnakeAttackSpeedPanel,
-        SnakeRangePanel,
-        SnakeAccuracyPanel,
-        SnakeFirePanel,
-        
-        SnakeNagaAttackPanel,
-        SnakeNagaRangePanel,
-        SnakeNagaFireResistPanel,
-        SnakeNagaCriticalPanel,
-        SnakeNagaDrainPanel,
-        SnakeNagaMeteorPanel,
-        
-        MosquitoBugSpeedPanel,
-        MosquitoBugDefencePanel,
-        MosquitoBugAvoidPanel,
-        MosquitoBugWoolDownPanel,
-        
-        MosquitoPesterAttackPanel,
-        MosquitoPesterHealthPanel,
-        MosquitoPesterWoolDown2Panel,
-        MosquitoPesterWoolRatePanel,
-        MosquitoPesterWoolStopPanel,
-        
-        MosquitoStingerLongAttackPanel,
-        MosquitoStingerHealthPanel,
-        MosquitoStingerAvoidPanel,
-        MosquitoStingerPoisonPanel,
-        MosquitoStingerPoisonResistPanel,
-        MosquitoStingerInfectionPanel,
-        MosquitoStingerSheepDeathPanel,
-        
-        ShellAttackSpeedPanel,
-        ShellSpeedPanel,
-        ShellHealthPanel,
-        ShellRollPanel,
-        
-        SpikeSelfDefencePanel,
-        SpikeLostHealPanel,
-        SpikeDefencePanel,
-        SpikeAttackPanel,
-        SpikeDoubleBuffPanel,
-        
-        HermitFireResistPanel,
-        HermitPoisonResistPanel,
-        HermitDebuffRemovePanel,
-        HermitRangePanel,
-        HermitAggroPanel,
-        HermitReflectionPanel,
-        HermitFaintPanel,
-    }
-
     enum SkillPanels
     {
         DnaSkillPanel,
@@ -430,7 +335,6 @@ public class UI_GameWolf : UI_Scene
         BindData<Image>(typeof(SkillPanels), _dictSkillPanel);
         
         BindData<Button>(typeof(SkillButtons), _dictSkillBtn);
-        BindData<Image>(typeof(SkillButtonPanels), _dictSkillBtnPanel);
         BindData<Image>(typeof(Lines), _dictLine);
     }
 
@@ -566,14 +470,10 @@ public class UI_GameWolf : UI_Scene
     
     private void SetSkillPanel()
     {
-        foreach (var item in _dictSkillBtnPanel)
-        {
-            SetObjectSize(item.Value, 0.22f);    
-        }
-        
         foreach (var item in _dictSkillBtn)
         {
             SetAlpha(item.Value, 0.6f);
+            SetObjectSize(item.Value.transform.parent.parent.gameObject, 0.22f);
         }
 
         foreach (var item in _dictSkillPanel)

@@ -49,8 +49,10 @@ public class SunfloraPixieController : TowerController
                     _attackSpeedSkill = true;
                     break;
                 case Define.Skill.SunfloraPixieTriple:
+                    _triple = true;
                     break;
                 case Define.Skill.SunfloraPixieDebuffRemove:
+                    _debuffRemove = true;
                     break;
                 case Define.Skill.SunfloraPixieAttack:
                     _attack = true;
@@ -202,7 +204,7 @@ public class SunfloraPixieController : TowerController
             List<Collider> tower = PickUnits(1, towers);
             if (tower[0].TryGetComponent(out Stat towerStat))
             {
-                towerStat.RemoveDebuff();
+                towerStat.RemoveAllDebuff();
             }
         }
 

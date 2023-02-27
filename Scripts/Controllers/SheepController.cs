@@ -87,7 +87,6 @@ public class SheepController : BaseController
     private void YieldCoin(int yield)
     {
         GameObject coin;
-        int gold;
         
         switch (yield)
         {

@@ -27,6 +27,7 @@ public class Stat : MonoBehaviour
     [SerializeField] protected float _accuracy;
     [SerializeField] protected float _evasion;
     [SerializeField] protected bool _targetable;
+    [SerializeField] protected bool _aggro = false;
 
     protected bool _reflection;
     protected bool _reflectionSkill;
@@ -67,6 +68,7 @@ public class Stat : MonoBehaviour
     public bool Reflection { get { return _reflection; } set { _reflection = value; } }
     public bool ReflectionSkill { get { return _reflectionSkill; } set { _reflectionSkill = value; } }
     public float ReflectionRate { get { return _reflectionRate; } set { _reflectionRate = value; } }
+    public bool Aggro { get { return _aggro;} set { _aggro = value; } }
 
     private List<Define.Buff> _buffList = new List<Define.Buff>();
     private List<Define.Debuff> _debuffList = new List<Define.Debuff>();
@@ -140,11 +142,8 @@ public class Stat : MonoBehaviour
         Mp += 2;
         Hp -= damage;
         
-        if (ReflectionSkill)
-        {
-            OnReflection(attacker, damage);
-        }
-        
+        if (ReflectionSkill) OnReflection(attacker, damage);
+
         if (Hp <= 0)
         {
             Hp = 0;
@@ -207,10 +206,10 @@ public class Stat : MonoBehaviour
         {
             AttackDebuff(Define.Debuff.Attack), AttackSpeedDebuff(Define.Debuff.AttackSpeed),
             DefenceDebuff(Define.Debuff.Defence), MoveSpeedDebuff(Define.Debuff.MoveSpeed),
-            Curse(Define.Debuff.Curse), Addicted(Define.Debuff.Addicted), 
+            Curse(Define.Debuff.Curse), Addicted(Define.Debuff.Addicted), AggroFunc(Define.Debuff.Aggro),
         };
         Array buffEnum = Enum.GetValues(typeof(Define.Buff));
-        Array debuffEnum = Enum.GetValues(typeof(Define.Buff));
+        Array debuffEnum = Enum.GetValues(typeof(Define.Debuff));
 
         for (int i = 0; i < buffArr.Length; i++)
         {
@@ -253,7 +252,7 @@ public class Stat : MonoBehaviour
         _param = param;
     }
     
-    public void RemoveDebuff()
+    public void RemoveAllDebuff()
     {
         for (int i = 0; i < _debuffList.Count; i++)
         {
@@ -262,6 +261,15 @@ public class Stat : MonoBehaviour
         }
         
         _debuffList.Clear();
+    }
+
+    public void RemoveDebuff(Define.Debuff debuff)
+    {
+        if (_debuffList.Contains(debuff))
+        {
+            StopCoroutine(_debuffDict[debuff]);
+            _debuffList.Remove(debuff);   
+        }
     }
 
     public IEnumerator AttackBuff(Define.Buff buff)
@@ -379,7 +387,6 @@ public class Stat : MonoBehaviour
 
     public IEnumerator Addicted(Define.Debuff debuff)
     {
-        Debug.Log("a");
         _debuffList.Add(debuff);
         float intervalTime = 1.0f;
         float time = Time.time;
@@ -393,6 +400,15 @@ public class Stat : MonoBehaviour
             }
         }
         yield return new WaitForSeconds(_time);
+        _debuffList.Remove(debuff);
+    }
+
+    public IEnumerator AggroFunc(Define.Debuff debuff)
+    {
+        _debuffList.Add(debuff);
+        Aggro = true;
+        yield return new WaitForSeconds(_time);
+        Aggro = false;
         _debuffList.Remove(debuff);
     }
 }

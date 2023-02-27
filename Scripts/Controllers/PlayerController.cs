@@ -1,9 +1,11 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.AI;
+using UnityEngine.Events;
 using UnityEngine.EventSystems;
 using UnityEngine.PlayerLoop;
 
@@ -11,11 +13,25 @@ public class PlayerController : BaseController
 {
     private int _mask = (1 << (int)Define.Layer.Ground);
     // private int _sheepMask = (1 << (int)Define.Layer.Sheep);
+    private int _resource = 0;
+    public UnityEvent onGoldChanged;
     
+    public int Resource
+    {
+        get => _resource;
+        set
+        {
+            _resource = value;
+            ResourceChanged(_resource);
+        }
+    }
+
     protected override void Init()
     {
         base.Init();
-        WorldObjectType = Define.WorldObject.Player;
+        WorldObjectType = Util.SheepOrWolf == "Sheep"
+            ? Define.WorldObject.PlayerSheep
+            : Define.WorldObject.PlayerWolf;
         Managers.Input.MouseAction -= OnMouseEvent;
         Managers.Input.MouseAction += OnMouseEvent;
     }
@@ -97,6 +113,22 @@ public class PlayerController : BaseController
                 if (raycastHit)
                     _destPos = hit.point;
                 break;
+        }
+    }
+
+    private void ResourceChanged(int gold)
+    {
+        if (Enum.IsDefined(typeof(Define.SheepCharacter), gameObject.name))
+        {
+            var ui = GameObject.FindWithTag("UI").GetComponent<UI_GameSheep>();
+            var goldText = ui.DictTxt["GoldText"].GetComponent<TextMeshProUGUI>();
+            goldText.text = gold.ToString();
+        }
+        else
+        {
+            var ui = GameObject.FindWithTag("UI").GetComponent<UI_GameWolf>();
+            var resourceText = ui.DictTxt["ResourceText"].GetComponent<TextMeshProUGUI>();
+            resourceText.text = gold.ToString();
         }
     }
 }

@@ -54,7 +54,7 @@ public class MothMoonController : TowerController
     
     protected override void Init()
     {
-        _skillSubject = GameObject.Find("SkillSubject").GetComponent<SkillSubject>();
+        _skillSubject = GameObject.Find("Subject").GetComponent<SkillSubject>();
         _skillSubject.AddObserver(this);
         _rigidbody = gameObject.GetComponent<Rigidbody>();
         _rigidbody.constraints = RigidbodyConstraints.FreezeAll;
@@ -145,26 +145,12 @@ public class MothMoonController : TowerController
         for (int i = 0; i < sLength; i++)
         {
             if (!sheeps[i].TryGetComponent(out Stat sheepStat)) continue;
-            if (_healSheep)
-            {
-                sheepStat.Heal(_heal);
-            }
-
+            if (_healSheep) sheepStat.Heal(_heal);
             if (_removeDebuff)
             {
-                if (sheeps[i].TryGetComponent(out BaseController baseController))
-                {
-                    if (baseController.Condition != Define.Condition.Good)
-                    {
-                        int ranVal = UnityEngine.Random.Range(0, 100);
-                        if (ranVal < _removeProb)
-                        {
-                            baseController.Condition = Define.Condition.Good;
-                        }
-                    }
-                }
+                int ranVal = UnityEngine.Random.Range(0, 100);
+                if (ranVal < _removeProb) sheepStat.RemoveAllDebuff(); 
             }
-
             if (_output)
             {
                 

@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
@@ -50,7 +51,11 @@ public class ChestController : MonoBehaviour
 
     private void Init()
     {
-        _player = GameObject.FindWithTag("Player");
+        GameObject[] gameObjects = GameObject.FindGameObjectsWithTag("Player");
+        foreach (var go in gameObjects)
+        {
+            if (Enum.IsDefined(typeof(Define.SheepCharacter), go.name)) _player = go;
+        }
     }
 
     private void UpdateIdle()
@@ -74,10 +79,7 @@ public class ChestController : MonoBehaviour
         if (dir.magnitude < 0.3f)
         {
             // 골드 증가, Chest 사라짐
-            GameObject go = GameObject.FindWithTag("UI").GetComponent<UI_GameSheep>().DictTxt["GoldText"];
-            int.TryParse(go.GetComponent<TextMeshProUGUI>().text, out int goldUi);
-            goldUi += gold;
-            go.GetComponent<TextMeshProUGUI>().text = goldUi.ToString();
+            _player.GetComponent<PlayerController>().Resource += gold;
             Managers.Resource.Destroy(gameObject);
         }
         else

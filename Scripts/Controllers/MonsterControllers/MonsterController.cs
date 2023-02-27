@@ -128,7 +128,7 @@ public class MonsterController : BaseController
     
     protected void SetTarget(string[] tags)
     {
-        if (Condition == Define.Condition.Aggro) return;
+        if (GetComponent<Stat>().Aggro) return;
         float closestDist = 5000.0f;
         foreach (string tag in tags)
         {

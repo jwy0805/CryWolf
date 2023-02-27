@@ -44,7 +44,7 @@ public class MothLunaController : TowerController
     
     protected override void Init()
     {
-        _skillSubject = GameObject.Find("SkillSubject").GetComponent<SkillSubject>();
+        _skillSubject = GameObject.Find("Subject").GetComponent<SkillSubject>();
         _skillSubject.AddObserver(this);
         _rigidbody = gameObject.GetComponent<Rigidbody>();
         _rigidbody.constraints = RigidbodyConstraints.FreezeAll;

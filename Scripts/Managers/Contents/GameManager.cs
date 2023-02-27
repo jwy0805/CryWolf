@@ -29,7 +29,10 @@ public class GameManager
             case Define.WorldObject.Sheep:
                 _sheep = go;
                 break;
-            case Define.WorldObject.Player:
+            case Define.WorldObject.PlayerSheep:
+                _player = go;
+                break;
+            case Define.WorldObject.PlayerWolf:
                 _player = go;
                 break;
         }
@@ -104,8 +107,11 @@ public class GameManager
             
             case Define.WorldObject.Sheep:
                 break;
-            
-            case Define.WorldObject.Player:
+            case Define.WorldObject.PlayerSheep:
+                if (_player == go)
+                    _player = null;
+                break;
+            case Define.WorldObject.PlayerWolf:
                 if (_player == go)
                     _player = null;
                 break;

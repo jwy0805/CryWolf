@@ -7,8 +7,8 @@ public class GameData
 {
     // Game 초기 설정
     // 가변
-    public int[] SpawnMonsterCnt { get; set; } = { 1, 1, 0 }; // { West, North, East }
-    public int SpawnSheepCnt { get; set; } = 5;
+    public static int[] SpawnMonsterCnt { get; set; } = { 1, 1, 0 }; // { West, North, East }
+    public static int SpawnSheepCnt { get; set; } = 5;
     
     // 불변
     public static Vector3 center = new Vector3(0.0f, 6.0f, 0.0f); // Center of the Map
@@ -108,6 +108,23 @@ public class GameData
         return posArr;
     }
 
+    // 게임 진행 정보
+    #region GameInfo
+
+    public static int StorageLevel = 1;
+    public static int[] StorageLvUpCost = { 600, 2000 };
+    public static int[] TowerCapacity = new int[3];
+    public static int TowerMaxCapacity = 0;
+    public static int SheepCapacity = 0;
+    public static int SheepMaxCapacity = 0;
+    
+
+    public static int[] MonsterCapacity = new int[3];
+    public static int MonsterMaxCapacity = 0;
+    
+    
+    #endregion
+    
     public static float[] GetRotation(int cnt, int row)
     {
         float[] rotationArr = new float[cnt];
@@ -154,6 +171,10 @@ public class GameData
 
     public static readonly List<string> UnitList = TowerList.Concat(MonsterList).ToList();
 
+    public static readonly Dictionary<Define.Skill, int> SkillCost = new Dictionary<Define.Skill, int>()
+    {
+        { Define.Skill.Bloom3Combo, 120 }
+    };
     public static readonly Dictionary<string, string[]> SkillTree = new Dictionary<string, string[]>()
     {
         { "BloomAttack", new[] { "free" } },

@@ -9,7 +9,6 @@ public abstract class BaseController : MonoBehaviour, ISkillObserver
 {
     [SerializeField] protected Vector3 _destPos;
     [SerializeField] protected Define.State _state = Define.State.Idle;
-    [SerializeField] protected Define.Condition _condition = Define.Condition.Good;
     [SerializeField] public GameObject _lockTarget;
     protected Animator _anim;
     protected Rigidbody _rigidbody;
@@ -19,7 +18,6 @@ public abstract class BaseController : MonoBehaviour, ISkillObserver
     protected string _newSkill;
     protected readonly int _attackSpeed = Animator.StringToHash("AttackSpeed");
     protected virtual string NewSkill { get; set; }
-    protected Queue<Coroutine> conditionQueue = new Queue<Coroutine>();
 
     public Define.WorldObject WorldObjectType { get; protected set; } = Define.WorldObject.Unknown;
     
@@ -67,15 +65,6 @@ public abstract class BaseController : MonoBehaviour, ISkillObserver
         }
     }
 
-    public virtual Define.Condition Condition
-    {
-        get { return _condition; }
-        set
-        {
-            _condition = value;
-        }
-    }
-
     private void Start()
     {
         Init();
@@ -110,12 +99,6 @@ public abstract class BaseController : MonoBehaviour, ISkillObserver
                 UpdateKnockBackCreeper();
                 break;
             case Define.State.Faint:
-                break;
-        }
-
-        switch (Condition)
-        {
-            case Define.Condition.Aggro:
                 break;
         }
     }

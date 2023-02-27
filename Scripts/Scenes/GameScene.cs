@@ -39,13 +39,13 @@ public class GameScene : BaseScene
         switch (side)
         {
             case "Sheep":
-                player = Managers.Game.Spawn(Define.WorldObject.Player, "PlayerCharacter");
+                player = Managers.Game.Spawn(Define.WorldObject.PlayerSheep, "PlayerCharacter");
                 break;
             case "Wolf":
-                player = Managers.Game.Spawn(Define.WorldObject.Player, "PoisonBomb");
+                player = Managers.Game.Spawn(Define.WorldObject.PlayerWolf, "PoisonBomb");
                 break;
             default:
-                player = Managers.Game.Spawn(Define.WorldObject.Player, "PlayerCharacter");
+                player = Managers.Game.Spawn(Define.WorldObject.PlayerSheep, "PlayerCharacter");
                 break;
         }
         

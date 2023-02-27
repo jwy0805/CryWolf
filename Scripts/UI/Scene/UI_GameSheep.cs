@@ -29,13 +29,12 @@ public class UI_GameSheep : UI_Scene
     private Dictionary<string, GameObject> _dictBtn = new ();
     private Dictionary<string, GameObject> _dictImg = new ();
     private Dictionary<string, GameObject> _dictTxt = new ();
-    private Dictionary<string, GameObject> _dictSkillBtnPanel = new ();
     private Dictionary<string, GameObject> _dictSkillPanel = new ();
+    private Dictionary<string, GameObject> _dictSkillBtn = new();
     private Dictionary<string, GameObject> _dictLine = new ();
     private Dictionary<string, GameObject> _dictPortrait = new ();
 
-    public Dictionary<string, GameObject> DictSkillBtn { get; set; } = new ();
-
+    public Dictionary<string, GameObject> DictSkillBtn => _dictSkillBtn;
     public Dictionary<string, GameObject> DictTxt => _dictTxt;
 
     #endregion
@@ -51,7 +50,7 @@ public class UI_GameSheep : UI_Scene
             }
             
             _selectedObj = value;
-            Debug.Log(_selectedObj.name);
+            // Debug.Log(_selectedObj.name);
         }
     }
 
@@ -116,6 +115,7 @@ public class UI_GameSheep : UI_Scene
         {
             _capacityButton = value;
             _dictSkillPanel["SheepSkillPanel"].SetActive(_capacityButton);
+            if (OnSelectedPortrait != null) PortraitOff(OnSelectedPortrait);
         }
     }
     
@@ -253,119 +253,14 @@ public class UI_GameSheep : UI_Scene
         SoulMageDebuffResistButton,
         SoulMageNatureAttackButton,
         SoulMageCriticalButton,
+        
+        FenceRepairButton,
+        StorageLvUpButton,
+        GoldIncreaseButton,
+        SheepHealthButton,
+        SheepIncreaseButton,
     }
-
-    enum SkillButtonPanels
-    {
-        BudAttackPanel,
-        BudAttackSpeedPanel,
-        BudRangePanel,
-        BudSeedPanel,
-        BudDoublePanel,
-        BudLine1,
-        BudLine2,
-        
-        BloomAttackPanel,
-        BloomAttackSpeedPanel,
-        BloomRangePanel,
-        BloomAttackSpeed2Panel,
-        Bloom3ComboPanel,
-        BloomAirAttackPanel,
-        BloomLine1,
-
-        BlossomPoisonPanel,
-        BlossomAccuracyPanel,
-        BlossomAttackPanel,
-        BlossomAttackSpeedPanel,
-        BlossomRangePanel,
-        BlossomDeathPanel,
-        BlossomLine1,
-        BlossomLine2,
-        
-        PracticeDummyHealthPanel,
-        PracticeDummyDefencePanel,
-        PracticeDummyHealth2Panel,
-        PracticeDummyDefence2Panel,
-        PracticeDummyAggroPanel,
-        
-        TargetDummyHealthPanel,
-        TargetDummyHealPanel,
-        TargetDummyFireResistPanel,
-        TargetDummyPoisonResistPanel,
-        TargetDummyReflectionPanel,
-        
-        TrainingDummyAggroPanel,
-        TrainingDummyHealPanel,
-        TrainingDummyFaintPanel,
-        TrainingDummyHealthPanel,
-        TrainingDummyDefencePanel,
-        TrainingDummyFireResistPanel,
-        TrainingDummyPoisonResistPanel,
-        TrainingDummyDebuffRemovePanel,
-        
-        SunBlossomHealthPanel,
-        SunBlossomSlowPanel,
-        SunBlossomHealPanel,
-        SunBlossomSlowAttackPanel,
-        
-        SunflowerFairyAttackPanel,
-        SunflowerFairyDefencePanel,
-        SunflowerFairyDoublePanel,
-        SunflowerFairyMpDownPanel,
-        SunflowerFairyFenceHealPanel,
-
-        SunfloraPixieCursePanel,
-        SunfloraPixieHealPanel,
-        SunfloraPixieRangePanel,
-        SunfloraPixieFaintPanel,
-        SunfloraPixieAttackSpeedPanel,
-        SunfloraPixieTriplePanel,
-        SunfloraPixieDebuffRemovePanel,
-        SunfloraPixieAttackPanel,
-        SunfloraPixieInvinciblePanel,
-        
-        MothLunaAttackPanel,
-        MothLunaSpeedPanel,
-        MothLunaAccuracyPanel,
-        MothLunaFaintPanel,
-        
-        MothMoonRemoveDebuffSheepPanel,
-        MothMoonHealSheepPanel,
-        MothMoonRangePanel,
-        MothMoonOutputPanel,
-        MothMoonAttackSpeedPanel,
-        
-        MothCelestialSheepHealthPanel,
-        MothCelestialGroundAttackPanel,
-        MothCelestialAccuracyPanel,
-        MothCelestialFireResistPanel,
-        MothCelestialPoisonResistPanel,
-        MothCelestialPoisonPanel,
-        MothCelestialBreedSheepPanel,
-        
-        SoulAttackPanel,
-        SoulDefencePanel,
-        SoulHealthPanel,
-        SoulDrainPanel,
-        
-        HauntLongAttackPanel,
-        HauntAttackSpeedPanel,
-        HauntAttackPanel,
-        HauntPoisonResistPanel,
-        HauntFireResistPanel,
-        HauntFirePanel,
-        HauntLine1,
-        
-        SoulMageAvoidPanel,
-        SoulMageDefenceAllPanel,
-        SoulMageFireDamagePanel,
-        SoulMageShareDamagePanel,
-        SoulMageTornadoPanel,
-        SoulMageDebuffResistPanel,
-        SoulMageNatureAttackPanel,
-        SoulMageCriticalPanel,
-    }
-
+    
     enum SkillPanels
     {
         SheepSkillPanel,
@@ -459,8 +354,7 @@ public class UI_GameSheep : UI_Scene
         BindData<TextMeshProUGUI>(typeof(Texts), _dictTxt);
         BindData<Image>(typeof(SkillPanels), _dictSkillPanel);
         
-        BindData<Button>(typeof(SkillButtons), DictSkillBtn);
-        BindData<Image>(typeof(SkillButtonPanels), _dictSkillBtnPanel);
+        BindData<Button>(typeof(SkillButtons), _dictSkillBtn);
         BindData<Image>(typeof(Lines), _dictLine);
     }
 
@@ -503,7 +397,7 @@ public class UI_GameSheep : UI_Scene
             item.Value.GetComponent<Button>().onClick.AddListener(OnPortraitClicked);
         }
 
-        foreach (var item in DictSkillBtn)
+        foreach (var item in _dictSkillBtn)
         {
             item.Value.GetComponent<Button>().onClick.AddListener(OnSkillClicked);
         }
@@ -602,14 +496,10 @@ public class UI_GameSheep : UI_Scene
     
     private void SetSkillPanel()
     {
-        foreach (var item in _dictSkillBtnPanel)
-        {
-            SetObjectSize(item.Value, 0.22f);    
-        }
-        
         foreach (var item in DictSkillBtn)
         {
             SetAlpha(item.Value, 0.6f);
+            SetObjectSize(item.Value.transform.parent.parent.gameObject, 0.22f);
         }
 
         foreach (var item in _dictSkillPanel)

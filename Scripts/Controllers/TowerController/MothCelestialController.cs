@@ -59,7 +59,7 @@ public class MothCelestialController : TowerController
 
     protected override void Init()
     {
-        _skillSubject = GameObject.Find("SkillSubject").GetComponent<SkillSubject>();
+        _skillSubject = GameObject.Find("Subject").GetComponent<SkillSubject>();
         _skillSubject.AddObserver(this);
         _rigidbody = gameObject.GetComponent<Rigidbody>();
         _rigidbody.constraints = RigidbodyConstraints.FreezeAll;
@@ -150,8 +150,7 @@ public class MothCelestialController : TowerController
             Quaternion.identity, _mask);
         List<Collider> sheeps = new List<Collider>();
 
-        int cLength = colliders.Length;
-        for (int i = 0; i < cLength; i++)
+        for (int i = 0; i < colliders.Length; i++)
         {
             if (colliders[i].CompareTag("Sheep"))
             {
@@ -168,24 +167,13 @@ public class MothCelestialController : TowerController
             {
                 Managers.Game.Spawn(Define.WorldObject.Sheep, "Sheep");
             }
-            
-            if (sheeps[i].TryGetComponent(out BaseController baseController))
-            {
-                if (baseController.Condition != Define.Condition.Good)
-                {
-                    int ranRemove = UnityEngine.Random.Range(0, 100);
-                    if (ranRemove < _removeProb)
-                    {
-                        baseController.Condition = Define.Condition.Good;
-                    }
-                }
-            }
-            
+
             // MothMoon output 스킬 계승
-            // 이 위에 스킬 만들것
+            // 이 위에 스킬 만들것(sheepStat을 이용한 스킬만 아래 구현)
             if (!sheeps[i].TryGetComponent(out Stat sheepStat)) continue;
             sheepStat.Heal(_heal);
-            
+            int ranVal = UnityEngine.Random.Range(0, 100);
+            if (ranVal < _removeProb) sheepStat.RemoveAllDebuff();
             if (i == ranHealth)
             {
                 sheepStat.Hp += 100;

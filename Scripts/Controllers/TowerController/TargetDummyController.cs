@@ -10,6 +10,23 @@ public class TargetDummyController : TowerController
     private bool _heal = false;
     private bool _dead = false;
     private Collider[] _colliders;
+    
+    public bool Dead
+    {
+        get => _dead;
+        set
+        {
+            _dead = value;
+            if (!_dead) return;
+            int length = _colliders.Length;
+            for (int i = 0; i < length; i++)
+            {
+                GameObject go = _colliders[i].gameObject;
+                Stat stat = go.GetComponent<Stat>();
+                stat.RemoveDebuff(Define.Debuff.Aggro);
+            }
+        }
+    }
 
     protected override string NewSkill
     {
@@ -64,19 +81,7 @@ public class TargetDummyController : TowerController
 
     protected override void UpdateDie()
     {
-        if (_dead) return;
-        else
-        {
-            int length = _colliders.Length;
-            for (int i = 0; i < length; i++)
-            {
-                GameObject go = _colliders[i].gameObject;
-                BaseController baseController = go.GetComponent<BaseController>();
-                baseController.Condition = Define.Condition.Good;
-            }
-            
-            _dead = true;
-        }
+        Dead = true;
     }
     
     private void OnSkillEvent()
@@ -87,8 +92,9 @@ public class TargetDummyController : TowerController
         {
             GameObject go = _colliders[i].gameObject;
             BaseController baseController = go.GetComponent<BaseController>();
-            baseController.Condition = Define.Condition.Aggro;
             baseController._lockTarget = gameObject;
+            Stat stat = go.GetComponent<Stat>();
+            stat.SetDebuffParams(5, 0, Define.Debuff.Aggro);
         }
 
         if (_heal)

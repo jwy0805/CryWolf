@@ -26,21 +26,21 @@ public class Define
     public enum MonsterId
     {
         Unknown = 0,
-        WolfPup = 50,
-        Wolf = 51,
-        WereWolf = 52,
-        Lurker = 60,
-        Creeper = 61,
-        Horror = 62,
-        Snakelet = 70,
-        Snake = 71,
-        SnakeNaga = 72,
-        MosquitoBug = 80,
-        MosquitoPester = 81,
-        MosquitoStinger = 82,
-        Shell = 90,
-        Spike = 91,
-        Hermit = 92,
+        WolfPup = 150,
+        Wolf = 151,
+        WereWolf = 152,
+        Lurker = 160,
+        Creeper = 161,
+        Horror = 162,
+        Snakelet = 170,
+        Snake = 171,
+        SnakeNaga = 172,
+        MosquitoBug = 180,
+        MosquitoPester = 181,
+        MosquitoStinger = 182,
+        Shell = 190,
+        Spike = 191,
+        Hermit = 192,
     }
     
     public enum MouseEvent
@@ -166,6 +166,12 @@ public class Define
         TrainingDummyFireResist,
         TrainingDummyDebuffRemove,
         
+        FenceRepair,
+        StorageLvUp,
+        GoldIncrease,
+        SheepHealth,
+        SheepIncrease,
+        
         WolfPupSpeed,
         WolfPupHealth,
         WolfPupAttack,
@@ -274,15 +280,6 @@ public class Define
         Faint,
         None,
     }
-
-    public enum Condition
-    {
-        Good,
-        Burned,
-        Addicted,
-        FatalAddicted,
-        Aggro,
-    }
     
     public enum Sound
     {
@@ -293,22 +290,22 @@ public class Define
 
     public enum TowerId
     {
-        Unknown = 0,
-        Bud = 1,
-        Bloom = 2,
-        Blossom = 3,
-        PracticeDummy = 11,
-        TargetDummy = 12,
-        TrainingDummy = 13,
-        SunBlossom = 21,
-        SunflowerFairy = 22,
-        SunfloraPixie = 23,
-        MothLuna = 31,
-        MothMoon = 32,
-        MothCelestial = 33,
-        Soul = 41,
-        Haunt = 42,
-        SoulMage = 43,
+        Unknown = 100,
+        Bud = 101,
+        Bloom = 102,
+        Blossom = 103,
+        PracticeDummy = 111,
+        TargetDummy = 112,
+        TrainingDummy = 113,
+        SunBlossom = 121,
+        SunflowerFairy = 122,
+        SunfloraPixie = 123,
+        MothLuna = 131,
+        MothMoon = 132,
+        MothCelestial = 133,
+        Soul = 141,
+        Haunt = 142,
+        SoulMage = 143,
     }
 
     public enum UIEvent
@@ -327,7 +324,8 @@ public class Define
     {
         Unknown,
         Fence,
-        Player,
+        PlayerSheep,
+        PlayerWolf,
         Monster,
         Sheep,
         Tower,
@@ -353,6 +351,7 @@ public class Define
         MoveSpeed,
         Curse,
         Addicted,
+        Aggro,
     }
 
     public enum SheepCharacter
