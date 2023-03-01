@@ -10,6 +10,7 @@ public class FenceController : BaseController
     {
         WorldObjectType = Define.WorldObject.Fence;
 
+        GameData.CurrentFenceCnt += 1;
         _stat = gameObject.GetComponent<Stat>();
         _stat.Hp = 200;
         _stat.MaxHp = 200;

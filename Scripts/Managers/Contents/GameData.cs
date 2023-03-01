@@ -26,6 +26,7 @@ public class GameData
 
     public static string[] FenceName = { "", "FenceLv1", "FenceLv2", "FenceLv3" };
     public static int[] FenceCnt = { 0, 18, 34, 42 };
+    public static int CurrentFenceCnt = 0;
     public static int[] FenceRow = { 0, 4, 7, 9 };
 
     public static Vector3[] FenceStartPos =
@@ -46,6 +47,8 @@ public class GameData
         new Vector3(12, 6, 20), new Vector3(18, 6, 24)
     };
 
+    public static Bounds FenceBounds;
+    
     public static Bounds[] NorthFenceBounds =
     {
         new Bounds(), 
@@ -112,11 +115,11 @@ public class GameData
     #region GameInfo
 
     public static int StorageLevel = 1;
-    public static int[] StorageLvUpCost = { 600, 2000 };
-    public static int[] TowerCapacity = new int[3];
-    public static int TowerMaxCapacity = 0;
+    public static int[] StorageLvUpCost = { 0, 600, 2000 };
+    public static int TowerCapacity = 0;
+    public static int[] TowerMaxCapacity = {3, 5, 7};
     public static int SheepCapacity = 0;
-    public static int SheepMaxCapacity = 0;
+    public static int[] SheepMaxCapacity = {6, 12, 20};
     
 
     public static int[] MonsterCapacity = new int[3];

@@ -67,8 +67,7 @@ public class UI_UpgradePopup : UI_Popup
                 _cost = SetFenceRepairCost();
                 break;
             case "StorageLvUp":
-                if (GameData.StorageLevel == 1) _cost = GameData.StorageLvUpCost[0];
-                else if (GameData.StorageLevel == 2) _cost = GameData.StorageLvUpCost[1];
+                _cost = GameData.StorageLvUpCost[GameData.StorageLevel];
                 break;
             default:
                 _cost = 100;
@@ -93,11 +92,12 @@ public class UI_UpgradePopup : UI_Popup
         
         if (resourceOwned >= _cost)
         {
+            GameObject[] fences;
             switch (_skillName)
             {
                 // Sheep Base Skill
                 case "FenceRepair":
-                    GameObject[] fences = GameObject.FindGameObjectsWithTag("Fence");
+                    fences = GameObject.FindGameObjectsWithTag("Fence");
                     foreach (var fence in fences)
                     {
                         Stat stat = fence.GetComponent<Stat>();
@@ -105,6 +105,14 @@ public class UI_UpgradePopup : UI_Popup
                     }
                     break;
                 case "StorageLvUp":
+                    if (GameData.CurrentFenceCnt != GameData.FenceCnt[GameData.StorageLevel])
+                    {
+                        // 오류 메시지 출력
+                        // Debug.Log("울타리가 고장나 업그레이드 할 수 없습니다!");
+                    }
+
+                    Spawner spawner = GameObject.Find("Spawner").GetComponent<Spawner>();
+                    spawner.StorageLevel += 1;
                     break;
                 case "GoldIncrease":
                     break;

@@ -26,7 +26,7 @@ public class MosquitoStingerController : MonsterController
 
     protected override void UpdateIdle()
     {
-        if (_lockTarget == null || !Spawner._bounds.Contains(transform.position))
+        if (_lockTarget == null || !GameData.FenceBounds.Contains(transform.position))
         {
             string[] tags = { "Sheep" };
             SetTarget(tags);
@@ -41,7 +41,7 @@ public class MosquitoStingerController : MonsterController
         {
             _lastTargetingTime = Time.time;
             
-            if (Spawner._bounds.Contains(transform.position))
+            if (GameData.FenceBounds.Contains(transform.position))
             {
                 string[] tags = { "Sheep" };
                 SetTarget(tags);

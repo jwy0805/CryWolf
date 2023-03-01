@@ -160,7 +160,8 @@ public class Stat : MonoBehaviour
         switch (type)
         {
             case Define.WorldObject.Fence:
-                Managers.Game.Despawn(gameObject, 0);
+                Managers.Game.Despawn(gameObject);
+                GameData.CurrentFenceCnt -= 1;
                 break;
             default:
                 baseController.State = Define.State.Die;

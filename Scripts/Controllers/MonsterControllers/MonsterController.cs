@@ -37,14 +37,14 @@ public class MonsterController : BaseController
 
     protected override void UpdateIdle()
     {
-        if (_lockTarget == null || !Spawner._bounds.Contains(transform.position))
+        if (_lockTarget == null || !GameData.FenceBounds.Contains(transform.position))
         {
             string[] tags = { "Sheep", "Fence", "Tower" };
             SetTarget(tags);
             State = Define.State.Moving;
         }
 
-        if (Spawner._bounds.Contains(transform.position))
+        if (GameData.FenceBounds.Contains(transform.position))
         {
             State = Define.State.Moving;
         }
@@ -59,7 +59,7 @@ public class MonsterController : BaseController
         
             NavMeshPath navMeshPath = new NavMeshPath();
 
-            if (Spawner._bounds.Contains(transform.position))
+            if (GameData.FenceBounds.Contains(transform.position))
             {
                 string[] tags = { "Sheep", "Tower" };
                 SetTarget(tags);
