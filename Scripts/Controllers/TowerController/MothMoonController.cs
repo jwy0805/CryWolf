@@ -10,7 +10,7 @@ public class MothMoonController : TowerController
     private bool _output = false;
     private bool _removeDebuff = false;
     private int _removeProb;
-    private Bounds _fenceBounds = new Bounds(GameData.center, GameData.FenceSize[1]);
+    private Bounds _fenceBounds = new Bounds(GameData.Center, GameData.FenceSize[1]);
 
     private int _mask = 1 << (int)Define.Layer.Sheep;
     private int _level = 1;
@@ -63,7 +63,7 @@ public class MothMoonController : TowerController
         Vector3 size = gameObject.GetComponent<Collider>().bounds.size;
         _stat = gameObject.GetComponent<Stat>();
         
-        transform.position = GameData.center + Vector3.up * 2;
+        transform.position = GameData.Center + Vector3.up * 2;
         State = Define.State.Idle;
         
         _stat.Hp = 180;

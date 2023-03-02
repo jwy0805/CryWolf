@@ -21,7 +21,7 @@ public class MonsterController : BaseController
         _navMesh = GetComponent<NavMeshAgent>();
         _navMesh.enabled = false;
         WorldObjectType = Define.WorldObject.Monster;
-        _destPos = Managers.Game.GetRandomPointOnNavMesh(GameData.center, 5.0f);
+        _destPos = Managers.Game.GetRandomPointOnNavMesh(GameData.Center, 5.0f);
         _navMesh.enabled = true;
 
         _stat = gameObject.GetComponent<Stat>();
@@ -65,7 +65,7 @@ public class MonsterController : BaseController
                 SetTarget(tags);
             }
             // Fence 안으로 들어갈 수 있는지?
-            else if (_navMesh.CalculatePath(GameData.center, navMeshPath) 
+            else if (_navMesh.CalculatePath(GameData.Center, navMeshPath) 
                      && navMeshPath.status == NavMeshPathStatus.PathComplete)
             {
                 string[] tags = { "Sheep", "Tower" };

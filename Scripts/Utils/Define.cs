@@ -62,6 +62,15 @@ public class Define
         Store,
     }
 
+    public enum BaseSkill
+    {
+        FenceRepair,
+        StorageLvUp,
+        GoldIncrease,
+        SheepHealth,
+        SheepIncrease,
+    }
+    
     public enum Skill
     {
         BloomAttack,

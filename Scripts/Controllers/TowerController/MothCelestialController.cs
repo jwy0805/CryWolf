@@ -68,7 +68,7 @@ public class MothCelestialController : TowerController
         Vector3 size = gameObject.GetComponent<Collider>().bounds.size;
         _stat = gameObject.GetComponent<Stat>();
 
-        transform.position = GameData.center + Vector3.up * 2;
+        transform.position = GameData.Center + Vector3.up * 2;
         State = Define.State.Idle;
 
         _stat.Hp = 180;

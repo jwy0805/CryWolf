@@ -8,7 +8,7 @@ public class MothLunaController : TowerController
 {
     private float _height = 8f;
     private bool _faint = false;
-    private Bounds _fenceBounds = new Bounds(GameData.center, GameData.FenceSize[1]);
+    private Bounds _fenceBounds = new Bounds(GameData.Center, GameData.FenceSize[1]);
     
     protected override string NewSkill
     {
@@ -53,7 +53,7 @@ public class MothLunaController : TowerController
         Vector3 size = gameObject.GetComponent<Collider>().bounds.size;
         _stat = gameObject.GetComponent<Stat>();
         
-        transform.position = GameData.center + Vector3.up * 2;
+        transform.position = GameData.Center + Vector3.up * 2;
         State = Define.State.Idle;
         
         _stat.Hp = 100;
@@ -111,7 +111,7 @@ public class MothLunaController : TowerController
         }
         else
         {
-            _destPos = GameData.center + Vector3.up * 2;
+            _destPos = GameData.Center + Vector3.up * 2;
         }
 
         // Move

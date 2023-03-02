@@ -43,6 +43,6 @@ public class SnakeNagaController : MonsterController
     private void OnSkillEvent()
     {
         GameObject meteor = Managers.Resource.Instanciate("Effects/Meteor", gameObject.transform);
-        meteor.transform.position = GameData.center;
+        meteor.transform.position = GameData.Center;
     }
 }

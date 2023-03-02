@@ -69,13 +69,22 @@ public class UI_UpgradePopup : UI_Popup
             case "StorageLvUp":
                 _cost = GameData.StorageLvUpCost[GameData.StorageLevel];
                 break;
+            case "GoldIncrease":
+                _cost = GameData.SheepYield;
+                break;
+            case "SheepHealth":
+                Stat sheepStat = GameObject.FindWithTag("Sheep").GetComponent<Stat>();
+                _cost = sheepStat.MaxHp;
+                break;
+            case "SheepIncrease":
+                _cost = 200;
+                break;
             default:
                 _cost = 100;
                 break;
         }
         
         GetText((int)Texts.CostText).gameObject.GetComponent<TextMeshProUGUI>().text = _cost.ToString();
-
     }
 
     // 여기에 base skill 구현
@@ -92,17 +101,12 @@ public class UI_UpgradePopup : UI_Popup
         
         if (resourceOwned >= _cost)
         {
-            GameObject[] fences;
+            Spawner spawner = GameObject.Find("Spawner").GetComponent<Spawner>();
             switch (_skillName)
             {
                 // Sheep Base Skill
                 case "FenceRepair":
-                    fences = GameObject.FindGameObjectsWithTag("Fence");
-                    foreach (var fence in fences)
-                    {
-                        Stat stat = fence.GetComponent<Stat>();
-                        stat.Hp = stat.MaxHp;
-                    }
+                    spawner.FenceRepair = true;
                     break;
                 case "StorageLvUp":
                     if (GameData.CurrentFenceCnt != GameData.FenceCnt[GameData.StorageLevel])
@@ -110,15 +114,35 @@ public class UI_UpgradePopup : UI_Popup
                         // 오류 메시지 출력
                         // Debug.Log("울타리가 고장나 업그레이드 할 수 없습니다!");
                     }
-
-                    Spawner spawner = GameObject.Find("Spawner").GetComponent<Spawner>();
-                    spawner.StorageLevel += 1;
+                    else
+                    {
+                        spawner.StorageLevel += 1;
+                    }
                     break;
                 case "GoldIncrease":
+                    Debug.Log("s");
+                    GameData.SheepYield *= 2;
                     break;
                 case "SheepHealth":
+                    GameObject[] sheeps = GameObject.FindGameObjectsWithTag("Sheep");
+                    foreach (var sheep in sheeps)
+                    {
+                        Stat stat = sheep.GetComponent<Stat>();
+                        int temp = stat.MaxHp;
+                        stat.MaxHp *= 2;
+                        stat.Hp += temp;
+                    }
                     break;
                 case "SheepIncrease":
+                    if (GameData.SheepCapacity >= GameData.SheepMaxCapacity[GameData.StorageLevel])
+                    {
+                        // 오류 메시지 출력
+                        // Debug.Log("양이 너무 많습니다!");
+                    }
+                    else
+                    {
+                        spawner.SheepIncrease += 1;
+                    }
                     break;
                 // Wolf Base Skill
                 // Unit Skill

@@ -8,7 +8,6 @@ using Random = UnityEngine.Random;
 public class SheepController : BaseController
 {
     private Stat _stat;
-    private int _yield;
     private Vector3 _point;
     private float _lastMoveTime = 0.0f;
     private float _moveTime = 0.0f;
@@ -33,8 +32,6 @@ public class SheepController : BaseController
         _stat.Attack = 5;
         _stat.Defense = 0;
         _stat.MoveSpeed = 0.4f;
-
-        _yield = 2500;
     }
 
     protected override void UpdateIdle()
@@ -50,13 +47,19 @@ public class SheepController : BaseController
         if (Time.time > _lastYieldTime + GameData.RoundTime)
         {
             _lastYieldTime = Time.time;
-            YieldCoin(_yield);
+            YieldCoin(GameData.SheepYield);
         }
     }
     
     protected override void UpdateMoving()
     {
         Vector3 dir = _destPos - transform.position;
+        
+        if (Time.time > _lastYieldTime + GameData.RoundTime)
+        {
+            _lastYieldTime = Time.time;
+            YieldCoin(GameData.SheepYield);
+        }
 
         if (dir.magnitude < 0.1f || 
             Physics.Raycast(transform.position + Vector3.up * 0.5f, dir.normalized, 1.0f, 
@@ -94,15 +97,15 @@ public class SheepController : BaseController
                 coin = Managers.Resource.Instanciate("Items/CoinStarSilver");
                 coin.GetComponent<CoinController>().gold = yield;
                 break;
-            case < 50:
+            case < 100:
                 coin = Managers.Resource.Instanciate("Items/CoinStarGolden");
                 coin.GetComponent<CoinController>().gold = yield;
                 break;
-            case < 100:
+            case < 200:
                 coin = Managers.Resource.Instanciate("Items/PouchGreen");
                 coin.GetComponent<CoinController>().gold = yield;
                 break;
-            case < 200:
+            case < 300:
                 coin = Managers.Resource.Instanciate("Items/PouchRed");
                 coin.GetComponent<CoinController>().gold = yield;
                 break;

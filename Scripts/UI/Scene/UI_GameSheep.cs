@@ -150,6 +150,15 @@ public class UI_GameSheep : UI_Scene
         SoulMageButton,
     }
 
+    enum BaseSkillButtons
+    {
+        FenceRepairButton,
+        StorageLvUpButton,
+        GoldIncreaseButton,
+        SheepHealthButton,
+        SheepIncreaseButton,
+    }
+    
     enum SkillButtons
     {
         BudAttackButton,
@@ -498,7 +507,7 @@ public class UI_GameSheep : UI_Scene
     {
         foreach (var item in DictSkillBtn)
         {
-            SetAlpha(item.Value, 0.6f);
+            SetAlpha(item.Value, Enum.IsDefined(typeof(BaseSkillButtons), item.Key) ? 1.0f : 0.6f);
             SetObjectSize(item.Value.transform.parent.parent.gameObject, 0.22f);
         }
 

@@ -7,13 +7,12 @@ public class GameData
 {
     // Game 초기 설정
     // 가변
-    public static int[] SpawnMonsterCnt { get; set; } = { 1, 1, 0 }; // { West, North, East }
-    public static int SpawnSheepCnt { get; set; } = 5;
+    public static int[] SpawnMonsterCnt = { 1, 1, 0 }; // { West, North, East }
     
     // 불변
-    public static Vector3 center = new Vector3(0.0f, 6.0f, 0.0f); // Center of the Map
+    public static Vector3 Center = new Vector3(0.0f, 6.0f, 0.0f); // Center of the Map
     
-    public static int SpawnersCount = 3;
+    public static int SpawnersCnt = 3;
     public static Vector3[] SpawnerPos { get; set; } = {
         new Vector3(-45.0f, 4.0f, 0.0f), // West
         new Vector3(0.0f, 4.0f, 45.0f),  // North
@@ -85,7 +84,7 @@ public class GameData
     public static Bounds[] SheepBounds =
     {
         new Bounds(),
-        new Bounds(center, new Vector3(3, 10, 2)),
+        new Bounds(Center, new Vector3(3, 10, 2)),
         new Bounds(new Vector3(0, 6, 2), new Vector3(5, 10, 7)),
         new Bounds(new Vector3(3, 6, 0), new Vector3(10, 10, 9)),
     };
@@ -110,23 +109,6 @@ public class GameData
 
         return posArr;
     }
-
-    // 게임 진행 정보
-    #region GameInfo
-
-    public static int StorageLevel = 1;
-    public static int[] StorageLvUpCost = { 0, 600, 2000 };
-    public static int TowerCapacity = 0;
-    public static int[] TowerMaxCapacity = {3, 5, 7};
-    public static int SheepCapacity = 0;
-    public static int[] SheepMaxCapacity = {6, 12, 20};
-    
-
-    public static int[] MonsterCapacity = new int[3];
-    public static int MonsterMaxCapacity = 0;
-    
-    
-    #endregion
     
     public static float[] GetRotation(int cnt, int row)
     {
@@ -150,6 +132,26 @@ public class GameData
 
     #endregion
 
+    // 게임 진행 정보
+    #region GameInfo
+
+    public static int StartSheepResource = 200;
+    public static int SheepYield = 20;
+    public static int StartWolfResource = 120;
+    
+    public static int StorageLevel = 0;
+    public static int[] StorageLvUpCost = { 0, 600, 2000 };
+    public static int TowerCapacity = 0;
+    public static int[] TowerMaxCapacity = {0, 3, 5, 7};
+    public static int SheepCapacity = 3;
+    public static int[] SheepMaxCapacity = {0, 6, 12, 20};
+    
+
+    public static int[] MonsterCapacity = new int[3];
+    public static int MonsterMaxCapacity = 0;
+    
+    #endregion
+    
     public static readonly Dictionary<string, string> Tower = new Dictionary<string, string>()
     {
         { "00", "Bud" }, { "01", "Bloom" }, { "02", "Blossom" },

@@ -19,18 +19,16 @@ public class Spawner : MonoBehaviour
     public void AddWolfCount(int value) { _wolfCount += value; }
     public void AddSnakeCount(int value) { _snakeCount += value; }
     
-    private int _spawnersCount = GameData.SpawnersCount;
-
+    private int _spawnersCount = GameData.SpawnersCnt;
+    
     #region tmp
-
-    private float _sheepSpawnTime = 3.0f;
     private float _roundTime = 10f;
     private float _lastSpawnTime = 0.0f;
-    private int _cnt = 0;
-    private int _sheepCnt = GameData.SpawnSheepCnt;
+    
 
     private Define.MonsterId[] _monsterList =
     {
+        Define.MonsterId.WolfPup,
         Define.MonsterId.WolfPup,
         Define.MonsterId.Lurker,
         Define.MonsterId.Snakelet,
@@ -42,7 +40,9 @@ public class Spawner : MonoBehaviour
     };
 
     private int _summon = 0;
-    private int _storageLevel;
+    private int _storageLevel = 0;
+    private bool _fenceRepair = false;
+    private int _sheepIncrease = 0;
     public int Summon
     {
         get => _summon;
@@ -56,16 +56,36 @@ public class Spawner : MonoBehaviour
         }
     }
     // 스킬 업그레이드 알림을 받아서 실행하기 위한 변수
+    public bool FenceRepair
+    {
+        // Round시작할 때 FenceRepair = true면 파괴된 울타리 고쳐짐
+        get => _fenceRepair;
+        set
+        {
+            _fenceRepair = value;
+            GameObject[] fences = GameObject.FindGameObjectsWithTag("Fence");
+            foreach (var fence in fences)
+            {
+                Stat fenceStat = fence.GetComponent<Stat>();
+                fenceStat.Hp = fenceStat.MaxHp;
+            }
+            // ReserveDespawnFence();
+            // ReserveSpawnFence(GameData.FenceName[_storageLevel], _storageLevel);
+        }
+    }
+    
     public int StorageLevel
     {
         get => _storageLevel;
         set
         {
             _storageLevel = value;
+            if (_storageLevel > 3) _storageLevel = 3;
             GameData.StorageLevel = _storageLevel;
+            
             if (_storageLevel != 1) ReserveDespawnFence();
             GameData.FenceBounds = new Bounds(GameData.FenceCenter[_storageLevel], GameData.FenceSize[_storageLevel]);
-            ReserveSpawnFence(GameData.FenceName[_storageLevel]);
+            ReserveSpawnFence(GameData.FenceName[_storageLevel], _storageLevel);
             GameObject[] monsters = GameObject.FindGameObjectsWithTag("Monster");
             foreach (var monster in monsters)
             {
@@ -78,11 +98,22 @@ public class Spawner : MonoBehaviour
             }
         }
     }
-    #endregion
 
+    public int SheepIncrease
+    {
+        get => _sheepIncrease;
+        set
+        {
+            _sheepIncrease = value;
+            ReserveSpawnSheep();
+            GameData.SheepCapacity += 1;
+        }
+    }
+    #endregion
+    
     public GameObject SpawnUnit { get; set; }
     public GameObject UIType { get; set; }
-
+    
     public Define.Way SpawnWay
     {
         get => _spawnWay;
@@ -107,18 +138,14 @@ public class Spawner : MonoBehaviour
     void Start()
     {
         StorageLevel = 1;
-        StartCoroutine(ReserveSpawnMonsterEx(Define.MonsterId.WolfPup));
-        
-        for (int i = 0; i < _sheepCnt; i++)
-        {
-            ReserveSpawnSheep();
-        }
+        // 시작하면 양 3마리 주어짐
+        for (int i = 0; i < GameData.SheepCapacity; i++) ReserveSpawnSheep();
     }
 
     void Update()
     {
         // Tower Test 용도
-        SummonMonster();
+        // SummonMonster();
         //
         // // Wolf Test 용도
         // SummonTower();
@@ -188,12 +215,12 @@ public class Spawner : MonoBehaviour
         // ReSharper disable once HeapView.BoxingAllocation
         string monsterName = monsterId.ToString();
 
-        for (int i = 0; i < _spawnersCount; i++)
+        for (int i = 0; i < _spawnersCount; i++) 
         {
             int cnt = _spawnMonsterCntArr[i];
             if (cnt == 0)
-                continue;
-            for (int j = 0; j < cnt; j++)
+                continue; 
+            for (int j = 0; j < cnt; j++) 
             {
                 Vector3 monsterSpawnPos = Managers.Game.GetRandomPointOnNavMesh(_spawnPosArr[i]);
                 GameObject obj = Managers.Game.Spawn(monsterId, Define.WorldObject.Monster, $"Monsters/{monsterName}");
@@ -209,7 +236,7 @@ public class Spawner : MonoBehaviour
     
     private void ReserveSpawnSheep()
     {
-        Vector3 spawnPos = GameData.center;
+        Vector3 spawnPos = GameData.Center;
         Vector3 monsterSpawnPos = Managers.Game.GetRandomPointOnNavMesh(spawnPos);
         GameObject obj = Managers.Game.Spawn(Define.WorldObject.Sheep, "Sheep");
         obj.transform.position = monsterSpawnPos;

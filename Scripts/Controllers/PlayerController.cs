@@ -13,7 +13,7 @@ public class PlayerController : BaseController
 {
     private int _mask = (1 << (int)Define.Layer.Ground);
     // private int _sheepMask = (1 << (int)Define.Layer.Sheep);
-    private int _resource = 0;
+    private int _resource;
     public UnityEvent onGoldChanged;
     
     public int Resource
@@ -29,9 +29,16 @@ public class PlayerController : BaseController
     protected override void Init()
     {
         base.Init();
-        WorldObjectType = Util.SheepOrWolf == "Sheep"
-            ? Define.WorldObject.PlayerSheep
-            : Define.WorldObject.PlayerWolf;
+        if (Util.SheepOrWolf == "Sheep")
+        {
+            WorldObjectType = Define.WorldObject.PlayerSheep;
+            Resource = GameData.StartSheepResource;
+        }
+        else
+        {
+            WorldObjectType = Define.WorldObject.PlayerWolf;
+            Resource = GameData.StartWolfResource;
+        }
         Managers.Input.MouseAction -= OnMouseEvent;
         Managers.Input.MouseAction += OnMouseEvent;
     }

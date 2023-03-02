@@ -13,7 +13,7 @@ public class MeteorController : MonoBehaviour
         _particleSystem = GetComponentInChildren<ParticleSystem>();
         _parentTransform = transform.parent.transform;
         _parentStat = _parentTransform.GetComponent<Stat>();
-        transform.position = GameData.center;
+        transform.position = GameData.Center;
     }
     
     private void OnParticleCollision(GameObject other)
