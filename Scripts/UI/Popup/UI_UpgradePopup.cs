@@ -113,6 +113,7 @@ public class UI_UpgradePopup : UI_Popup
                     {
                         // 오류 메시지 출력
                         // Debug.Log("울타리가 고장나 업그레이드 할 수 없습니다!");
+                        Debug.Log($"{GameData.CurrentFenceCnt}, {GameData.FenceCnt[GameData.StorageLevel]}");
                     }
                     else
                     {
@@ -120,7 +121,6 @@ public class UI_UpgradePopup : UI_Popup
                     }
                     break;
                 case "GoldIncrease":
-                    Debug.Log("s");
                     GameData.SheepYield *= 2;
                     break;
                 case "SheepHealth":

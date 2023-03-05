@@ -80,8 +80,9 @@ public class Spawner : MonoBehaviour
         set
         {
             _storageLevel = value;
-            if (_storageLevel > 3) _storageLevel = 3;
+            // if (_storageLevel > 3) _storageLevel = 3;
             GameData.StorageLevel = _storageLevel;
+            Debug.Log($"{GameData.StorageLevel}, {_storageLevel}");
             
             if (_storageLevel != 1) ReserveDespawnFence();
             GameData.FenceBounds = new Bounds(GameData.FenceCenter[_storageLevel], GameData.FenceSize[_storageLevel]);
@@ -259,7 +260,12 @@ public class Spawner : MonoBehaviour
     private void ReserveDespawnFence()
     {
         GameObject[] fences = GameObject.FindGameObjectsWithTag("Fence");
-        foreach (var fence in fences) Managers.Resource.Destroy(fence);
+        for (int i = 0; i < fences.Length; i++)
+        {
+            GameData.CurrentFenceCnt -= 1;
+            Managers.Resource.Destroy(fences[i]);
+        }
+        // foreach (var fence in fences) Managers.Resource.Destroy(fence);
     }
 
     private void SummonMonster()
