@@ -80,9 +80,8 @@ public class Spawner : MonoBehaviour
         set
         {
             _storageLevel = value;
-            // if (_storageLevel > 3) _storageLevel = 3;
+            if (_storageLevel > 3) _storageLevel = 3;
             GameData.StorageLevel = _storageLevel;
-            Debug.Log($"{GameData.StorageLevel}, {_storageLevel}");
             
             if (_storageLevel != 1) ReserveDespawnFence();
             GameData.FenceBounds = new Bounds(GameData.FenceCenter[_storageLevel], GameData.FenceSize[_storageLevel]);
@@ -93,8 +92,9 @@ public class Spawner : MonoBehaviour
                 // 현재 위치에서 가장 가까운 울타리 밖으로 나감
                 if (GameData.FenceBounds.Contains(monster.transform.position))
                 {
-                    Vector3 tmpPos = GameData.FenceBounds.ClosestPoint(monster.transform.position);
-                    monster.transform.position = tmpPos;
+                    Debug.Log(GameData.FenceBounds.ClosestPoint(monster.transform.position));
+                    // Vector3 tmpPos = GameData.FenceBounds.ClosestPoint(monster.transform.position);
+                    monster.transform.position = new Vector3(10, 6, 10);
                 }
             }
         }
@@ -141,6 +141,7 @@ public class Spawner : MonoBehaviour
         StorageLevel = 1;
         // 시작하면 양 3마리 주어짐
         for (int i = 0; i < GameData.SheepCapacity; i++) ReserveSpawnSheep();
+        StartCoroutine(ReserveSpawnMonster(Define.MonsterId.Wolf, Define.Way.North));
     }
 
     void Update()

@@ -37,39 +37,41 @@ public class MonsterController : BaseController
 
     protected override void UpdateIdle()
     {
-        if (_lockTarget == null || !GameData.FenceBounds.Contains(transform.position))
-        {
-            string[] tags = { "Sheep", "Fence", "Tower" };
-            SetTarget(tags);
-            State = Define.State.Moving;
-        }
-
         if (GameData.FenceBounds.Contains(transform.position))
         {
-            State = Define.State.Moving;
+            string[] tags = { "Sheep", "Tower" };
+            SetTarget(tags);
         }
+        else
+        {
+            string[] tags = { "Tower", "Fence" };
+            SetTarget(tags);
+        }
+
+        if (_lockTarget == null) State = Define.State.Idle;
+        State = Define.State.Moving;
     }
 
     protected override void UpdateMoving()
     {
         // Targeting
-        if (Time.time > _lastTargetingTime + _targetingTime)
+        if (_lockTarget == null && Time.time > _lastTargetingTime + _targetingTime)
         {
             _lastTargetingTime = Time.time;
-        
-            NavMeshPath navMeshPath = new NavMeshPath();
-
+            // 이미 Fence 내부에 있으면
             if (GameData.FenceBounds.Contains(transform.position))
             {
-                string[] tags = { "Sheep", "Tower" };
-                SetTarget(tags);
+                SetTarget(new [] { "Sheep", "Tower" });
             }
-            // Fence 안으로 들어갈 수 있는지?
-            else if (_navMesh.CalculatePath(GameData.Center, navMeshPath) 
-                     && navMeshPath.status == NavMeshPathStatus.PathComplete)
+            else
             {
-                string[] tags = { "Sheep", "Tower" };
-                SetTarget(tags);
+                // Fence 안으로 들어갈 수 있는지?
+                if (GetPathLength() < GameData.FenceSize[GameData.StorageLevel].z)
+                {
+                    SetTarget(new[] { "Sheep", "Tower" });
+                }
+                // Fence 안으로 들어갈 수 없으면
+                else SetTarget(new [] { "Fence", "Tower" });
             }
         }
         
@@ -126,7 +128,7 @@ public class MonsterController : BaseController
         StartCoroutine(Despawn(gameObject, 2.0f));
     }
     
-    protected void SetTarget(string[] tags)
+    protected virtual void SetTarget(string[] tags)
     {
         if (GetComponent<Stat>().Aggro) return;
         float closestDist = 5000.0f;
@@ -144,9 +146,40 @@ public class MonsterController : BaseController
                     _lockTarget = tagged;
                 }
             }
-        }
+        } 
     }
 
+    protected virtual float GetPathLength()
+    {
+        NavMeshPath path = new NavMeshPath();
+        _navMesh.CalculatePath(GameData.Center, path);
+
+        Debug.Log(path.corners.Length);
+        Vector3[] corners = new Vector3[path.corners.Length + 2];
+        corners[0] = transform.position;
+        corners[corners.Length - 1] = GameData.Center;
+        for (int i = 0; i < path.corners.Length; i++)
+        {
+            corners[i + 1] = path.corners[i];
+        }
+
+        float pathLength = 0f;
+        for (int i = 0; i < corners.Length - 1; i++) 
+        {
+            pathLength += Vector3.Distance(corners[i], corners[i + 1]);
+        }
+
+        return pathLength;
+    }
+
+    protected virtual bool IsReachable(Vector3 center)
+    {
+        NavMeshHit hit;
+        if (NavMesh.SamplePosition(center, out hit, 500f, NavMesh.AllAreas)) Debug.Log("s");
+        else Debug.Log("k");
+        return NavMesh.SamplePosition(center, out hit, 500f, NavMesh.AllAreas);
+    }
+    
     // Animation Event
     protected virtual void OnHitEvent()
     {

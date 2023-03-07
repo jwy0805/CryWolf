@@ -150,7 +150,6 @@ public class GameManager
     public Vector3 GetRandomPointOnNavMesh(Vector3 spawnerPos, float distance = 3.0f)
     {
         bool x;
-
         do
         {
             Vector3 randPosAroundSpawner = Random.insideUnitSphere * distance + spawnerPos;
