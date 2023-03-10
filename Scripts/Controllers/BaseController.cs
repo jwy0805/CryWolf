@@ -18,6 +18,7 @@ public abstract class BaseController : MonoBehaviour, ISkillObserver
     protected string _newSkill;
     protected readonly int _attackSpeed = Animator.StringToHash("AttackSpeed");
     protected virtual string NewSkill { get; set; }
+    public Define.Way Way { get; set; }
 
     public Define.WorldObject WorldObjectType { get; protected set; } = Define.WorldObject.Unknown;
     

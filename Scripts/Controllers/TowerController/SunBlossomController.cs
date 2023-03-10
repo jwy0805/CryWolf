@@ -72,6 +72,8 @@ public class SunBlossomController : TowerController
 
     private void OnSkillEvent()
     {
+        _stat.Mp = 0;
+        
         float height = 6f;
         Vector3 pos = transform.position;
         Vector3 pos1 = new Vector3(pos.x, pos.y - height, pos.z);
@@ -101,6 +103,7 @@ public class SunBlossomController : TowerController
         }
 
         int lenMon = monsters.Count;
+        if (lenMon == 0) return;
         int ran = UnityEngine.Random.Range(0, lenMon);
         if (monsters[ran].TryGetComponent(out Stat monsterStat) && _slow)
         {

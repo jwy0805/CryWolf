@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -9,6 +10,7 @@ public class MonsterController : BaseController
     protected string[] _tags = { "Sheep", "Tower" };
     protected GameObject[] _tagged;
     protected NavMeshAgent _navMesh;
+    protected PlayerController _playerController;
 
     protected float _targetingTime = 1.0f;
     protected float _lastTargetingTime = 0.0f;
@@ -33,11 +35,18 @@ public class MonsterController : BaseController
         _stat.Defense = 0;
         _stat.MoveSpeed = 0;
         _stat.AttackRange = 0;
+        
+        GameObject[] gameObjects = GameObject.FindGameObjectsWithTag("Player");
+        foreach (var go in gameObjects)
+        {
+            if (Enum.IsDefined(typeof(Define.WolfCharacter), go.name)) 
+                _playerController = go.GetComponent<PlayerController>();
+        }    
     }
 
     protected override void UpdateIdle()
     {
-        if (GameData.FenceBounds.Contains(transform.position))
+        if (GameData.FenceBounds.Contains(transform.position) || IsReachable(GameData.Center))
         {
             string[] tags = { "Sheep", "Tower" };
             SetTarget(tags);
@@ -55,7 +64,7 @@ public class MonsterController : BaseController
     protected override void UpdateMoving()
     {
         // Targeting
-        if (_lockTarget == null && Time.time > _lastTargetingTime + _targetingTime)
+        if (Time.time > _lastTargetingTime + _targetingTime)
         {
             _lastTargetingTime = Time.time;
             // 이미 Fence 내부에 있으면
@@ -66,7 +75,7 @@ public class MonsterController : BaseController
             else
             {
                 // Fence 안으로 들어갈 수 있는지?
-                if (GetPathLength() < GameData.FenceSize[GameData.StorageLevel].z)
+                if (IsReachable(GameData.Center))
                 {
                     SetTarget(new[] { "Sheep", "Tower" });
                 }
@@ -149,35 +158,29 @@ public class MonsterController : BaseController
         } 
     }
 
-    protected virtual float GetPathLength()
+    protected virtual bool IsReachable(Vector3 pos)
     {
         NavMeshPath path = new NavMeshPath();
-        _navMesh.CalculatePath(GameData.Center, path);
-
-        Debug.Log(path.corners.Length);
-        Vector3[] corners = new Vector3[path.corners.Length + 2];
-        corners[0] = transform.position;
-        corners[corners.Length - 1] = GameData.Center;
-        for (int i = 0; i < path.corners.Length; i++)
+        _navMesh.CalculatePath(pos, path);
+        bool contains = true;
+        Bounds bounds = new Bounds();
+        switch (Way)
         {
-            corners[i + 1] = path.corners[i];
+            case Define.Way.West:
+                bounds = GameData.WestBounds;
+                break;
+            case Define.Way.North:
+                bounds = GameData.NorthBounds;
+                break;
+            case Define.Way.East:
+                bounds = GameData.EastBounds;
+                break;
         }
-
-        float pathLength = 0f;
-        for (int i = 0; i < corners.Length - 1; i++) 
+        for (int i = 0; i < path.corners.Length && contains; i++)
         {
-            pathLength += Vector3.Distance(corners[i], corners[i + 1]);
+            if (!bounds.Contains(path.corners[i])) contains = false;
         }
-
-        return pathLength;
-    }
-
-    protected virtual bool IsReachable(Vector3 center)
-    {
-        NavMeshHit hit;
-        if (NavMesh.SamplePosition(center, out hit, 500f, NavMesh.AllAreas)) Debug.Log("s");
-        else Debug.Log("k");
-        return NavMesh.SamplePosition(center, out hit, 500f, NavMesh.AllAreas);
+        return path.status == NavMeshPathStatus.PathComplete && contains;
     }
     
     // Animation Event
@@ -186,7 +189,8 @@ public class MonsterController : BaseController
         if (_lockTarget == null) return;
         Stat targetStat = _lockTarget.GetComponent<Stat>();
         targetStat.OnAttakced(_stat);
-        
+
+        _playerController.Resource += 6;
     }
 
     protected virtual void OnEndEvent()

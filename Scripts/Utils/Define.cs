@@ -69,6 +69,12 @@ public class Define
         GoldIncrease,
         SheepHealth,
         SheepIncrease,
+        
+        MonsterCapacity,
+        DnaIncrease,
+        RestoreCave,
+        CardUpgrade,
+        BlackMagicCard,
     }
     
     public enum Skill
@@ -273,6 +279,12 @@ public class Define
         HermitAggro,
         HermitReflection,
         HermitFaint,
+        
+        MonsterCapacity,
+        DnaIncrease,
+        RestoreCave,
+        CardUpgrade,
+        BlackMagicCard,
     }
     
     public enum State

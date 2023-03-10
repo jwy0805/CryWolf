@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using TMPro;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -38,8 +39,7 @@ public class UI_GameWolf : UI_Scene
         set => _dictSkillBtn = value;
     }
     public Dictionary<string, GameObject> DictTxt => _dictTxt;
-
-
+    
     #endregion
 
     public GameObject SelectedObj
@@ -53,7 +53,7 @@ public class UI_GameWolf : UI_Scene
             }
             
             _selectedObj = value;
-            // Debug.Log(_selectedObj.name);
+            Debug.Log(_selectedObj.name);
         }
     }
 
@@ -116,7 +116,8 @@ public class UI_GameWolf : UI_Scene
         set
         {
             _capacityButton = value;
-            _dictSkillPanel["SheepSkillPanel"].SetActive(_capacityButton);
+            _dictSkillPanel["DnaSkillPanel"].SetActive(_capacityButton);
+            if (OnSelectedPortrait != null) PortraitOff(OnSelectedPortrait);
         }
     }
     
@@ -149,6 +150,15 @@ public class UI_GameWolf : UI_Scene
         ShellButton,
         SpikeButton,
         HermitButton,
+    }
+
+    enum BaseSkillButtons
+    {
+        MonsterCapacityButton,
+        DnaIncreaseButton,
+        RestoreCaveButton,
+        CardUpgradeButton,
+        BlackMagicCardButton,
     }
 
     enum SkillButtons
@@ -245,6 +255,12 @@ public class UI_GameWolf : UI_Scene
         HermitAggroButton,
         HermitReflectionButton,
         HermitFaintButton,
+        
+        MonsterCapacityButton,
+        DnaIncreaseButton,
+        RestoreCaveButton,
+        CardUpgradeButton,
+        BlackMagicCardButton,
     }
 
     enum SkillPanels
@@ -358,7 +374,7 @@ public class UI_GameWolf : UI_Scene
                 dict.Add(img.name, img);
             }
         }
-        else if (typeof(T) == typeof(Text))
+        else if (typeof(T) == typeof(TextMeshProUGUI))
         {
             for (int i = 0; i < _objects[typeof(T)].Length; i++)
             {
@@ -472,9 +488,11 @@ public class UI_GameWolf : UI_Scene
     {
         foreach (var item in _dictSkillBtn)
         {
-            SetAlpha(item.Value, 0.6f);
+            SetAlpha(item.Value, Enum.IsDefined(typeof(BaseSkillButtons), item.Key) ? 1.0f : 0.6f);
             SetObjectSize(item.Value.transform.parent.parent.gameObject, 0.22f);
         }
+        SetAlpha(_dictSkillBtn["BlackMagicCardButton"], 1.0f);
+        SetObjectSize(_dictSkillBtn["BlackMagicCardButton"].transform.parent.parent.gameObject, 0.45f);
 
         foreach (var item in _dictSkillPanel)
         {

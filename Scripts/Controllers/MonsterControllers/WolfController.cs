@@ -58,6 +58,9 @@ public class WolfController : MonsterController
         if (_lockTarget == null) return;
         Stat targetStat = _lockTarget.GetComponent<Stat>();
         targetStat.OnAttakced(_stat);
+        
+        _playerController.Resource += 6;
+        
         if (_drain)
         {
             int recoverHp = (int)((_stat.Attack - targetStat.Defense) * _drainParam);

@@ -82,10 +82,18 @@ public class Spawner : MonoBehaviour
             _storageLevel = value;
             if (_storageLevel > 3) _storageLevel = 3;
             GameData.StorageLevel = _storageLevel;
-            
+            // 울타리 새로 생성
             if (_storageLevel != 1) ReserveDespawnFence();
             GameData.FenceBounds = new Bounds(GameData.FenceCenter[_storageLevel], GameData.FenceSize[_storageLevel]);
             ReserveSpawnFence(GameData.FenceName[_storageLevel], _storageLevel);
+            // Way Bounds 설정
+            GameData.NorthBounds = new Bounds(new Vector3(0f, 5f, 24f),
+                new Vector3(GameData.FenceSize[_storageLevel].x, 6f, 50f));
+            GameData.WestBounds = new Bounds(new Vector3(-24f, 5f, GameData.FenceCenter[_storageLevel].z),
+                new Vector3(50f, 6f, GameData.FenceSize[_storageLevel].z));
+            GameData.EastBounds = new Bounds(new Vector3(24f, 5f, GameData.FenceCenter[_storageLevel].z),
+                new Vector3(50f, 6f, GameData.FenceSize[_storageLevel].z));
+            // 몬스터 밖으로 밀어냄
             GameObject[] monsters = GameObject.FindGameObjectsWithTag("Monster");
             foreach (var monster in monsters)
             {
@@ -175,6 +183,8 @@ public class Spawner : MonoBehaviour
 
         GameObject obj = Managers.Game.Spawn(id, Define.WorldObject.Monster, $"Monsters/{monsterName}");
         obj.transform.position = monsterSpawnPos;
+        BaseController baseController = obj.GetComponent<BaseController>();
+        baseController.Way = way;
         yield break;
     }
     
@@ -203,7 +213,8 @@ public class Spawner : MonoBehaviour
 
         GameObject obj = Managers.Game.Spawn(id, Define.WorldObject.Tower, $"Towers/{towerName}");
         obj.transform.position = towerSpawnPos;
-        
+        BaseController baseController = obj.GetComponent<BaseController>();
+        baseController.Way = way;
         yield break;
     }
     

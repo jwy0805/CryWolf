@@ -24,26 +24,26 @@ public class GameData
     #region FenceData
 
     public static string[] FenceName = { "", "FenceLv1", "FenceLv2", "FenceLv3" };
-    public static int[] FenceCnt = { 0, 18, 34, 42 };
+    public static int[] FenceCnt = { 0, 18, 22, 28 };
     public static int CurrentFenceCnt = 0;
-    public static int[] FenceRow = { 0, 4, 7, 9 };
+    public static int[] FenceRow = { 0, 4, 5, 6 };
 
     public static Vector3[] FenceStartPos =
     {
         new Vector3(0, 0, 0), new Vector3(-4, 6.5f, -7),
-        new Vector3(-7, 6, -9), new Vector3(-9, 6, -10)
+        new Vector3(-5, 5.8f, -7), new Vector3(-6, 5.8f, -8)
     };
 
     public static Vector3[] FenceCenter =
     {
         new Vector3(0, 0, 0), new Vector3(0, 6, -2),
-        new Vector3(0, 6, 1), new Vector3(0, 6, 2)
+        new Vector3(0, 6, -1), new Vector3(0, 6, 0)
     };
 
     public static Vector3[] FenceSize =
     {
         new Vector3(0, 0, 0), new Vector3(8, 6, 10),
-        new Vector3(12, 6, 20), new Vector3(18, 6, 24)
+        new Vector3(10, 6, 12), new Vector3(12, 6, 16)
     };
 
     public static Bounds FenceBounds;
@@ -81,6 +81,10 @@ public class GameData
             new Vector3(2, 10, FenceSize[3].z / 2)),
     };
 
+    public static Bounds NorthBounds;
+    public static Bounds WestBounds;
+    public static Bounds EastBounds;
+    
     public static Bounds[] SheepBounds =
     {
         new Bounds(),
