@@ -184,6 +184,20 @@ public class GameData
     {
         { Define.Skill.Bloom3Combo, 120 }
     };
+
+    public static readonly Dictionary<Define.UnitId, int> UnitUpgradeCost = new Dictionary<Define.UnitId, int>()
+    {
+        { Define.UnitId.Bud, 160 }, { Define.UnitId.Bloom, 430 },
+        { Define.UnitId.PracticeDummy, 200 }, { Define.UnitId.TargetDummy, 520 },
+        { Define.UnitId.SunBlossom, 250 }, { Define.UnitId.SunflowerFairy, 630 },
+        { Define.UnitId.MothLuna, 220 }, { Define.UnitId.MothMoon, 500 },
+        { Define.UnitId.Soul, 180 }, { Define.UnitId.Haunt, 640 },
+        { Define.UnitId.WolfPup, 150 }, { Define.UnitId.Wolf, 700 },
+        { Define.UnitId.Lurker, 240 }, { Define.UnitId.Creeper, 480 },
+        { Define.UnitId.Snakelet, 300 }, { Define.UnitId.Snake, 660 },
+        { Define.UnitId.MosquitoBug, 180 }, { Define.UnitId.MosquitoPester, 450 },
+        { Define.UnitId.Shell, 250 }, { Define.UnitId.Spike, 650 },
+    };
     public static readonly Dictionary<string, string[]> SkillTree = new Dictionary<string, string[]>()
     {
         { "BloomAttack", new[] { "free" } },

@@ -11,18 +11,19 @@ public class GameScene : BaseScene
         
         SceneType = Define.Scene.Game;
 
-        Util.SheepOrWolf = "Wolf";
-        switch (Util.SheepOrWolf)
-        {
-            case "Sheep":
-                Managers.UI.ShowSceneUI<UI_GameSheep>();
-                break;
-            case "Wolf":
-                Managers.UI.ShowSceneUI<UI_GameWolf>();
-                break;
-            default:
-                return;
-        }
+        Util.SheepOrWolf = "Sheep";
+        // switch (Util.SheepOrWolf)
+        // {
+        //     case "Sheep":
+        //         Managers.UI.ShowSceneUI<UI_GameSheep>();
+        //         break;
+        //     case "Wolf":
+        //         Managers.UI.ShowSceneUI<UI_GameWolf>();
+        //         break;
+        //     default:
+        //         return;
+        // }
+        Managers.UI.ShowSceneUI<UI_Game>();
         
         InitObjects(Util.SheepOrWolf);
     }

@@ -340,6 +340,40 @@ public class Define
         Inactive,
         Active,
     }
+
+    public enum UnitId
+    {
+        Bud = 101,
+        Bloom = 102,
+        Blossom = 103,
+        PracticeDummy = 111,
+        TargetDummy = 112,
+        TrainingDummy = 113,
+        SunBlossom = 121,
+        SunflowerFairy = 122,
+        SunfloraPixie = 123,
+        MothLuna = 131,
+        MothMoon = 132,
+        MothCelestial = 133,
+        Soul = 141,
+        Haunt = 142,
+        SoulMage = 143,
+        WolfPup = 150,
+        Wolf = 151,
+        WereWolf = 152,
+        Lurker = 160,
+        Creeper = 161,
+        Horror = 162,
+        Snakelet = 170,
+        Snake = 171,
+        SnakeNaga = 172,
+        MosquitoBug = 180,
+        MosquitoPester = 181,
+        MosquitoStinger = 182,
+        Shell = 190,
+        Spike = 191,
+        Hermit = 192,
+    }
     
     public enum WorldObject
     {
