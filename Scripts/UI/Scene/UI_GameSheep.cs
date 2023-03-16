@@ -609,6 +609,7 @@ public class UI_GameSheep : UI_Scene
         if (OnSelectedPortrait != null)
         {
             int level = Int32.Parse(GetLevelFromUIObject(OnSelectedPortrait, "Button"));
+            Debug.Log(level);
             _isActive = OnSelectedPortrait.GetComponent<UI_Portrait>();
         
             int[] needGold = { 400, 450, 500 };

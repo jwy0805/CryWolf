@@ -1,7 +1,5 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -24,21 +22,23 @@ public class UI_Game : UI_Scene
     
     #region UIDictionaray
     
-    private Dictionary<string, GameObject> _dictCommonBtn;
-    private Dictionary<string, GameObject> _dictCommonImg;
-    private Dictionary<string, GameObject> _dictCommonTxt;
+    private Dictionary<string, GameObject> _dictCommonBtn = new();
+    private Dictionary<string, GameObject> _dictCommonImg = new();
+    private Dictionary<string, GameObject> _dictCommonTxt = new();
     
-    private Dictionary<string, GameObject> _dictBtn;
-    private Dictionary<string, GameObject> _dictImg;
-    private Dictionary<string, GameObject> _dictTxt;
-    private Dictionary<string, GameObject> _dictSkillPanel;
-    private Dictionary<string, GameObject> _dictSkillBtn;
-    private Dictionary<string, GameObject> _dictLine;
-    private Dictionary<string, GameObject> _dictPortrait;
+    // 활성화될 오브젝트
+    private Dictionary<string, GameObject> _dictBtn = new();
+    private Dictionary<string, GameObject> _dictImg = new();
+    private Dictionary<string, GameObject> _dictTxt = new();
+    private Dictionary<string, GameObject> _dictSkillPanel = new();
+    private Dictionary<string, GameObject> _dictSkillBtn = new();
+    private Dictionary<string, GameObject> _dictLine = new();
+    private Dictionary<string, GameObject> _dictPortrait = new();
 
     public Dictionary<string, GameObject> DictSkillBtn => _dictSkillBtn;
     public Dictionary<string, GameObject> DictTxt => _dictTxt;
-    
+    public Dictionary<string, GameObject> DictCommonTxt => _dictCommonTxt;
+
     #endregion
     
     #region Properties
@@ -141,10 +141,35 @@ public class UI_Game : UI_Scene
                 _player = go.GetComponent<PlayerController>();
             }
         }
+        
+        BindObjects();
+        SetButtonEvents();
+        SetUI();
+        SetTexts();
+        
+        _dgo = gameObject.GetComponent<DeliverGameObject>();
+        
+    }
+
+    protected void DeactivateUI(Dictionary<string, GameObject> dict)
+    {
+        foreach (var item in dict)
+        {
+            item.Value.gameObject.SetActive(false);
+        }
     }
     
     protected override void BindObjects()
     {
+        // 비활성화될 오브젝트
+        Dictionary<string, GameObject> dictBtn = new Dictionary<string, GameObject>();
+        Dictionary<string, GameObject> dictImg = new Dictionary<string, GameObject>();
+        Dictionary<string, GameObject> dictTxt = new Dictionary<string, GameObject>();
+        Dictionary<string, GameObject> dictSkillPanel = new Dictionary<string, GameObject>();
+        Dictionary<string, GameObject> dictSkillButton = new Dictionary<string, GameObject>();
+        Dictionary<string, GameObject> dictLine = new Dictionary<string, GameObject>();
+        Dictionary<string, GameObject> dictPortrait = new Dictionary<string, GameObject>();
+    
         BindData<Button>(typeof(CommonButtons), _dictCommonBtn);
         BindData<Image>(typeof(CommonImages), _dictCommonImg);
         BindData<TextMeshProUGUI>(typeof(CommonTexts), _dictCommonTxt);
@@ -153,19 +178,41 @@ public class UI_Game : UI_Scene
         {
             BindData<Button>(typeof(SheepButtons), _dictBtn);
             BindData<Button>(typeof(SheepPortraits), _dictPortrait);
+            BindData<Image>(typeof(SheepImages), _dictImg);
             BindData<Image>(typeof(SheepSkillPanels), _dictSkillPanel);
             BindData<Button>(typeof(SheepSkillButtons), _dictSkillBtn);
             BindData<Image>(typeof(SheepLines), _dictLine);
+            
+            BindData<Button>(typeof(WolfButtons), dictBtn);
+            BindData<Button>(typeof(WolfPortraits), dictPortrait);
+            BindData<Image>(typeof(WolfImages), dictImg);
+            BindData<Image>(typeof(WolfSkillPanels), dictSkillPanel);
+            BindData<Button>(typeof(WolfSkillButtons), dictSkillButton);
+            BindData<Image>(typeof(WolfLines), dictLine);
         }
         else
         {
             BindData<Button>(typeof(WolfButtons), _dictBtn);
             BindData<Button>(typeof(WolfPortraits), _dictPortrait);
+            BindData<Image>(typeof(WolfImages), _dictImg);
             BindData<Image>(typeof(WolfSkillPanels), _dictSkillPanel);
             BindData<Button>(typeof(WolfSkillButtons), _dictSkillBtn);
             BindData<Image>(typeof(WolfLines), _dictLine);
+            
+            BindData<Button>(typeof(SheepButtons), dictBtn);
+            BindData<Button>(typeof(SheepPortraits), dictPortrait);
+            BindData<Image>(typeof(SheepImages), dictImg);
+            BindData<Image>(typeof(SheepSkillPanels), dictSkillPanel);
+            BindData<Button>(typeof(SheepSkillButtons), dictSkillButton);
+            BindData<Image>(typeof(SheepLines), dictLine);
         }
         
+        DeactivateUI(dictBtn);
+        DeactivateUI(dictPortrait);
+        DeactivateUI(dictImg);
+        DeactivateUI(dictSkillPanel);
+        DeactivateUI(dictSkillButton);
+        DeactivateUI(dictLine);
     }
 
     private void BindData<T>(Type enumType, Dictionary<string, GameObject> dict) where T : Object
@@ -212,9 +259,9 @@ public class UI_Game : UI_Scene
             item.Value.GetComponent<Button>().onClick.AddListener(OnSkillClicked);
         }
         
-        _dictBtn["CapacityButton"].BindEvent(OnCapacityClicked);
-        _dictBtn["WestSpawnButton"].BindEvent(OnWestSpawnClicked);
-        _dictBtn["NorthSpawnButton"].BindEvent(OnNorthSpawnClicked);
+        _dictCommonBtn["CapacityButton"].BindEvent(OnCapacityClicked);
+        _dictCommonBtn["WestSpawnButton"].BindEvent(OnWestSpawnClicked);
+        _dictCommonBtn["NorthSpawnButton"].BindEvent(OnNorthSpawnClicked);
 
         if (_side == "Sheep")
         {
@@ -228,7 +275,7 @@ public class UI_Game : UI_Scene
     
     private void SetUpgradeButton(GameObject go)
     {
-        string level = GetLevelFromUIObject(go, "Button");
+        int level = GetLevelFromUIObject(go, "Button");
         Transform tf = _side == "Sheep" ? _dictBtn["TulipButton"].transform : _dictBtn["DnaButton"].transform;
         Button btn = _side == "Sheep" ? 
             _dictBtn["TulipButton"].GetComponent<Button>() : _dictBtn["DnaButton"].GetComponent<Button>();
@@ -241,7 +288,7 @@ public class UI_Game : UI_Scene
         
         switch (level)
         {
-            case "0":
+            case 1:
                 _isActive = go.GetComponent<UI_Portrait>();
                 
                 if (_isActive.IsActive == false)
@@ -254,11 +301,11 @@ public class UI_Game : UI_Scene
                 }
                 break;
             
-            case "1":
+            case 2:
                 tf.GetChild(1).gameObject.SetActive(true);
                 break;
             
-            case "2":
+            case 3:
                 tf.GetChild(2).gameObject.SetActive(true);
                 btn.interactable = false;
                 break;
@@ -267,7 +314,7 @@ public class UI_Game : UI_Scene
     
     private void SetTexts()
     {
-        _dictTxt["GoldText"].GetComponent<TextMeshProUGUI>().text = "0";
+        _dictCommonTxt["ResourceText"].GetComponent<TextMeshProUGUI>().text = "0";
     }
     
     protected override void SetUI()
@@ -281,36 +328,66 @@ public class UI_Game : UI_Scene
             _isActive.IsActive = false;
         }
 
-        SetObjectSize(_dictImg["UnitFrame"], 1.0f);
-        _dictImg["UnitFrame"].SetActive(false);
-        SetObjectSize(_dictBtn["TulipButton"], 0.95f);
-        _dictBtn["TulipButton"].transform.GetChild(0).gameObject.SetActive(false);
-        _dictBtn["TulipButton"].transform.GetChild(1).gameObject.SetActive(true);
-        _dictBtn["TulipButton"].transform.GetChild(2).gameObject.SetActive(false);
-
-        _dictImg["SpawnButtonPanel"].SetActive(false);
+        SetObjectSize(_dictCommonImg["UnitFrame"], 1.0f);
+        _dictCommonImg["UnitFrame"].SetActive(false);
+        if (_side == "Sheep")
+        {
+            SetObjectSize(_dictBtn["TulipButton"], 0.95f);
+            _dictBtn["TulipButton"].transform.GetChild(0).gameObject.SetActive(false);
+            _dictBtn["TulipButton"].transform.GetChild(1).gameObject.SetActive(true);
+            _dictBtn["TulipButton"].transform.GetChild(2).gameObject.SetActive(false);
+            
+        }
+        else
+        {
+            SetObjectSize(_dictBtn["DnaButton"], 0.95f);
+            _dictBtn["DnaButton"].transform.GetChild(0).gameObject.SetActive(false);
+            _dictBtn["DnaButton"].transform.GetChild(1).gameObject.SetActive(true);
+            _dictBtn["DnaButton"].transform.GetChild(2).gameObject.SetActive(false);
+        }
+        _dictCommonImg["SpawnButtonPanel"].SetActive(false);
         
         SetButtons();
     }
 
     private void SetButtons()
     {
-        // 0단계 초상화만 패널에 뜨고 나머지는 비활성화
-        foreach (var item in GameData.Tower)
+        if (_side == "Sheep")
         {
-            string level = item.Key.Substring(1, 1);
+            _dictBtn["TulipButton"].transform.GetChild(0).gameObject.SetActive(false);
+            // 0단계 초상화만 패널에 뜨고 나머지는 비활성화
+            foreach (var item in GameData.Tower)
+            {
+                string level = item.Key.Substring(1, 1);
             
-            if (level == "0")
-            {
-                _dictPortrait[$"{item.Value}Button"].GetComponent<UI_Portrait>().IsActive = true;
-            }
-            else
-            {
-                _dictPortrait[$"{item.Value}Button"].SetActive(false);
+                if (level == "0")
+                {
+                    _dictPortrait[$"{item.Value}Button"].GetComponent<UI_Portrait>().IsActive = true;
+                }
+                else
+                {
+                    _dictPortrait[$"{item.Value}Button"].SetActive(false);
+                }
             }
         }
-        
-        _dictBtn["TulipButton"].transform.GetChild(0).gameObject.SetActive(false);
+        else
+        {
+            _dictBtn["DnaButton"].transform.GetChild(0).gameObject.SetActive(false);
+            // 0단계 초상화만 패널에 뜨고 나머지는 비활성화
+            foreach (var item in GameData.Monster)
+            {
+                string level = item.Key.Substring(1, 1);
+            
+                if (level == "0")
+                {
+                    _dictPortrait[$"{item.Value}Button"].GetComponent<UI_Portrait>().IsActive = true;
+                }
+                else
+                {
+                    _dictPortrait[$"{item.Value}Button"].SetActive(false);
+                }
+            }
+        }
     }
     
     private void SetSkillPanel()
@@ -321,6 +398,12 @@ public class UI_Game : UI_Scene
             SetObjectSize(item.Value.transform.parent.parent.gameObject, 0.22f);
         }
 
+        if (_side == "Wolf")
+        {
+            SetAlpha(_dictSkillBtn["BlackMagicCardButton"], 1.0f);
+            SetObjectSize(_dictSkillBtn["BlackMagicCardButton"].transform.parent.parent.gameObject, 0.45f);
+        }
+        
         foreach (var item in _dictSkillPanel)
         {
             item.Value.SetActive(false);
@@ -367,11 +450,10 @@ public class UI_Game : UI_Scene
         }
     }
     
-    private string GetLevelFromUIObject(GameObject go, string oldValue)
+    private int GetLevelFromUIObject(GameObject go, string oldValue)
     {
-        string towerName = go.name.Replace(oldValue, "");
-        string num = GameData.Tower.FirstOrDefault(item => item.Value == towerName).Key;
-        string level = num.Substring(1, 1);
+        string unitName = go.name.Replace(oldValue, "");
+        int level = (int)Enum.Parse(typeof(Define.UnitId), unitName) % 10;
 
         return level;
     }
@@ -381,12 +463,12 @@ public class UI_Game : UI_Scene
         CapacityButton = false;
         string unitName = portraits.name.Replace("Button", "");
         var parent = portraits.transform.parent;
-        RectTransform rectTransform = _dictImg["UnitFrame"].GetComponent<RectTransform>();
+        RectTransform rectTransform = _dictCommonImg["UnitFrame"].GetComponent<RectTransform>();
 
         _dictSkillPanel[$"{unitName}SkillPanel"].SetActive(true);
         
-        _dictImg["UnitFrame"].transform.SetParent(parent, false);
-        _dictImg["UnitFrame"].SetActive(true);
+        _dictCommonImg["UnitFrame"].transform.SetParent(parent, false);
+        _dictCommonImg["UnitFrame"].SetActive(true);
         rectTransform.sizeDelta = portraits.GetComponent<RectTransform>().sizeDelta;
     }
 
@@ -401,7 +483,7 @@ public class UI_Game : UI_Scene
     private void OnPortraitClicked()
     {
         SelectedObj = EventSystem.current.currentSelectedGameObject;
-        _dictImg["SpawnButtonPanel"].SetActive(true);
+        _dictCommonImg["SpawnButtonPanel"].SetActive(true);
         
         if (OnSelectedPortrait != null)
         {
@@ -433,44 +515,30 @@ public class UI_Game : UI_Scene
 
     private void OnUpgradeClicked(PointerEventData data)
     {
-        if (OnSelectedPortrait != null)
+        if (OnSelectedPortrait == null) return;
+        int level = GetLevelFromUIObject(OnSelectedPortrait, "Button");
+        string unitName = OnSelectedPortrait.name.Replace("Button", ""); 
+        _isActive = OnSelectedPortrait.GetComponent<UI_Portrait>();
+
+        int cost = GameData.UnitUpgradeCost[(Define.UnitId)Enum.Parse(typeof(Define.UnitId), unitName)];
+        if (_player.Resource >= cost)
         {
-            int level = Int32.Parse(GetLevelFromUIObject(OnSelectedPortrait, "Button"));
-            string unitName = OnSelectedPortrait.name.Replace("Button", ""); 
-            _isActive = OnSelectedPortrait.GetComponent<UI_Portrait>();
+            _player.Resource -= cost;
+            if (!_isActive.IsActive) return;
+            if (level >= 3) return;
+            
+            int unitId = (int)Enum.Parse(typeof(Define.UnitId), unitName) + 1;
+            unitName = (string)Enum.ToObject(typeof(Define.UnitId), unitId);
+            GameObject newPortrait = OnSelectedPortrait.transform.parent.Find($"{unitName}Button").gameObject;
+                        
+            if (OnSelectedPortrait != null) OffSelectedPortrait = OnSelectedPortrait;
 
-            int cost = GameData.UnitUpgradeCost[(Define.UnitId)Enum.Parse(typeof(Define.UnitId), unitName)];
-            if (_player.Resource >= cost)
-            {
-                _player.Resource -= cost;
-                
-                GameObject newPortrait;
-                if (_isActive.IsActive)
-                {
-                    if (level < 2)
-                    {
-                        newPortrait = OnSelectedPortrait.transform.parent.GetChild(level + 1).gameObject;
-                    }
-                    else return;
-                }
-                else
-                {
-                    _isActive.IsActive = true;
-                    newPortrait = OnSelectedPortrait.transform.parent.GetChild(level).gameObject;
-                }
-                
-                if (OnSelectedPortrait != null)
-                {
-                    OffSelectedPortrait = OnSelectedPortrait;
-                }
-
-                OnSelectedPortrait = newPortrait;
-                OnSelectedPortrait.GetComponent<UI_Portrait>().IsActive = true;
-            }
-            else
-            {
-                Debug.Log("Need more gold.");
-            }
+            OnSelectedPortrait = newPortrait;
+            OnSelectedPortrait.GetComponent<UI_Portrait>().IsActive = true;
+        }
+        else
+        {
+            Debug.Log("Need more gold.");
         }
     }
 
@@ -506,6 +574,8 @@ public class UI_Game : UI_Scene
         WestSpawnButton,
         NorthSpawnButton,
         EastSpawnButton,
+        
+        CapacityButton,
     }
     private enum CommonImages
     {
@@ -551,7 +621,6 @@ public class UI_Game : UI_Scene
         TulipButton,
 
         GoldButton,
-        CapacityButton,
     }
     private enum SheepPortraits
     {
@@ -570,6 +639,10 @@ public class UI_Game : UI_Scene
         SoulButton,
         HauntButton,
         SoulMageButton,
+    }
+    private enum SheepImages
+    {
+        GoldFrame,
     }
     private enum SheepBaseSkillButtons
     {
@@ -742,7 +815,6 @@ public class UI_Game : UI_Scene
         DnaButton,
 
         ResourceButton,
-        CapacityButton,
     }
     private enum WolfPortraits
     {
@@ -761,6 +833,10 @@ public class UI_Game : UI_Scene
         ShellButton,
         SpikeButton,
         HermitButton,
+    }
+    private enum WolfImages
+    {
+        ResourceFrame,
     }
     private enum WolfBaseSkillButtons
     {

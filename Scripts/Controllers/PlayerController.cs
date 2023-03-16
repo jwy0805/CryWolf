@@ -125,17 +125,8 @@ public class PlayerController : BaseController
 
     private void ResourceChanged(int gold)
     {
-        if (Enum.IsDefined(typeof(Define.SheepCharacter), gameObject.name))
-        {
-            var ui = GameObject.FindWithTag("UI").GetComponent<UI_GameSheep>();
-            var goldText = ui.DictTxt["GoldText"].GetComponent<TextMeshProUGUI>();
-            goldText.text = gold.ToString();
-        }
-        else
-        {
-            var ui = GameObject.FindWithTag("UI").GetComponent<UI_GameWolf>();
-            var resourceText = ui.DictTxt["ResourceText"].GetComponent<TextMeshProUGUI>();
-            resourceText.text = gold.ToString();
-        }
+        var ui = GameObject.FindWithTag("UI").GetComponent<UI_Game>();
+        var resourceText = ui.DictCommonTxt["ResourceText"].GetComponent<TextMeshProUGUI>();
+        resourceText.text = gold.ToString();
     }
 }
