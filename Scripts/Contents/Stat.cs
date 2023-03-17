@@ -10,6 +10,7 @@ using UnityEngine.UI;
 public class Stat : MonoBehaviour
 {
     [SerializeField] protected int _level;
+    [SerializeField] protected int _resource;
     [SerializeField] protected int _hp;
     [SerializeField] protected int _maxHp;
     [SerializeField] protected int _mp;
@@ -39,6 +40,7 @@ public class Stat : MonoBehaviour
     private static readonly int AnimAttackSpeed = Animator.StringToHash("AttackSpeed");
 
     public int Level { get { return _level; } set { _level = value; } }
+    public int Resource { get { return _resource; } set { _resource = value; } }
     public int Hp { get { return _hp; } set { _hp = value; } }
     public int MaxHp { get { return _maxHp; } set { _maxHp = value; } }
     public int Mp { get { return _mp; } set { _mp = value; } }
@@ -87,6 +89,8 @@ public class Stat : MonoBehaviour
         Reflection = false;
         ReflectionSkill = false;
         ReflectionRate = 0f;
+
+        Resource = 0;
         
         RegisterBuff();
     }
@@ -132,7 +136,7 @@ public class Stat : MonoBehaviour
         
         if (randVal < (int)attacker.CriticalChance)
         {
-            damage = (int)(Mathf.Max(0, attacker.Attack - Defense) * CriticalMultiplier); 
+            damage = (int)(Mathf.Max(0, attacker.Skill - Defense) * CriticalMultiplier); 
         }
         else
         {

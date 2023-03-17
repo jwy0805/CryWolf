@@ -360,7 +360,7 @@ public class Define
         SoulMage = 143,
         WolfPup = 150,
         Wolf = 151,
-        WereWolf = 152,
+        Werewolf = 152,
         Lurker = 160,
         Creeper = 161,
         Horror = 162,

@@ -90,7 +90,7 @@ public class UI_UpgradePopup : UI_Popup
     // 여기에 base skill 구현
     private void OnAcceptClicked(PointerEventData data)
     {
-        UI_GameSheep ui = GameObject.FindWithTag("UI").GetComponent<UI_GameSheep>();
+        var ui = GameObject.FindWithTag("UI").GetComponent<UI_Game>();
         GameObject currentSkillButton = ui.OnSelectedSkill;
         _skillName = currentSkillButton.name.Replace("Button", "");
         var playerController = GameObject.FindWithTag("Player").GetComponent<PlayerController>();

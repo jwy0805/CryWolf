@@ -1,11 +1,6 @@
 using System;
 using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.AI;
-using Random = UnityEngine.Random;
 
 public class Spawner : MonoBehaviour
 {
@@ -129,16 +124,15 @@ public class Spawner : MonoBehaviour
         set
         {
             _spawnWay = value;
-            if (UIType.name == "UI_GameSheep")
+            string unitName = SpawnUnit.name.Replace("Button", "");
+            if (Enum.IsDefined(typeof(Define.TowerId), unitName))
             {
-                string towerName = SpawnUnit.name.Replace("Button", "");
-                Define.TowerId towerId = (Define.TowerId)Enum.Parse(typeof(Define.TowerId), towerName);
+                Define.TowerId towerId = (Define.TowerId)Enum.Parse(typeof(Define.TowerId), unitName);
                 StartCoroutine(ReserveSpawnTower(towerId, _spawnWay, 1));
             }
             else
             {
-                string monsterName = SpawnUnit.name.Replace("Button", "");
-                Define.MonsterId monsterId = (Define.MonsterId)Enum.Parse(typeof(Define.MonsterId), monsterName);
+                Define.MonsterId monsterId = (Define.MonsterId)Enum.Parse(typeof(Define.MonsterId), unitName);
                 StartCoroutine(ReserveSpawnMonster(monsterId, _spawnWay));
             }
         }
@@ -149,7 +143,7 @@ public class Spawner : MonoBehaviour
         StorageLevel = 1;
         // 시작하면 양 3마리 주어짐
         for (int i = 0; i < GameData.SheepCapacity; i++) ReserveSpawnSheep();
-        StartCoroutine(ReserveSpawnMonster(Define.MonsterId.Wolf, Define.Way.North));
+        StartCoroutine(ReserveSpawnMonster(Define.MonsterId.WereWolf, Define.Way.North));
     }
 
     void Update()

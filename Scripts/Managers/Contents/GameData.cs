@@ -141,7 +141,7 @@ public class GameData
 
     public static int StartSheepResource = 5000;
     public static int SheepYield = 20;
-    public static int StartWolfResource = 120;
+    public static int StartWolfResource = 5000;
     
     public static int StorageLevel = 0;
     public static int[] StorageLvUpCost = { 0, 600, 2000 };

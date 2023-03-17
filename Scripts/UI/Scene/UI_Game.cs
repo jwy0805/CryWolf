@@ -117,7 +117,10 @@ public class UI_Game : UI_Scene
         set
         {
             _capacityButton = value;
-            _dictSkillPanel["SheepSkillPanel"].SetActive(_capacityButton);
+            
+            if (_side == "Sheep") _dictSkillPanel["SheepSkillPanel"].SetActive(_capacityButton);
+            else _dictSkillPanel["DnaSkillPanel"].SetActive(_capacityButton);
+            
             if (OnSelectedPortrait != null) PortraitOff(OnSelectedPortrait);
         }
     }
@@ -528,7 +531,7 @@ public class UI_Game : UI_Scene
             if (level >= 3) return;
             
             int unitId = (int)Enum.Parse(typeof(Define.UnitId), unitName) + 1;
-            unitName = (string)Enum.ToObject(typeof(Define.UnitId), unitId);
+            unitName = Enum.ToObject(typeof(Define.UnitId), unitId).ToString();
             GameObject newPortrait = OnSelectedPortrait.transform.parent.Find($"{unitName}Button").gameObject;
                         
             if (OnSelectedPortrait != null) OffSelectedPortrait = OnSelectedPortrait;

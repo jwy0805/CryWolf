@@ -190,7 +190,7 @@ public class MonsterController : BaseController
         Stat targetStat = _lockTarget.GetComponent<Stat>();
         targetStat.OnAttakced(_stat);
 
-        if (_playerController != null) _playerController.Resource += 6;
+        if (_playerController != null) _playerController.Resource += _stat.Resource;
     }
 
     protected virtual void OnEndEvent()

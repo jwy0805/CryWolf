@@ -7,7 +7,6 @@ public class WolfController : MonsterController
 {
     private bool _drain = false;
     private float _drainParam = 0.25f;
-    private bool _dna = false;
 
     protected override string NewSkill
     {
@@ -35,7 +34,7 @@ public class WolfController : MonsterController
                     _stat.PoisonResist = 10;
                     break;
                 case Define.Skill.WolfDna:
-                    _dna = true;
+                    _stat.Resource = 10;
                     break;
             }
         }
