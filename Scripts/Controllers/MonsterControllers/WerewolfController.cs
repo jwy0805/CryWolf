@@ -11,6 +11,11 @@ public class WerewolfController : MonsterController
     private bool _faint = false;
     private bool _enhance = false;
     
+    private float _attackSpeedParam;
+    private float _drainParam;
+
+    public bool DebuffResist => _debuffResist;
+
     protected override string NewSkill
     {
         get => NewSkill;
@@ -50,7 +55,8 @@ public class WerewolfController : MonsterController
         _stat.Mp = 0;
         _stat.maxMp = 0;
         _stat.Attack = 100;
-        _stat.Skill = 300;
+        _stat.AttackSpeed = 1f;
+        _stat.Skill = 3;
         _stat.Defense = 5;
         _stat.MoveSpeed = 7.0f;
         _stat.AttackRange = 2.5f;
@@ -68,6 +74,19 @@ public class WerewolfController : MonsterController
             base.UpdateAttack();
         }
     }
+
+    private void AddAttackSpeed()
+    {
+        if (!_enhance) return;
+        _attackSpeedParam = (1f - (float)_stat.Hp / _stat.MaxHp) * 0.6f;
+        _stat.AttackSpeed += _attackSpeedParam;
+    }
+
+    private void RemoveAttackSpeed()
+    {
+        if (!_enhance) return;
+        _stat.AttackSpeed -= _attackSpeedParam;
+    }
     
     protected override void UpdateDie()
     {
@@ -80,6 +99,35 @@ public class WerewolfController : MonsterController
         base.UpdateAttack();
     }
 
+    private void OnSkillStart()
+    {
+        AddAttackSpeed();    
+    }
+
+    protected override void OnHitEvent()
+    {
+        if (_lockTarget == null) return;
+        Stat targetStat = _lockTarget.GetComponent<Stat>();
+        targetStat.OnAttakced(_stat);
+        
+        if (_playerController != null) _playerController.Resource += 6;
+        
+        // drain 승계
+        int recoverHp = 0;
+        if (_enhance)
+        {
+            float drainParam = _drainParam + _drainParam * (1f - (float)_stat.Hp / _stat.MaxHp);
+            recoverHp = (int)((_stat.Attack - targetStat.Defense) * drainParam);
+        }
+        else
+        {
+            recoverHp = (int)((_stat.Attack - targetStat.Defense) * _drainParam);
+        }
+        
+        if (_stat.Hp + recoverHp <= _stat.MaxHp) _stat.Hp += recoverHp;
+        else _stat.Hp = _stat.MaxHp;
+    }
+    
     private void OnSkillEvent()
     {
         if (_lockTarget != null)
@@ -91,5 +139,11 @@ public class WerewolfController : MonsterController
             go.transform.position = _lockTarget.transform.position;
             _count++;
         }
+    }
+
+    protected override void OnEndEvent()
+    {
+        RemoveAttackSpeed();
+        base.OnEndEvent();
     }
 }

@@ -143,7 +143,7 @@ public class Spawner : MonoBehaviour
         StorageLevel = 1;
         // 시작하면 양 3마리 주어짐
         for (int i = 0; i < GameData.SheepCapacity; i++) ReserveSpawnSheep();
-        StartCoroutine(ReserveSpawnMonster(Define.MonsterId.WereWolf, Define.Way.North));
+        StartCoroutine(ReserveSpawnMonster(Define.MonsterId.SnakeNaga, Define.Way.North));
     }
 
     void Update()

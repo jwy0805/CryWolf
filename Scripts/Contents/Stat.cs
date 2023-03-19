@@ -41,7 +41,7 @@ public class Stat : MonoBehaviour
 
     public int Level { get { return _level; } set { _level = value; } }
     public int Resource { get { return _resource; } set { _resource = value; } }
-    public int Hp { get { return _hp; } set { _hp = value; } }
+    public int Hp { get => _hp; set { _hp = value; } }
     public int MaxHp { get { return _maxHp; } set { _maxHp = value; } }
     public int Mp { get { return _mp; } set { _mp = value; } }
     public int maxMp { get { return _maxMp; } set { _maxMp = value; } }
@@ -253,8 +253,21 @@ public class Stat : MonoBehaviour
     
     public void SetParams(float time, float param)
     {
-        _time = time;
-        _param = param;
+        switch (gameObject.name)
+        {
+            case "Werewolf":
+                bool debuffResist = gameObject.GetComponent<WerewolfController>().DebuffResist;
+                if (debuffResist)
+                {
+                    _time = time * 0.5f;
+                    _param = param * 0.5f;
+                }
+                break;
+            default:
+                _time = time;
+                _param = param;
+                break;
+        }
     }
     
     public void RemoveAllDebuff()

@@ -16,7 +16,9 @@ public class ProjectileController : MonoBehaviour
     protected Stat _stat;
     protected BaseController _baseController;
     protected Vector3 _destPos;
+    protected Vector3 _destPosNull;
     protected GameObject _lockTarget;
+    protected Collider _targetCollider;
     public float speed = 15f;
     private string[] effects;
     private bool _getMp = false;
@@ -28,13 +30,23 @@ public class ProjectileController : MonoBehaviour
 
     private void FixedUpdate ()
     {
-        Vector3 dir = _destPos - transform.position;
-        float moveDist = Mathf.Clamp(speed * Time.deltaTime, 0, dir.magnitude);
-        float distParent = (transform.position - transform.parent.transform.position).magnitude;
-        transform.position += dir.normalized * moveDist;
-        if (transform.parent.name == "SunfloraPixie")
+        if (_lockTarget != null)
         {
-            Debug.Log(_lockTarget);
+            _destPos = _targetCollider.ClosestPoint(transform.position);
+            // _destPos = _targetCollider.CompareTag("Fence")
+            //     ? _targetCollider.ClosestPoint(transform.position)
+            //     : _targetCollider.ClosestPoint(transform.position) + Vector3.up * 0.25f;
+            _destPosNull = _destPos;
+            Vector3 dir = _destPos - transform.position;
+            float moveDist = Mathf.Clamp(speed * Time.deltaTime, 0, dir.magnitude);
+            transform.position += dir.normalized * moveDist;
+        }
+        else
+        {
+            Vector3 dir = _destPosNull - transform.position;
+            float moveDist = Mathf.Clamp(speed * Time.deltaTime, 0, dir.magnitude);
+            transform.position += dir.normalized * moveDist;
+            if (dir.magnitude < 0.1f) HitEffect();
         }
     }
         
@@ -45,14 +57,13 @@ public class ProjectileController : MonoBehaviour
         _baseController = parent.GetComponent<BaseController>();
         transform.position = parent.position + Vector3.up / 2;
         _lockTarget = _baseController._lockTarget;
+        _targetCollider = _lockTarget.GetComponent<Collider>();
         if (_lockTarget == null)
         {
             Managers.Resource.Destroy(gameObject);
             return;
         }
-        
-        Collider targetCollider = _lockTarget.GetComponent<Collider>();
-        _destPos = targetCollider.ClosestPoint(transform.position) + Vector3.up * 0.25f;        
+
         #region Effect
 
         rb = GetComponent<Rigidbody>();
@@ -152,20 +163,18 @@ public class ProjectileController : MonoBehaviour
                 HitEffect();
             }
         }
-        else
-        {            
-            if (go.TryGetComponent(out Stat targetStat))
+        
+        if (go.TryGetComponent(out Stat targetStat))
+        {
+            if (targetStat.Targetable)
             {
-                if (targetStat.Targetable)
+                targetStat.OnAttakced(_stat);
+                if (_stat.maxMp > 0)
                 {
-                    targetStat.OnAttakced(_stat);
-                    if (_stat.maxMp > 0)
-                    {
-                        GetMp();
-                    }
+                    GetMp();
                 }
-                HitEffect();
             }
+            HitEffect();
         }
     }
 }

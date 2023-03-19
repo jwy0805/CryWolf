@@ -6,10 +6,16 @@ public class BigFireController : ProjectileController
 {
     protected override void OnTriggerEnter(Collider collider)
     {
+        Debug.Log("fe");
         GameObject go = collider.gameObject;
 
+        if (go == null || _lockTarget == null)
+        {
+            HitEffect();
+            return; 
+        }
         if (!go.CompareTag(_lockTarget.tag))
-        {            
+        {
             if (go.CompareTag("Terrain"))
             {
                 HitEffect();
