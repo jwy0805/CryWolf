@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class ProjectileController : MonoBehaviour
@@ -33,9 +34,6 @@ public class ProjectileController : MonoBehaviour
         if (_lockTarget != null)
         {
             _destPos = _targetCollider.ClosestPoint(transform.position);
-            // _destPos = _targetCollider.CompareTag("Fence")
-            //     ? _targetCollider.ClosestPoint(transform.position)
-            //     : _targetCollider.ClosestPoint(transform.position) + Vector3.up * 0.25f;
             _destPosNull = _destPos;
             Vector3 dir = _destPos - transform.position;
             float moveDist = Mathf.Clamp(speed * Time.deltaTime, 0, dir.magnitude);
@@ -46,13 +44,13 @@ public class ProjectileController : MonoBehaviour
             Vector3 dir = _destPosNull - transform.position;
             float moveDist = Mathf.Clamp(speed * Time.deltaTime, 0, dir.magnitude);
             transform.position += dir.normalized * moveDist;
-            if (dir.magnitude < 0.1f) HitEffect();
+            if (dir.magnitude < 0.5f) HitEffect();
         }
     }
         
     protected virtual void Init()
     {
-        Transform parent = transform.parent.GetComponent<Transform>();
+        Transform parent = transform.parent;
         _stat = parent.GetComponent<Stat>();
         _baseController = parent.GetComponent<BaseController>();
         transform.position = parent.position + Vector3.up / 2;
@@ -151,28 +149,26 @@ public class ProjectileController : MonoBehaviour
     {
         GameObject go = collider.gameObject;
 
-        if (_lockTarget == null) {
+        if (go == null || _lockTarget == null)
+        {
             Managers.Resource.Destroy(gameObject);
-            return;
+            return; 
         }
         
-        if (!go.CompareTag(_lockTarget.tag))
-        {            
+        if (!_baseController.Tags.Contains(go.tag))
+        {
             if (go.CompareTag("Terrain"))
             {
                 HitEffect();
             }
         }
-        
-        if (go.TryGetComponent(out Stat targetStat))
-        {
-            if (targetStat.Targetable)
+        else
+        {            
+            if (go.TryGetComponent(out Stat targetStat))
             {
+                if (!targetStat.Targetable) HitEffect();
                 targetStat.OnAttakced(_stat);
-                if (_stat.maxMp > 0)
-                {
-                    GetMp();
-                }
+                GetMp();
             }
             HitEffect();
         }

@@ -64,7 +64,7 @@ public class MothLunaController : TowerController
         _stat.AttackRange = 2;
         _stat.AttackSpeed = 0.7f;
 
-        tags = new[] { "MonsterAir" };
+        Tags = new[] { "MonsterAir" };
         
         SkillInit(); 
     }
@@ -79,7 +79,7 @@ public class MothLunaController : TowerController
         if (Time.time > _lastTargetingTime + _targetingTime)
         {
             _lastTargetingTime = Time.time;
-            SetTarget(tags);
+            SetTarget(Tags);
         }
     }
 
@@ -88,7 +88,7 @@ public class MothLunaController : TowerController
         // Targeting
         if (Time.time > _lastTargetingTime + _targetingTime && _lockTarget == null)
         {
-            SetTarget(tags);
+            SetTarget(Tags);
         }
         
         // Attack

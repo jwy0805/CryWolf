@@ -9,7 +9,9 @@ public class FenceController : BaseController
     protected override void Init()
     {
         WorldObjectType = Define.WorldObject.Fence;
-
+        Rigidbody rigidbody = GetComponent<Rigidbody>();
+        rigidbody.constraints = RigidbodyConstraints.FreezeAll;
+        
         GameData.CurrentFenceCnt += 1;
         _stat = gameObject.GetComponent<Stat>();
         _stat.Hp = 200;

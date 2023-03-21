@@ -15,7 +15,7 @@ public class Define
     {
         Player = 6,
         Sheep = 7,
-        Monsters = 8,
+        Monster = 8,
         Ground = 9,
         Block = 10,
         Fence = 11,
@@ -406,6 +406,7 @@ public class Define
         MoveSpeed,
         Curse,
         Addicted,
+        DeadlyAddicted,
         Aggro,
     }
 

@@ -1,13 +1,50 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class HorrorController : MonsterController
 {
     private bool _rush;
     private bool _knockBack;
-    private float _rollingSpeed = 7.0f;
+    private bool _rollPoison = false;
+    private bool _poisonBelt = false;
+    private readonly float _rollingSpeed = 8.0f;
     private Vector3 _dir;
+    
+    protected override string NewSkill
+    {
+        get => _newSkill;
+        set
+        {
+            _newSkill = value;
+            Define.Skill skill = (Define.Skill)Enum.Parse(typeof(Define.Skill), _newSkill);
+
+            switch (skill)
+            {
+                case Define.Skill.HorrorHealth:
+                    _stat.MaxHp += 200;
+                    _stat.Hp += 200;
+                    break;
+                case Define.Skill.HorrorDefence:
+                    _stat.Defense += 5;
+                    break;
+                case Define.Skill.HorrorPoisonResist:
+                    _stat.PoisonResist += 15;
+                    break;
+                case Define.Skill.HorrorPoisonStack:
+                    _stat.Accuracy += 10;
+                    break;
+                case Define.Skill.HorrorRollPoison:
+                    _rollPoison = true;
+                    break;
+                case Define.Skill.HorrorPoisonBelt:
+                    _poisonBelt = true;
+                    break;
+            }
+        }
+    }
     
     private bool KnockBack
     {
@@ -24,7 +61,7 @@ public class HorrorController : MonsterController
             }
         }
     }
-    
+
     protected override void Init()
     {
         base.Init();
@@ -32,15 +69,15 @@ public class HorrorController : MonsterController
         _stat.Hp = 600;
         _stat.MaxHp = 600;
         _stat.Attack = 60;
-        _stat.Defense = 0;
+        _stat.AttackSpeed = 0.75f;
+        _stat.Defense = 7;
         _stat.MoveSpeed = 4.0f;
         _stat.AttackRange = 3.0f;
     }
     
     protected override void UpdateMoving()
     {
-        // if: 스킬 업그레이드 && 생성된 후 최초 1번
-        if (true && _rush == false)
+        if (_rush == false)
         {
             State = Define.State.Rush;
         }
@@ -90,11 +127,7 @@ public class HorrorController : MonsterController
     {
         _navMesh.SetDestination(_destPos);
         _dir = _destPos - transform.position;
-
-        if (_dir.magnitude < 0.1f)
-        {
-            State = Define.State.Idle;
-        }
+        State = Define.State.Idle;
     }
     
     protected override void OnHitEvent()
@@ -102,6 +135,22 @@ public class HorrorController : MonsterController
         if (_lockTarget != null)
         {
             Managers.Resource.Instanciate("Effects/PoisonAttack", gameObject.transform);
+        }
+    }
+    
+    private void OnCollisionEnter(Collision collision)
+    {
+        if (!Tags.Contains(collision.gameObject.tag)) return;
+        KnockBack = true;
+        if (collision.gameObject.TryGetComponent(out Stat targetStat))
+        {
+            // 충돌음 재생
+            /* todo */
+            targetStat.OnSkilled(_stat);
+            if (_rollPoison)
+            {
+                
+            }
         }
     }
 }

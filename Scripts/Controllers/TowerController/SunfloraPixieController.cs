@@ -96,7 +96,7 @@ public class SunfloraPixieController : TowerController
             if (Time.time > _lastTargetingTime + _targetingTime)
             {
                 _lastTargetingTime = Time.time;
-                SetTarget(tags);
+                SetTarget(Tags);
             }
         }
         else

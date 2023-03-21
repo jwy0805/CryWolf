@@ -7,7 +7,6 @@ using UnityEngine.AI;
 public class MonsterController : BaseController
 {
     protected Stat _stat;
-    protected string[] _tags = { "Sheep", "Tower" };
     protected GameObject[] _tagged;
     protected NavMeshAgent _navMesh;
     protected PlayerController _playerController;
@@ -48,13 +47,13 @@ public class MonsterController : BaseController
     {
         if (GameData.FenceBounds.Contains(transform.position) || IsReachable(GameData.Center))
         {
-            string[] tags = { "Sheep", "Tower" };
-            SetTarget(tags);
+            Tags = new[] { "Sheep", "Tower" };
+            SetTarget(Tags);
         }
         else
         {
-            string[] tags = { "Tower", "Fence" };
-            SetTarget(tags);
+            Tags = new []{ "Tower", "Fence" };
+            SetTarget(Tags);
         }
 
         if (_lockTarget == null) State = Define.State.Idle;
@@ -70,17 +69,23 @@ public class MonsterController : BaseController
             // 이미 Fence 내부에 있으면
             if (GameData.FenceBounds.Contains(transform.position))
             {
-                SetTarget(new [] { "Sheep", "Tower" });
+                Tags = new[] { "Sheep", "Tower" };
+                SetTarget(Tags);
             }
             else
             {
                 // Fence 안으로 들어갈 수 있는지?
                 if (IsReachable(GameData.Center))
                 {
-                    SetTarget(new[] { "Sheep", "Tower" });
+                    Tags = new[] { "Sheep", "Tower" };
+                    SetTarget(Tags);
                 }
                 // Fence 안으로 들어갈 수 없으면
-                else SetTarget(new [] { "Fence", "Tower" });
+                else
+                {
+                    Tags = new[] { "Fence", "Tower" };
+                    SetTarget(Tags);
+                }
             }
         }
         
@@ -90,9 +95,7 @@ public class MonsterController : BaseController
             Stat targetStat = _lockTarget.GetComponent<Stat>();
             Collider targetCollider = _lockTarget.GetComponent<Collider>();
             Vector3 position = transform.position;
-            
-            if (targetStat.Targetable == false)
-                return;
+            if (targetStat.Targetable == false) return;
             
             _destPos = targetCollider.ClosestPoint(position);
             float distance = (_destPos - position).magnitude;

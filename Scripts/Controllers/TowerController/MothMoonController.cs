@@ -77,7 +77,7 @@ public class MothMoonController : TowerController
 
         _stat.Accuracy = 105;
 
-        tags = new[] { "MonsterAir" };
+        Tags = new[] { "MonsterAir" };
         
         SkillInit(); 
     }

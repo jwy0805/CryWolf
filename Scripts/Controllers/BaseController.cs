@@ -10,16 +10,18 @@ public abstract class BaseController : MonoBehaviour, ISkillObserver
     [SerializeField] protected Vector3 _destPos;
     [SerializeField] protected Define.State _state = Define.State.Idle;
     [SerializeField] public GameObject _lockTarget;
+    private string[] _tags = new [] {"Tower", "Fence"};
     protected Animator _anim;
     protected Rigidbody _rigidbody;
-    
+
     protected SkillSubject _skillSubject;
     protected List<string> _skillList = new List<string>();
     protected string _newSkill;
     protected readonly int _attackSpeed = Animator.StringToHash("AttackSpeed");
+
+    public string[] Tags { get => _tags; set => _tags = value; }
     protected virtual string NewSkill { get; set; }
     public Define.Way Way { get; set; }
-
     public Define.WorldObject WorldObjectType { get; protected set; } = Define.WorldObject.Unknown;
     
     public virtual Define.State State
@@ -71,7 +73,7 @@ public abstract class BaseController : MonoBehaviour, ISkillObserver
         Init();
     }
 
-    private void Update()
+    protected virtual void Update()
     {
         switch (State)
         {

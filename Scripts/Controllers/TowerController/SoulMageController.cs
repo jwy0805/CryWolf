@@ -70,7 +70,7 @@ public class SoulMageController : TowerController
         // Targeting
         if (Time.time > _lastTargetingTime + _targetingTime && _lockTarget == null)
         {
-            SetTarget(tags);
+            SetTarget(Tags);
         }
         
         // Attack

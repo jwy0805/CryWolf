@@ -72,7 +72,7 @@ public class HauntController : TowerController
         // Targeting
         if (Time.time > _lastTargetingTime + _targetingTime && _lockTarget == null)
         {
-            SetTarget(tags);
+            SetTarget(Tags);
         }
         
         // Attack

@@ -86,7 +86,7 @@ public class PracticeDummyController : TowerController
 
     private void OnSkillEvent()
     {
-        _colliders  = Physics.OverlapSphere(transform.position, 4.0f, (int)Define.Layer.Monsters);
+        _colliders  = Physics.OverlapSphere(transform.position, 4.0f, (int)Define.Layer.Monster);
         int length = _colliders.Length;
         for (int i = 0; i < length; i++)
         {

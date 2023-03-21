@@ -7,7 +7,6 @@ public class TowerController : BaseController
 {
     public Define.TowerId TowerId { get; protected set; } = Define.TowerId.Unknown;
     protected Stat _stat;
-    protected string[] tags = { "Monster" };
     protected GameObject[] _tagged;
     private Drag _drag;
     protected bool _active;
@@ -43,6 +42,7 @@ public class TowerController : BaseController
         _canvas = transform.Find("CanSpawn").gameObject;
         _drag = gameObject.GetComponent<Drag>();
         _stat = gameObject.GetComponent<Stat>();
+        Tags = new[] { "Monster" };
 
         Active = false;
     }
@@ -61,7 +61,7 @@ public class TowerController : BaseController
         if (Time.time > _lastTargetingTime + _targetingTime)
         {
             _lastTargetingTime = Time.time;
-            SetTarget(tags);
+            SetTarget(Tags);
         }
     }
 

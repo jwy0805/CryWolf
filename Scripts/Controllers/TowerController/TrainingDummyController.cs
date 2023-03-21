@@ -107,7 +107,7 @@ public class TrainingDummyController : TowerController
             if (Time.time > _lastTargetingTime + _targetingTime)
             {
                 _lastTargetingTime = Time.time;
-                SetTarget(tags);
+                SetTarget(Tags);
             }
         }
     }
@@ -144,7 +144,7 @@ public class TrainingDummyController : TowerController
 
     private void OnSkillEvent()
     {
-        _colliders  = Physics.OverlapSphere(transform.position, _radius, (int)Define.Layer.Monsters);
+        _colliders  = Physics.OverlapSphere(transform.position, _radius, (int)Define.Layer.Monster);
         int length = _colliders.Length;
         for (int i = 0; i < length; i++)
         {

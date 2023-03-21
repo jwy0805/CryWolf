@@ -30,7 +30,7 @@ public class MothCelestialController : TowerController
                     _sheepHealth = true;
                     break;
                 case Define.Skill.MothCelestialGroundAttack:
-                    tags = new[] { "MonsterAir", "Monster" };
+                    Tags = new[] { "MonsterAir", "Monster" };
                     break;
                 case Define.Skill.MothCelestialAccuracy:
                     _stat.Accuracy += 10;
@@ -84,7 +84,7 @@ public class MothCelestialController : TowerController
         _removeProb = 25;
         _breedProb = 3;
         _heal = 15;
-        tags = new[] { "MonsterAir" };
+        Tags = new[] { "MonsterAir" };
 
         SkillInit();
     }

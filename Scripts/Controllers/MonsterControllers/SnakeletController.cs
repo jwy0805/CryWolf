@@ -16,13 +16,13 @@ public class SnakeletController : MonsterController
             switch (skill)
             {
                 case Define.Skill.SnakeletAttack:
-                    _stat.Attack = 21;
+                    _stat.Attack += 6;
                     break;
                 case Define.Skill.SnakeletAttackSpeed:
-                    _stat.AttackSpeed = 0.85f;
+                    _stat.AttackSpeed += 0.1f;
                     break;
                 case Define.Skill.SnakeletRange:
-                    _stat.AttackRange += 2f;
+                    _stat.AttackRange += 1.5f;
                     break;
                 case Define.Skill.SnakeletSpeed:
                     _stat.MoveSpeed += 2f;
