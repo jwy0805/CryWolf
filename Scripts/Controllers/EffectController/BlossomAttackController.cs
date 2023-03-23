@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class BlossomAttackController : ProjectileController
@@ -15,7 +16,13 @@ public class BlossomAttackController : ProjectileController
     {
         GameObject go = collider.gameObject;
 
-        if (!go.CompareTag(_lockTarget.tag))
+        if (go == null || _lockTarget == null)
+        {
+            Managers.Resource.Destroy(gameObject);
+            return; 
+        }
+        
+        if (!_baseController.Tags.Contains(go.tag))
         {            
             if (go.CompareTag("Terrain"))
             {
@@ -31,6 +38,10 @@ public class BlossomAttackController : ProjectileController
                 {
                     var random = new System.Random();
                     int randVal = random.Next(100);
+                    if (_blossomController._blossomPoison)
+                    {
+                        targetStat.SetDebuffParams(10, 0.03f, Define.Debuff.Addicted);
+                    }
                     if (randVal < _blossomController._deadParameter)
                     {
                         targetStat.Hp = 0;

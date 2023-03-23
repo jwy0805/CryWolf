@@ -6,7 +6,7 @@ using UnityEngine;
 
 public class BlossomController : TowerController
 {
-    private bool _blossomPoison = false;
+    public bool _blossomPoison = false;
     public bool _blossomDeath = false;
     public int _deadParameter = 3;
     

@@ -7,12 +7,35 @@ using UnityEngine;
 public class HorrorController : MonsterController
 {
     private bool _rush;
+    private bool _crash = false;
     private bool _knockBack;
     private bool _rollPoison = false;
+    private bool _poisonStack = false;
     private bool _poisonBelt = false;
     private readonly float _rollingSpeed = 8.0f;
     private Vector3 _dir;
     
+    private bool KnockBack
+    {
+        get => _knockBack;
+        set
+        {
+            _knockBack = value;
+            if (_knockBack)
+            {
+                _destPos = -(_dir.normalized * 5.0f);
+                _destPos.y = 6.0f;
+                State = Define.State.KnockBackCreeper;
+            }
+        }
+    }
+
+    public bool PoisonStack
+    {
+        get => _poisonStack;
+        set => _poisonStack = value;
+    }
+
     protected override string NewSkill
     {
         get => _newSkill;
@@ -34,7 +57,7 @@ public class HorrorController : MonsterController
                     _stat.PoisonResist += 15;
                     break;
                 case Define.Skill.HorrorPoisonStack:
-                    _stat.Accuracy += 10;
+                    PoisonStack = true;
                     break;
                 case Define.Skill.HorrorRollPoison:
                     _rollPoison = true;
@@ -46,32 +69,19 @@ public class HorrorController : MonsterController
         }
     }
     
-    private bool KnockBack
-    {
-        get => _knockBack;
-        set
-        {
-            _knockBack = value;
-            if (_knockBack)
-            {
-                _destPos = -(_dir.normalized * 10.0f);
-                _destPos.y = 6.0f;
-                Debug.Log(_destPos);
-                State = Define.State.KnockBackCreeper;
-            }
-        }
-    }
-
     protected override void Init()
     {
         base.Init();
         
         _stat.Hp = 600;
         _stat.MaxHp = 600;
-        _stat.Attack = 60;
+        _stat.maxMp = 10;
+        _stat.Mp = 0;
+        _stat.Attack = 6;
+        _stat.Skill = 112;
         _stat.AttackSpeed = 0.75f;
         _stat.Defense = 7;
-        _stat.MoveSpeed = 4.0f;
+        _stat.MoveSpeed = 5.0f;
         _stat.AttackRange = 3.0f;
     }
     
@@ -91,43 +101,54 @@ public class HorrorController : MonsterController
     {
         _stat.MoveSpeed = _rollingSpeed;
         _rush = true;
+        // Targeting
+        if (Time.time > _lastTargetingTime + _targetingTime)
+        {
+            // Fence 안으로 들어갈 수 있는지?
+            if (IsReachable(GameData.Center))
+            {
+                Tags = new[] { "Sheep", "Tower" };
+                SetTarget(Tags);
+            }
+            // Fence 안으로 들어갈 수 없으면
+            else
+            {
+                Tags = new[] { "Fence", "Tower" };
+                SetTarget(Tags);
+            }
+        }
         
         if (_lockTarget != null)
         {
             Stat targetStat = _lockTarget.GetComponent<Stat>();
             if (targetStat.Targetable == false) return;
-
             _destPos = _lockTarget.transform.position;
         }
-        else
-        {
-            if (Time.time > _lastTargetingTime + _targetingTime)
-            {
-                _lastTargetingTime = Time.time;
-
-                string[] tags = { "Fence", "Tower" };
-                SetTarget(tags);
-            }
-        }
         
+        // Move
         _dir= _destPos - transform.position;
-        
-        if (_dir.magnitude < 0.7f && KnockBack == false)
-        {
-            KnockBack = true;
-        }
-        else
-        {
-            _navMesh.SetDestination(_destPos);
-            _navMesh.speed = _stat.MoveSpeed;
-        }
+        _navMesh.SetDestination(_destPos);
+        _navMesh.speed = _stat.MoveSpeed;
     }
 
     protected override void UpdateKnockBackCreeper()
     {
         _navMesh.SetDestination(_destPos);
         _dir = _destPos - transform.position;
-        State = Define.State.Idle;
+        if (_dir.magnitude < 0.5f) State = Define.State.Idle;
+    }
+
+    protected override void UpdateAttack()
+    {
+        if (_stat.Mp >= _stat.maxMp)
+        { 
+            _stat.Mp = 0;
+            if (_poisonBelt) Managers.Resource.Instanciate("Effects/PoisonExplosion", gameObject.transform);
+        }
+        else
+        {
+            base.UpdateAttack();
+        }
     }
     
     protected override void OnHitEvent()
@@ -137,11 +158,11 @@ public class HorrorController : MonsterController
             Managers.Resource.Instanciate("Effects/PoisonAttack", gameObject.transform);
         }
     }
-    
+
     private void OnCollisionEnter(Collision collision)
     {
-        if (!Tags.Contains(collision.gameObject.tag)) return;
-        KnockBack = true;
+        if (!Tags.Contains(collision.gameObject.tag) || _crash) return;
+        // KnockBack = true;
         if (collision.gameObject.TryGetComponent(out Stat targetStat))
         {
             // 충돌음 재생
@@ -149,8 +170,12 @@ public class HorrorController : MonsterController
             targetStat.OnSkilled(_stat);
             if (_rollPoison)
             {
-                
+                targetStat.SetDebuffParams(_poisonStack? 5 : 10, 0.03f,
+                    _poisonStack ? Define.Debuff.Addicted : Define.Debuff.DeadlyAddicted);
             }
         }
+
+        _crash = true;
+        State = Define.State.Idle;
     }
 }

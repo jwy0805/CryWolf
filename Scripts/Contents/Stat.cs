@@ -34,7 +34,6 @@ public class Stat : MonoBehaviour
     protected bool _reflectionSkill;
     protected float _reflectionRate;
 
-    private int _poisonStack = 0;
     private float _time = 0f;
     private float _param = 0f;
     
@@ -244,12 +243,14 @@ public class Stat : MonoBehaviour
     public void SetDebuffParams(float time, float param, Define.Debuff debuff)
     {
         SetParams(time, param);
+        
         if (_debuffList.Contains(debuff))
         {
-            StartCoroutine(_debuffDict[debuff]);
+            Debug.Log("asd");
+            StopCoroutine(_debuffDict[debuff]);
             _debuffList.Remove(debuff);
         }
-
+        
         StartCoroutine(_debuffDict[debuff]);
     }
 
@@ -322,10 +323,7 @@ public class Stat : MonoBehaviour
         yield return new WaitForSeconds(_time);
         _buffList.Remove(buff);
         MaxHp -= p;
-        if (Hp > MaxHp)
-        {
-            Hp = MaxHp;
-        }
+        if (Hp > MaxHp) Hp = MaxHp;
     }
 
     private IEnumerator DefenceBuff(Define.Buff buff)
@@ -409,25 +407,37 @@ public class Stat : MonoBehaviour
     {
         _debuffList.Add(debuff);
         float intervalTime = 1.0f;
+        float startTime = Time.time;
         float time = Time.time;
         int poison = (int)(MaxHp * _param);
-        if (!_debuffList.Contains(Define.Debuff.DeadlyAddicted)) Hp -= poison;
-        for (int i = 0; i < (int)(_time + 0.1); i++)
+        while (Time.time < startTime + _time)
         {
-            if (Time.time > time + intervalTime)
-            {
-                time = Time.time;
-                if (!_debuffList.Contains(Define.Debuff.DeadlyAddicted)) Hp -= poison;
-            }
+            Hp -= poison;
+            Debug.Log(_debuffList.Count);
+            yield return new WaitForSeconds(intervalTime);
         }
-        yield return new WaitForSeconds(_time);
         _debuffList.Remove(debuff);
     }
 
     private IEnumerator DeadlyAddicted(Define.Debuff debuff)
     {
-        
-        yield break;
+        _debuffList.Add(debuff);
+        Debug.Log("as");
+        float intervalTime = 1.0f;
+        float time = Time.time;
+        int poison = (int)(MaxHp * _param);
+        Hp -= poison;
+        for (int i = 0; i < (int)(_time + 0.1); i++)
+        {
+            if (Time.time > time + intervalTime)
+            {
+                Debug.Log("kk");
+                time = Time.time;
+                Hp -= poison;
+            }
+        }
+        yield return new WaitForSeconds(_time);
+        _debuffList.Remove(debuff);
     }
 
     private IEnumerator AggroFunc(Define.Debuff debuff)

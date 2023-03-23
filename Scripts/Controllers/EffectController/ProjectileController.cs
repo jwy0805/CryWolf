@@ -154,7 +154,7 @@ public class ProjectileController : MonoBehaviour
             Managers.Resource.Destroy(gameObject);
             return; 
         }
-        
+
         if (!_baseController.Tags.Contains(go.tag))
         {
             if (go.CompareTag("Terrain"))
@@ -166,11 +166,11 @@ public class ProjectileController : MonoBehaviour
         {            
             if (go.TryGetComponent(out Stat targetStat))
             {
-                if (!targetStat.Targetable) HitEffect();
+                if (!targetStat.Targetable) return;
                 targetStat.OnAttakced(_stat);
                 GetMp();
+                HitEffect();
             }
-            HitEffect();
         }
     }
 }

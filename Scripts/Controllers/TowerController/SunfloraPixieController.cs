@@ -23,6 +23,7 @@ public class SunfloraPixieController : TowerController
     private bool _attack = false;
     private bool _attackSpeedSkill = false;
     private bool _invincible = false;
+    
     protected override string NewSkill
     {
         get => _newSkill;

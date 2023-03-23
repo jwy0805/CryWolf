@@ -131,11 +131,7 @@ public class CreeperController : MonsterController
     {
         _navMesh.SetDestination(_destPos);
         _dir = _destPos - transform.position;
-
-        if (_dir.magnitude < 0.1f)
-        {
-            State = Define.State.Idle;
-        }
+        if (_dir.magnitude < 0.1f) State = Define.State.Idle;
     }
 
     protected override void UpdateAttack()

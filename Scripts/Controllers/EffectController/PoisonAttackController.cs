@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-public class MothCelestialPoisonController : ProjectileController
+public class PoisonAttackController : ProjectileController
 {
     protected override void OnTriggerEnter(Collider collider)
     {
@@ -27,9 +27,17 @@ public class MothCelestialPoisonController : ProjectileController
             if (go.TryGetComponent(out Stat targetStat))
             {
                 if (!targetStat.Targetable) HitEffect();
-                targetStat.OnFaint();
                 targetStat.OnAttakced(_stat);
-                targetStat.SetDebuffParams(10, 0.05f, Define.Debuff.Addicted);
+                if (gameObject.name == "Horror")
+                {
+                    HorrorController horrorController = GetComponent<HorrorController>();
+                    targetStat.SetDebuffParams(horrorController.PoisonStack ? 5 : 10, 0.03f,
+                        horrorController.PoisonStack ? Define.Debuff.DeadlyAddicted : Define.Debuff.Addicted);
+                }
+                else
+                {
+                    targetStat.SetDebuffParams(10, 0.03f, Define.Debuff.Addicted);
+                }
                 GetMp();
             }
             HitEffect();

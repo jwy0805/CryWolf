@@ -16,7 +16,7 @@ public class MeteorController : MonoBehaviour
     private void Init()
     {
         _particleSystem = GetComponentInChildren<ParticleSystem>();
-        _parentTransform = transform.parent.transform;
+        _parentTransform = transform.parent;
         _parentStat = _parentTransform.GetComponent<Stat>();
     }
     
