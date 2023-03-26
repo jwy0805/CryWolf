@@ -34,9 +34,10 @@ public class Stat : MonoBehaviour
     protected bool _reflectionSkill;
     protected float _reflectionRate;
 
-    private float _time = 0f;
-    private float _param = 0f;
-    
+    private float _buffTime = 10f;
+    private float _buffParam = 0f;
+    private Define.BuffList _applyBuff;
+
     private static readonly int AnimAttackSpeed = Animator.StringToHash("AttackSpeed");
 
     public int Level { get { return _level; } set { _level = value; } }
@@ -72,6 +73,127 @@ public class Stat : MonoBehaviour
     public float ReflectionRate { get { return _reflectionRate; } set { _reflectionRate = value; } }
     public bool Aggro { get { return _aggro;} set { _aggro = value; } }
 
+    
+    public Define.BuffList ApplyBuff
+    {
+        get => _applyBuff;
+        set
+        {
+            _applyBuff = value;
+            string buffstr = Enum.GetName(typeof(Define.BuffList), _applyBuff);
+            string[] buffArr = Enum.GetNames(typeof(Define.Buff));
+            string[] debuffArr = Enum.GetNames(typeof(Define.Debuff));
+            
+            if (buffArr.Contains(buffstr))
+            {
+                if (buffstr == null) return;
+                Define.Buff buff = (Define.Buff)Enum.Parse(typeof(Define.Buff), buffstr);
+                if (_buffList.Contains(buff))
+                {
+                    StopCoroutine(_buffDict[buff]);
+                    _buffList.Remove(buff);
+                }
+
+                StartCoroutine(_buffDict[buff]);
+            }
+            else
+            {
+                if (buffstr == null) return;
+                Define.Debuff debuff = (Define.Debuff)Enum.Parse(typeof(Define.Debuff), buffstr);
+                bool start;
+                
+                if (_debuffList.Contains(debuff))
+                {
+                    start = false;
+                    _debuffList.Remove(debuff);
+                    SelectDebuff(debuff, start);
+                }
+
+                start = true;
+                SelectDebuff(debuff, start);
+            }
+        }
+    }
+    
+    private void SelectBuff(Define.Buff buff, bool start)
+    {
+        switch (buff)
+        {
+            case Define.Buff.AttackIncrease:
+                if (start) StartCoroutine(AttackBuff(buff));
+                else StopCoroutine(AttackBuff(buff));
+                break;
+            case Define.Buff.DefenceIncrease:
+                if (start) StartCoroutine(DefenceBuff(buff));
+                else StopCoroutine(DefenceBuff(buff));
+                break;
+            case Define.Buff.HealthIncrease:
+                if (start) StartCoroutine(HealthBuff(buff));
+                else StopCoroutine(HealthBuff(buff));
+                break;
+            case Define.Buff.AttackSpeedIncrease:
+                if (start) StartCoroutine(AttackSpeedBuff(buff));
+                else StopCoroutine(AttackSpeedBuff(buff));
+                break;
+            case Define.Buff.MoveSpeedIncrease:
+                if (start) StartCoroutine(MoveSpeedBuff(buff));
+                else StopCoroutine(MoveSpeedBuff(buff));
+                break;
+            case Define.Buff.Invincible:
+                if (start) StartCoroutine(Invincible(buff));
+                else StopCoroutine(Invincible(buff));
+                break;
+        }
+    }
+
+    private void SelectDebuff(Define.Debuff debuff, bool start)
+    {
+        switch (debuff)
+        {
+            case Define.Debuff.AttackDecrease:
+                if (start) StartCoroutine(AttackDebuff(debuff));
+                else StopCoroutine(AttackDebuff(debuff));
+                break;
+            case Define.Debuff.DefenceDecrease:
+                if (start) StartCoroutine(DefenceDebuff(debuff));
+                else StopCoroutine(DefenceDebuff(debuff));
+                break;
+            case Define.Debuff.AttackSpeedDecrease:
+                if (start) StartCoroutine(AttackSpeedDebuff(debuff));
+                else StopCoroutine(AttackSpeedDebuff(debuff));
+                break;
+            case Define.Debuff.MoveSpeedDecrease:
+                if (start) StartCoroutine(MoveSpeedDebuff(debuff));
+                else StopCoroutine(MoveSpeedDebuff(debuff));
+                break;
+            case Define.Debuff.Curse:
+                if (start) StartCoroutine(Curse(debuff));
+                else StopCoroutine(Curse(debuff));
+                break;
+            case Define.Debuff.Addicted:
+                if (start) StartCoroutine(Addicted(debuff));
+                else StopCoroutine(Addicted(debuff));
+                break;
+            case Define.Debuff.DeadlyAddicted:
+                if (start) StartCoroutine(DeadlyAddicted(debuff));
+                else StopCoroutine(DeadlyAddicted(debuff));
+                break;
+        }
+    }
+    
+    private void RemoveBuff()
+    {
+            
+    }
+    
+    public void ApplyingBuff(float time, float param, Define.BuffList buff)
+    {
+        _buffTime = time;
+        _buffParam = param;
+        ApplyBuff = buff;
+    }
+    
+    
     private List<Define.Buff> _buffList = new List<Define.Buff>();
     private List<Define.Debuff> _debuffList = new List<Define.Debuff>();
     private Dictionary<Define.Buff, IEnumerator> _buffDict = new Dictionary<Define.Buff, IEnumerator>();    
@@ -81,6 +203,9 @@ public class Stat : MonoBehaviour
     {
         Targetable = true;
         Accuracy = 100;
+        Attack = 0;
+        Defense = 0;
+        MoveSpeed = 0;
         Evasion = 0;
         FireResist = 0;
         PoisonResist = 0;
@@ -203,14 +328,14 @@ public class Stat : MonoBehaviour
         // Define.Buff 와 순서 맞출것
         IEnumerator[] buffArr =
         {
-            AttackBuff(Define.Buff.Attack), AttackSpeedBuff(Define.Buff.AttackSpeed),
-            HealthBuff(Define.Buff.Health), DefenceBuff(Define.Buff.Defence), MoveSpeedBuff(Define.Buff.MoveSpeed),
-            Invincible(Define.Buff.Invincible)
+            AttackBuff(Define.Buff.AttackIncrease), AttackSpeedBuff(Define.Buff.AttackSpeedIncrease),
+            HealthBuff(Define.Buff.HealthIncrease), DefenceBuff(Define.Buff.DefenceIncrease), 
+            MoveSpeedBuff(Define.Buff.MoveSpeedIncrease), Invincible(Define.Buff.Invincible)
         };
         IEnumerator[] debuffArr =
         {
-            AttackDebuff(Define.Debuff.Attack), AttackSpeedDebuff(Define.Debuff.AttackSpeed),
-            DefenceDebuff(Define.Debuff.Defence), MoveSpeedDebuff(Define.Debuff.MoveSpeed),
+            AttackDebuff(Define.Debuff.AttackDecrease), AttackSpeedDebuff(Define.Debuff.AttackSpeedDecrease),
+            DefenceDebuff(Define.Debuff.DefenceDecrease), MoveSpeedDebuff(Define.Debuff.MoveSpeedDecrease),
             Curse(Define.Debuff.Curse), Addicted(Define.Debuff.Addicted), DeadlyAddicted(Define.Debuff.DeadlyAddicted),
             AggroFunc(Define.Debuff.Aggro),
         };
@@ -253,7 +378,51 @@ public class Stat : MonoBehaviour
         
         StartCoroutine(_debuffDict[debuff]);
     }
+    
+    private IEnumerator Addicted(Define.Debuff debuff)
+    {
+        _debuffList.Add(debuff);
+        float time = Time.time;
+        Debug.Log($"S{time}");
+        yield return new WaitForSeconds(_buffTime);
+        _debuffList.Remove(debuff);
+        Debug.Log($"E{time}");
+        
+        
+        // _debuffList.Add(debuff);
+        // Debug.Log(string.Join(" ", _debuffList));
+        // float intervalTime = 1.0f;
+        // float startTime = Time.time;
+        // float time = startTime - intervalTime;
+        // int poison = (int)(MaxHp * _buffParam);
+        // while (true)
+        // {
+        //     if (Time.time >= startTime + _buffTime)
+        //         break;
+        //     
+        //     if (Time.time >= time + intervalTime)
+        //     {
+        //         time = Time.time;
+        //         Debug.Log("at");
+        //         Hp -= poison;
+        //     }            
+        //     yield return null;
+        // }
+        // _debuffList.Remove(debuff);
+    }
 
+    public void Test()
+    {
+        StartCoroutine(CoTest());
+    }
+    public IEnumerator CoTest()
+    {
+        float time = Time.time;
+        Debug.Log($"Start {time}");
+        yield return new WaitForSeconds(3f);
+        Debug.Log($"End {time}");
+    }
+    
     private void SetParams(float time, float param)
     {
         switch (gameObject.name)
@@ -262,13 +431,13 @@ public class Stat : MonoBehaviour
                 bool debuffResist = gameObject.GetComponent<WerewolfController>().DebuffResist;
                 if (debuffResist)
                 {
-                    _time = time * 0.5f;
-                    _param = param * 0.5f;
+                    _buffTime = time * 0.5f;
+                    _buffParam = param * 0.5f;
                 }
                 break;
             default:
-                _time = time;
-                _param = param;
+                _buffTime = time;
+                _buffParam = param;
                 break;
         }
     }
@@ -296,9 +465,9 @@ public class Stat : MonoBehaviour
     private IEnumerator AttackBuff(Define.Buff buff)
     {
         _buffList.Add(buff);
-        int p = (int)(Attack * _param);
+        int p = (int)(Attack * _buffParam);
         Attack += p;
-        yield return new WaitForSeconds(_time);
+        yield return new WaitForSeconds(_buffTime);
         _buffList.Remove(buff);
         Attack -= p;
     }
@@ -307,9 +476,9 @@ public class Stat : MonoBehaviour
     {
         Debug.Log(gameObject.name);
         _buffList.Add(buff);
-        float p = AttackSpeed * _param;
+        float p = AttackSpeed * _buffParam;
         AttackSpeed += p;
-        yield return new WaitForSeconds(_time);
+        yield return new WaitForSeconds(_buffTime);
         _buffList.Remove(buff);
         AttackSpeed -= p;
     }
@@ -317,10 +486,10 @@ public class Stat : MonoBehaviour
     private IEnumerator HealthBuff(Define.Buff buff)
     {
         _buffList.Add(buff);
-        int p = (int)(MaxHp * _param);
+        int p = (int)(MaxHp * _buffParam);
         Hp += p;
         MaxHp += p;
-        yield return new WaitForSeconds(_time);
+        yield return new WaitForSeconds(_buffTime);
         _buffList.Remove(buff);
         MaxHp -= p;
         if (Hp > MaxHp) Hp = MaxHp;
@@ -329,9 +498,9 @@ public class Stat : MonoBehaviour
     private IEnumerator DefenceBuff(Define.Buff buff)
     {
         _buffList.Add(buff);
-        int p = (int)_param;
+        int p = (int)_buffParam;
         Defense += p;
-        yield return new WaitForSeconds(_time);
+        yield return new WaitForSeconds(_buffTime);
         _buffList.Remove(buff);
         Defense -= p;
     }
@@ -339,9 +508,9 @@ public class Stat : MonoBehaviour
     private IEnumerator MoveSpeedBuff(Define.Buff buff)
     {
         _buffList.Add(buff);
-        float p = MoveSpeed * _param;
+        float p = MoveSpeed * _buffParam;
         MoveSpeed += p;
-        yield return new WaitForSeconds(_time);
+        yield return new WaitForSeconds(_buffTime);
         _buffList.Remove(buff);
         MoveSpeed -= p;
     }
@@ -350,7 +519,7 @@ public class Stat : MonoBehaviour
     {
         _buffList.Add(buff);
         GameObject effect = Managers.Resource.Instanciate("Effects/HolyAura", gameObject.transform);
-        yield return new WaitForSeconds(_time);
+        yield return new WaitForSeconds(_buffTime);
         Managers.Resource.Destroy(effect);
         _buffList.Remove(buff);
     }
@@ -358,9 +527,9 @@ public class Stat : MonoBehaviour
     private IEnumerator AttackDebuff(Define.Debuff debuff)
     {
         _debuffList.Add(debuff);
-        int p = (int)(Attack * _param);
+        int p = (int)(Attack * _buffParam);
         Attack -= p;
-        yield return new WaitForSeconds(_time);
+        yield return new WaitForSeconds(_buffTime);
         _debuffList.Remove(debuff);
         Attack += p;
     }
@@ -368,9 +537,9 @@ public class Stat : MonoBehaviour
     private IEnumerator AttackSpeedDebuff(Define.Debuff debuff)
     {
         _debuffList.Add(debuff);
-        float p = AttackSpeed * _param;
+        float p = AttackSpeed * _buffParam;
         AttackSpeed -= p;
-        yield return new WaitForSeconds(_time);
+        yield return new WaitForSeconds(_buffTime);
         _debuffList.Remove(debuff);
         AttackSpeed += p;
     }
@@ -378,9 +547,9 @@ public class Stat : MonoBehaviour
     private IEnumerator DefenceDebuff(Define.Debuff debuff)
     {
         _debuffList.Add(debuff);
-        int p = (int)_param;
+        int p = (int)_buffParam;
         Defense -= p;
-        yield return new WaitForSeconds(_time);
+        yield return new WaitForSeconds(_buffTime);
         _debuffList.Remove(debuff);
         Defense += p;
     }
@@ -388,55 +557,38 @@ public class Stat : MonoBehaviour
     private IEnumerator MoveSpeedDebuff(Define.Debuff debuff)
     {
         _debuffList.Add(debuff);
-        float p = MoveSpeed * _param;
+        float p = MoveSpeed * _buffParam;
         MoveSpeed -= p;
-        yield return new WaitForSeconds(_time);
+        yield return new WaitForSeconds(5f);
         _debuffList.Remove(debuff);
         MoveSpeed += p;
+        Debug.Log("we");
     }
 
     private IEnumerator Curse(Define.Debuff debuff)
     {
         _debuffList.Add(debuff);
-        yield return new WaitForSeconds(_time);
+        yield return new WaitForSeconds(_buffTime);
         Hp /= 2;
-        _debuffList.Remove(debuff);
-    }
-
-    private IEnumerator Addicted(Define.Debuff debuff)
-    {
-        _debuffList.Add(debuff);
-        float intervalTime = 1.0f;
-        float startTime = Time.time;
-        float time = Time.time;
-        int poison = (int)(MaxHp * _param);
-        while (Time.time < startTime + _time)
-        {
-            Hp -= poison;
-            Debug.Log(_debuffList.Count);
-            yield return new WaitForSeconds(intervalTime);
-        }
         _debuffList.Remove(debuff);
     }
 
     private IEnumerator DeadlyAddicted(Define.Debuff debuff)
     {
         _debuffList.Add(debuff);
-        Debug.Log("as");
         float intervalTime = 1.0f;
         float time = Time.time;
-        int poison = (int)(MaxHp * _param);
+        int poison = (int)(MaxHp * _buffParam);
         Hp -= poison;
-        for (int i = 0; i < (int)(_time + 0.1); i++)
+        for (int i = 0; i < (int)(_buffTime + 0.1); i++)
         {
             if (Time.time > time + intervalTime)
             {
-                Debug.Log("kk");
                 time = Time.time;
                 Hp -= poison;
             }
         }
-        yield return new WaitForSeconds(_time);
+        yield return new WaitForSeconds(_buffTime);
         _debuffList.Remove(debuff);
     }
 
@@ -444,7 +596,7 @@ public class Stat : MonoBehaviour
     {
         _debuffList.Add(debuff);
         Aggro = true;
-        yield return new WaitForSeconds(_time);
+        yield return new WaitForSeconds(_buffTime);
         Aggro = false;
         _debuffList.Remove(debuff);
     }

@@ -116,15 +116,15 @@ public class SunflowerFairyController : TowerController
                 if (colliders[i].TryGetComponent(out Stat towerStat))
                 {
                     towerStat.Heal(_numHeal);
-                    towerStat.SetBuffParams(10, _numHealth, Define.Buff.Health);
+                    towerStat.SetBuffParams(10, _numHealth, Define.Buff.HealthIncrease);
                     if (_attack)
                     {
-                        towerStat.SetBuffParams(10, _numAttack, Define.Buff.Attack);
+                        towerStat.SetBuffParams(10, _numAttack, Define.Buff.AttackIncrease);
                     }
 
                     if (_defence)
                     {
-                        towerStat.SetBuffParams(10, _numDefence, Define.Buff.Defence);
+                        towerStat.SetBuffParams(10, _numDefence, Define.Buff.DefenceIncrease);
                     }
                 }
             }
@@ -150,8 +150,8 @@ public class SunflowerFairyController : TowerController
         for (int i = 0; i < cnt; i++)
         {
             if (!monsterDebuff[i].TryGetComponent(out Stat monsterStat)) continue;
-            monsterStat.SetDebuffParams(10, _numSlow, Define.Debuff.MoveSpeed);
-            monsterStat.SetDebuffParams(10, _numSlowAttack, Define.Debuff.AttackSpeed);
+            monsterStat.SetDebuffParams(10, _numSlow, Define.Debuff.MoveSpeedDecrease);
+            monsterStat.SetDebuffParams(10, _numSlowAttack, Define.Debuff.AttackSpeedDecrease);
         }
     }
 

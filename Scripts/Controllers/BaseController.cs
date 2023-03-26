@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using TMPro;
 using UnityEngine;
+using Debug = UnityEngine.Debug;
 
 public abstract class BaseController : MonoBehaviour, ISkillObserver
 {
@@ -161,5 +162,14 @@ public abstract class BaseController : MonoBehaviour, ISkillObserver
                 NewSkill = skill;
             }
         }
+    }
+
+    protected void OnCollisionEnter(Collision collision)
+    {
+        Stat stat = GetComponent<Stat>();
+        // if (collision.gameObject.name == "PoisonAttack")
+        // {
+        //     stat.ApplyingBuff(3, 0.3f, Define.BuffList.MoveSpeedDecrease);
+        // }
     }
 }

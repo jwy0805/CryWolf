@@ -176,12 +176,12 @@ public class SunfloraPixieController : TowerController
                 if (colliders[i].TryGetComponent(out Stat towerStat))
                 {
                     towerStat.Heal(_numHeal);
-                    towerStat.SetBuffParams(10, _numHealth, Define.Buff.Health);
-                    towerStat.SetBuffParams(10, _numAttack, Define.Buff.Attack);
-                    towerStat.SetBuffParams(10, _numDefence, Define.Buff.Defence);
+                    towerStat.SetBuffParams(10, _numHealth, Define.Buff.HealthIncrease);
+                    towerStat.SetBuffParams(10, _numAttack, Define.Buff.AttackIncrease);
+                    towerStat.SetBuffParams(10, _numDefence, Define.Buff.DefenceIncrease);
                     if (_attackSpeedSkill)
                     {
-                        towerStat.SetBuffParams(10, _numAttackSpeed, Define.Buff.AttackSpeed);
+                        towerStat.SetBuffParams(10, _numAttackSpeed, Define.Buff.AttackSpeedIncrease);
                     }
                 }
             }
@@ -226,8 +226,8 @@ public class SunfloraPixieController : TowerController
         {
             if (monsterDebuff[i].TryGetComponent(out Stat monsterStat))
             {
-                monsterStat.SetDebuffParams(10, _numSlow, Define.Debuff.MoveSpeed);
-                monsterStat.SetDebuffParams(10, _numSlowAttack, Define.Debuff.AttackSpeed);
+                monsterStat.SetDebuffParams(10, _numSlow, Define.Debuff.MoveSpeedDecrease);
+                monsterStat.SetDebuffParams(10, _numSlowAttack, Define.Debuff.AttackSpeedDecrease);
                 if (_curse)
                 {
                     monsterStat.SetDebuffParams(5,0, Define.Debuff.Curse);

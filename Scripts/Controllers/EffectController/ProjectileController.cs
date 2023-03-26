@@ -148,13 +148,13 @@ public class ProjectileController : MonoBehaviour
     protected virtual void OnTriggerEnter(Collider collider)
     {
         GameObject go = collider.gameObject;
-
+    
         if (go == null || _lockTarget == null)
         {
             Managers.Resource.Destroy(gameObject);
             return; 
         }
-
+    
         if (!_baseController.Tags.Contains(go.tag))
         {
             if (go.CompareTag("Terrain"))
@@ -172,5 +172,11 @@ public class ProjectileController : MonoBehaviour
                 HitEffect();
             }
         }
+    }
+
+    protected virtual void OnCollisionEnter(Collision collision)
+    {
+        if (collision.gameObject.name == "Horror" ) return;
+        HitEffect();
     }
 }

@@ -388,22 +388,40 @@ public class Define
         Item,
     }
 
+    public enum BuffList
+    {
+        AttackIncrease,
+        AttackSpeedIncrease,
+        HealthIncrease,
+        DefenceIncrease,
+        MoveSpeedIncrease,
+        Invincible,
+        AttackDecrease,
+        AttackSpeedDecrease,
+        DefenceDecrease,
+        MoveSpeedDecrease,
+        Curse,
+        Addicted,
+        DeadlyAddicted,
+        Aggro,
+    }
+    
     public enum Buff
     {
-        Attack,
-        AttackSpeed,
-        Health,
-        Defence,
-        MoveSpeed,
+        AttackIncrease,
+        AttackSpeedIncrease,
+        HealthIncrease,
+        DefenceIncrease,
+        MoveSpeedIncrease,
         Invincible,
     }
 
     public enum Debuff
     {
-        Attack,
-        AttackSpeed,
-        Defence,
-        MoveSpeed,
+        AttackDecrease,
+        AttackSpeedDecrease,
+        DefenceDecrease,
+        MoveSpeedDecrease,
         Curse,
         Addicted,
         DeadlyAddicted,

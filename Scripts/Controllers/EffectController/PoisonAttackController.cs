@@ -27,16 +27,21 @@ public class PoisonAttackController : ProjectileController
             if (go.TryGetComponent(out Stat targetStat))
             {
                 if (!targetStat.Targetable) HitEffect();
-                targetStat.OnAttakced(_stat);
-                if (gameObject.name == "Horror")
+                // targetStat.OnAttakced(_stat);
+                if (transform.parent.gameObject.name == "Horror")
                 {
-                    HorrorController horrorController = GetComponent<HorrorController>();
-                    targetStat.SetDebuffParams(horrorController.PoisonStack ? 5 : 10, 0.03f,
-                        horrorController.PoisonStack ? Define.Debuff.DeadlyAddicted : Define.Debuff.Addicted);
+                    HorrorController horrorController = transform.parent.GetComponent<HorrorController>();
+
+                    // targetStat.Test();
+
+                    targetStat.ApplyingBuff(3, 0.03f, Define.BuffList.Addicted);
+
+                    // targetStat.SetDebuffParams(horrorController.PoisonStack ? 5f : 10f, 0.03f,
+                    //     horrorController.PoisonStack ? Define.Debuff.DeadlyAddicted : Define.Debuff.MoveSpeedDecrease);
                 }
                 else
                 {
-                    targetStat.SetDebuffParams(10, 0.03f, Define.Debuff.Addicted);
+                    targetStat.SetDebuffParams(10f, 0.03f, Define.Debuff.Addicted);
                 }
                 GetMp();
             }
