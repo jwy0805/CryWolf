@@ -78,7 +78,7 @@ public class HorrorController : MonsterController
         _stat.maxMp = 10;
         _stat.Mp = 0;
         _stat.Attack = 6;
-        _stat.Skill = 112;
+        _stat.Skill = 0;
         _stat.AttackSpeed = 0.75f;
         _stat.Defense = 7;
         _stat.MoveSpeed = 5.0f;
@@ -170,8 +170,8 @@ public class HorrorController : MonsterController
             targetStat.OnSkilled(_stat);
             if (_rollPoison)
             {
-                targetStat.SetDebuffParams(_poisonStack? 5 : 10, 0.03f,
-                    _poisonStack ? Define.Debuff.Addicted : Define.Debuff.DeadlyAddicted);
+                targetStat.ApplyingBuff(_poisonStack? 5 : 10, 0.03f,
+                    _poisonStack ? Define.BuffList.DeadlyAddicted : Define.BuffList.Addicted);
             }
         }
 

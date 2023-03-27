@@ -26,8 +26,6 @@ public class MonsterController : BaseController
         _navMesh.enabled = true;
 
         _stat = gameObject.GetComponent<Stat>();
-        _stat.Hp = 0;
-        _stat.MaxHp = 0;
         _stat.Mp = 0;
         _stat.maxMp = 0;
         _stat.Attack = 0;

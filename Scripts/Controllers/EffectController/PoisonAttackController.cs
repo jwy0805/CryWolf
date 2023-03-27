@@ -31,17 +31,14 @@ public class PoisonAttackController : ProjectileController
                 if (transform.parent.gameObject.name == "Horror")
                 {
                     HorrorController horrorController = transform.parent.GetComponent<HorrorController>();
-
-                    // targetStat.Test();
-
-                    targetStat.ApplyingBuff(3, 0.03f, Define.BuffList.Addicted);
-
-                    // targetStat.SetDebuffParams(horrorController.PoisonStack ? 5f : 10f, 0.03f,
-                    //     horrorController.PoisonStack ? Define.Debuff.DeadlyAddicted : Define.Debuff.MoveSpeedDecrease);
+                    targetStat.ApplyingBuff(horrorController.PoisonStack ? 5f : 10f, 0.03f,
+                        horrorController.PoisonStack ? Define.BuffList.DeadlyAddicted : Define.BuffList.Addicted);
+                    // _stat.ApplyingBuff(5f, 1f, Define.BuffList.AttackIncrease);
+                    // Debug.Log(_stat.Attack);
                 }
                 else
                 {
-                    targetStat.SetDebuffParams(10f, 0.03f, Define.Debuff.Addicted);
+                    targetStat.ApplyingBuff(10f, 0.03f, Define.BuffList.Addicted);
                 }
                 GetMp();
             }

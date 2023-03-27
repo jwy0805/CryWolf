@@ -29,7 +29,7 @@ public class MothCelestialPoisonController : ProjectileController
                 if (!targetStat.Targetable) HitEffect();
                 targetStat.OnFaint();
                 targetStat.OnAttakced(_stat);
-                targetStat.SetDebuffParams(10, 0.05f, Define.Debuff.Addicted);
+                targetStat.ApplyingBuff(10, 0.05f, Define.BuffList.Addicted);
                 GetMp();
             }
             HitEffect();

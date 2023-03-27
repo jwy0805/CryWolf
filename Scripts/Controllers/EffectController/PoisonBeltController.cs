@@ -23,7 +23,7 @@ public class PoisonBeltController : MonoBehaviour
         if (!other.CompareTag("Tower") && !other.CompareTag("Sheep")) return;
         if (other.TryGetComponent(out Stat targetStat))
         {
-            targetStat.SetDebuffParams(5, 0.1f, Define.Debuff.Addicted);
+            targetStat.ApplyingBuff(5, 0.1f, Define.BuffList.Addicted);
         }
     }
 }

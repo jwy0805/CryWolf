@@ -40,7 +40,7 @@ public class BlossomAttackController : ProjectileController
                     int randVal = random.Next(100);
                     if (_blossomController._blossomPoison)
                     {
-                        targetStat.SetDebuffParams(10, 0.03f, Define.Debuff.Addicted);
+                        targetStat.ApplyingBuff(10, 0.03f, Define.BuffList.Addicted);
                     }
                     if (randVal < _blossomController._deadParameter)
                     {

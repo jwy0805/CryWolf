@@ -163,13 +163,4 @@ public abstract class BaseController : MonoBehaviour, ISkillObserver
             }
         }
     }
-
-    protected void OnCollisionEnter(Collision collision)
-    {
-        Stat stat = GetComponent<Stat>();
-        // if (collision.gameObject.name == "PoisonAttack")
-        // {
-        //     stat.ApplyingBuff(3, 0.3f, Define.BuffList.MoveSpeedDecrease);
-        // }
-    }
 }

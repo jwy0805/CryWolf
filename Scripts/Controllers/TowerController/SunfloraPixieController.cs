@@ -176,12 +176,12 @@ public class SunfloraPixieController : TowerController
                 if (colliders[i].TryGetComponent(out Stat towerStat))
                 {
                     towerStat.Heal(_numHeal);
-                    towerStat.SetBuffParams(10, _numHealth, Define.Buff.HealthIncrease);
-                    towerStat.SetBuffParams(10, _numAttack, Define.Buff.AttackIncrease);
-                    towerStat.SetBuffParams(10, _numDefence, Define.Buff.DefenceIncrease);
+                    towerStat.ApplyingBuff(10, _numHealth, Define.BuffList.HealthIncrease);
+                    towerStat.ApplyingBuff(10, _numAttack, Define.BuffList.AttackIncrease);
+                    towerStat.ApplyingBuff(10, _numDefence, Define.BuffList.DefenceIncrease);
                     if (_attackSpeedSkill)
                     {
-                        towerStat.SetBuffParams(10, _numAttackSpeed, Define.Buff.AttackSpeedIncrease);
+                        towerStat.ApplyingBuff(10, _numAttackSpeed, Define.BuffList.AttackSpeedIncrease);
                     }
                 }
             }
@@ -214,7 +214,7 @@ public class SunfloraPixieController : TowerController
             List<Collider> tower = PickUnits(1, towers);
             if (tower[0].TryGetComponent(out Stat towerStat))
             {
-                towerStat.SetBuffParams(3, 0, Define.Buff.Invincible);
+                towerStat.ApplyingBuff(3, 0, Define.BuffList.Invincible);
             }
         }
         
@@ -226,11 +226,11 @@ public class SunfloraPixieController : TowerController
         {
             if (monsterDebuff[i].TryGetComponent(out Stat monsterStat))
             {
-                monsterStat.SetDebuffParams(10, _numSlow, Define.Debuff.MoveSpeedDecrease);
-                monsterStat.SetDebuffParams(10, _numSlowAttack, Define.Debuff.AttackSpeedDecrease);
+                monsterStat.ApplyingBuff(10, _numSlow, Define.BuffList.MoveSpeedDecrease);
+                monsterStat.ApplyingBuff(10, _numSlowAttack, Define.BuffList.AttackSpeedDecrease);
                 if (_curse)
                 {
-                    monsterStat.SetDebuffParams(5,0, Define.Debuff.Curse);
+                    monsterStat.ApplyingBuff(5,0, Define.BuffList.Curse);
                 }
 
                 if (_faint)

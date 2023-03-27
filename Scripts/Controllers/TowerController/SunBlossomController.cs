@@ -88,7 +88,7 @@ public class SunBlossomController : TowerController
             {
                 if (colliders[i].TryGetComponent(out Stat towerStat))
                 {
-                    towerStat.SetBuffParams(10f, _numHealth, Define.Buff.HealthIncrease);
+                    towerStat.ApplyingBuff(10f, _numHealth, Define.BuffList.HealthIncrease);
                     if (_heal)
                     {
                         towerStat.Heal(_numHeal);
@@ -107,10 +107,10 @@ public class SunBlossomController : TowerController
         int ran = UnityEngine.Random.Range(0, lenMon);
         if (monsters[ran].TryGetComponent(out Stat monsterStat) && _slow)
         {
-            monsterStat.SetDebuffParams(10f, _numSlow, Define.Debuff.MoveSpeedDecrease);
+            monsterStat.ApplyingBuff(10f, _numSlow, Define.BuffList.MoveSpeedDecrease);
             if (_slowAttack)
             {
-                monsterStat.SetDebuffParams(10f, _numSlowAttack, Define.Debuff.AttackSpeedDecrease);
+                monsterStat.ApplyingBuff(10f, _numSlowAttack, Define.BuffList.AttackSpeedDecrease);
             }
         }
     }

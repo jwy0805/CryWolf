@@ -94,7 +94,7 @@ public class PracticeDummyController : TowerController
             BaseController baseController = go.GetComponent<BaseController>();
             baseController._lockTarget = gameObject;
             Stat stat = go.GetComponent<Stat>();
-            stat.SetDebuffParams(5, 0, Define.Debuff.Aggro);
+            stat.ApplyingBuff(5, 0, Define.BuffList.Aggro);
         }
 
         _stat.Mp = 0;
