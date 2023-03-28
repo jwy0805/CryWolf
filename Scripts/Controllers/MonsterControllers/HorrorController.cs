@@ -10,7 +10,7 @@ public class HorrorController : MonsterController
     private bool _crash = false;
     private bool _knockBack;
     private bool _rollPoison = false;
-    private bool _poisonStack = false;
+    private bool _poisonStack = true;
     private bool _poisonBelt = false;
     private readonly float _rollingSpeed = 8.0f;
     private Vector3 _dir;

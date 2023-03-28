@@ -2,10 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.Serialization;
-using UnityEngine.UI;
 
 public class Stat : MonoBehaviour
 {
@@ -42,20 +39,15 @@ public class Stat : MonoBehaviour
 
     public int Level { get { return _level; } set { _level = value; } }
     public int Resource { get { return _resource; } set { _resource = value; } }
-
     public int Hp
     {
         get => _hp;
         set
         {
             _hp = value;
-            if (_hp <= 0)
-            {
-                OnDead();
-            }
+            if (_hp <= 0) OnDead();
         }
     }
-
     public int MaxHp { get { return _maxHp; } set { _maxHp = value; } }
     public int Mp { get { return _mp; } set { _mp = value; } }
     public int maxMp { get { return _maxMp; } set { _maxMp = value; } }
@@ -86,64 +78,6 @@ public class Stat : MonoBehaviour
     public float ReflectionRate { get { return _reflectionRate; } set { _reflectionRate = value; } }
     public bool Aggro { get { return _aggro;} set { _aggro = value; } }
 
-    private List<IEnumerator> _buffList = new List<IEnumerator>();
-    private List<IEnumerator> _debuffList = new List<IEnumerator>();
-    private List<int> _indexList = new List<int>();
-    private Define.BuffList ApplyBuff
-    {
-        get => _applyBuff;
-        set
-        {
-            _applyBuff = value;
-            string buffstr = Enum.GetName(typeof(Define.BuffList), _applyBuff);
-            string[] buffArr = Enum.GetNames(typeof(Define.Buff));
-            
-            if (buffArr.Contains(buffstr))
-            {
-                if (buffstr == null) return;
-                Define.Buff buff = (Define.Buff)Enum.Parse(typeof(Define.Buff), buffstr);
-                if (_buffList.Contains(_buffDict[buff]))
-                {
-                    int index = _buffList.IndexOf(_buffDict[buff]);
-                    StopCoroutine(_buffList[index]);
-                    _buffList.Remove(_buffDict[buff]);
-                }
-                _buffList.Add(_buffDict[buff]);
-                StartCoroutine(_buffDict[buff]);
-            }
-            else
-            {
-                if (buffstr == null) return;
-                Define.Debuff debuff = (Define.Debuff)Enum.Parse(typeof(Define.Debuff), buffstr);
-
-                if (_debuffList.Contains(_debuffDict[debuff]))
-                {
-                    int index = _debuffList.IndexOf(_debuffDict[debuff]);
-                    StopCoroutine(_debuffList[index]);
-                    StopCoroutineEffect(_debuffList[index]);
-                    _debuffList.Remove(_debuffDict[debuff]);
-                }
-                _debuffList.Add(_debuffDict[debuff]);
-                StartCoroutine(_debuffList.Last());
-            }
-        }
-    }
-
-    private void StopCoroutineEffect(IEnumerator coroutine)
-    {
-        
-    }
-    
-    public void ApplyingBuff(float time, float param, Define.BuffList buff)
-    {
-        _buffTime = time;
-        _buffParam = param;
-        ApplyBuff = buff;
-    }
-    
-    private Dictionary<Define.Buff, IEnumerator> _buffDict = new Dictionary<Define.Buff, IEnumerator>();    
-    private Dictionary<Define.Debuff, IEnumerator> _debuffDict = new Dictionary<Define.Debuff, IEnumerator>();
-
     void Start()
     {
         Targetable = true;
@@ -156,13 +90,11 @@ public class Stat : MonoBehaviour
         Reflection = false;
         ReflectionSkill = false;
         ReflectionRate = 0f;
-        
-        RegisterBuff();
     }
-
+    
     public virtual void OnAttakced(Stat attacker)
     {
-        if (_buffList.Contains(_buffDict[Define.Buff.Invincible])) return;
+        if (_buffDict.ContainsKey(Define.Buff.Invincible)) return;
         int damage;
         var random = new System.Random();
         int randVal = random.Next(100);
@@ -180,7 +112,7 @@ public class Stat : MonoBehaviour
 
     public virtual void OnSkilled(Stat attacker)
     {
-        if (_buffList.Contains(_buffDict[Define.Buff.Invincible])) return;
+        if (_buffDict.ContainsKey(Define.Buff.Invincible)) return;
         int damage;
         var random = new System.Random();
         int randVal = random.Next(100);
@@ -200,7 +132,7 @@ public class Stat : MonoBehaviour
         Targetable = false;
         BaseController baseController = gameObject.GetComponent<BaseController>();
         Define.WorldObject type = baseController.WorldObjectType;
-        
+        RemoveAllDebuff();
         switch (type)
         {
             case Define.WorldObject.Fence:
@@ -210,7 +142,7 @@ public class Stat : MonoBehaviour
             default:
                 baseController.State = Define.State.Die;
                 break;
-        }    
+        }
     }
 
     public virtual void OnFaint()
@@ -230,33 +162,41 @@ public class Stat : MonoBehaviour
         if (Hp > MaxHp) Hp = MaxHp;
     }
 
-    private void RegisterBuff()
+    #region BuffSystem
+
+    private Dictionary<Define.Buff, IEnumerator> _buffDict = new Dictionary<Define.Buff, IEnumerator>();
+    private Dictionary<Define.Debuff, IEnumerator> _debuffDict = new Dictionary<Define.Debuff, IEnumerator>();
+    private Dictionary<int, Define.Debuff> _debuffHashDict = new Dictionary<int, Define.Debuff>();
+    private Dictionary<int, IEnumerator> _debuffNestedDict = new Dictionary<int, IEnumerator>(); 
+    private Dictionary<Define.Buff, float> _buffParamDict = new Dictionary<Define.Buff, float>();
+    private Dictionary<Define.Debuff, float> _debuffParamDict = new Dictionary<Define.Debuff, float>();
+    private Define.BuffList ApplyBuff
     {
-        // Define.Buff 와 순서 맞출것
-        IEnumerator[] buffArr =
+        get => _applyBuff;
+        set
         {
-            AttackBuff(), AttackSpeedBuff(), HealthBuff(), DefenceBuff(), MoveSpeedBuff(), Invincible()
-        };
-        IEnumerator[] debuffArr =
-        {
-            AttackDebuff(), AttackSpeedDebuff(), DefenceDebuff(), MoveSpeedDebuff(), Curse(), Addicted(), 
-            DeadlyAddicted(), AggroFunc(),
-        };
-        Array buffEnum = Enum.GetValues(typeof(Define.Buff));
-        Array debuffEnum = Enum.GetValues(typeof(Define.Debuff));
-
-        for (int i = 0; i < buffArr.Length; i++)
-        {
-            _buffDict.Add((Define.Buff)buffEnum.GetValue(i), buffArr[i]);
-        }
-
-        for (int i = 0; i < debuffArr.Length; i++)
-        {
-            _debuffDict.Add((Define.Debuff)debuffEnum.GetValue(i), debuffArr[i]);
+            _applyBuff = value;
+            string buffstr = Enum.GetName(typeof(Define.BuffList), _applyBuff);
+            string[] buffArr = Enum.GetNames(typeof(Define.Buff));
+            
+            if (buffArr.Contains(buffstr))
+            {
+                if (buffstr == null) return;
+                Define.Buff buff = (Define.Buff)Enum.Parse(typeof(Define.Buff), buffstr);
+                if (_buffDict.ContainsKey(buff)) RenewBuff(buff);
+                StartBuff(buff);
+            }
+            else
+            {
+                if (buffstr == null) return;
+                Define.Debuff debuff = (Define.Debuff)Enum.Parse(typeof(Define.Debuff), buffstr);
+                if (_debuffDict.ContainsKey(debuff)) RenewDebuff(debuff);
+                StartDebuff(debuff);
+            }
         }
     }
 
-    private void SetParams(float time, float param)
+    public void ApplyingBuff(float time, float param, Define.BuffList buff)
     {
         switch (gameObject.name)
         {
@@ -273,134 +213,362 @@ public class Stat : MonoBehaviour
                 _buffParam = param;
                 break;
         }
+        ApplyBuff = buff;
     }
     
-    public void RemoveAllDebuff()
+    private void StartBuff(Define.Buff buff)
     {
-        // for (int i = 0; i < _debuffList.Count; i++)
-        // {
-        //     Define.Debuff debuff = _debuffList[i];
-        //     StopCoroutine(_debuffDict[debuff]);
-        // }
-        //
-        // _debuffList.Clear();
+        IEnumerator coroutine = SelectBuff(buff);
+        _buffDict.Add(buff, coroutine);
+        StartCoroutine(coroutine);
+    }
+
+    private void StartDebuff(Define.Debuff debuff)
+    {
+        IEnumerator coroutine = SelectDebuff(debuff);
+        switch (debuff)
+        {
+            case Define.Debuff.Curse:
+            case Define.Debuff.DeadlyAddicted:
+                _debuffHashDict.Add(coroutine.GetHashCode(), debuff);
+                _debuffNestedDict.Add(coroutine.GetHashCode(), coroutine);
+                break;
+        }
+        _debuffDict.Add(debuff, coroutine);
+        StartCoroutine(coroutine);
+    }
+    
+    private IEnumerator SelectBuff(Define.Buff buff)
+    {
+        IEnumerator coroutine;
+        switch (buff)
+        {
+            case Define.Buff.AttackIncrease:
+                coroutine = AttackBuff();
+                break;
+            case Define.Buff.AttackSpeedIncrease:
+                coroutine = AttackSpeedBuff();
+                break;
+            case Define.Buff.MoveSpeedIncrease:
+                coroutine = MoveSpeedBuff();
+                break;
+            case Define.Buff.DefenceIncrease:
+                coroutine = DefenceBuff();
+                break;
+            case Define.Buff.HealthIncrease:
+                coroutine = HealthBuff();
+                break;
+            case Define.Buff.Invincible:
+                coroutine = Invincible();
+                break;
+            default:
+                coroutine = null;
+                break;
+        }
+
+        return coroutine;
+    }
+    
+    private IEnumerator SelectDebuff(Define.Debuff debuff)
+    {
+        IEnumerator coroutine;
+        switch (debuff)
+        {
+            case Define.Debuff.AttackDecrease:
+                coroutine = AttackDebuff();
+                break;
+            case Define.Debuff.AttackSpeedDecrease:
+                coroutine = AttackSpeedDebuff();
+                break;
+            case Define.Debuff.MoveSpeedDecrease:
+                coroutine = MoveSpeedDebuff();
+                break;
+            case Define.Debuff.DefenceDecrease:
+                coroutine = DefenceDebuff();
+                break;
+            case Define.Debuff.Curse:
+                coroutine = Curse();
+                break;
+            case Define.Debuff.Addicted:
+                coroutine = Addicted();
+                break;
+            case Define.Debuff.DeadlyAddicted:
+                coroutine = DeadlyAddicted();
+                break;
+            case Define.Debuff.Aggro:
+                coroutine = AggroFunc();
+                break;
+            default:
+                coroutine = null;
+                break;
+        }
+        
+        return coroutine;
+    }
+    
+    private void RenewBuff(Define.Buff buff)
+    {
+        StopCoroutine(_buffDict[buff]);
+        switch (buff)
+        {
+            case Define.Buff.AttackIncrease:
+                Attack -= (int)_buffParamDict[buff];
+                break;
+            case Define.Buff.AttackSpeedIncrease:
+                AttackSpeed -= _buffParamDict[buff];
+                break;
+            case Define.Buff.MoveSpeedIncrease:
+                MoveSpeed -= _buffParamDict[buff];
+                break;
+            case Define.Buff.DefenceIncrease:
+                Defense -= (int)_buffParamDict[buff];
+                break;
+            case Define.Buff.HealthIncrease:
+                MaxHp -= (int)_buffParamDict[buff];
+                if (Hp > MaxHp) Hp = MaxHp;
+                break;
+            case Define.Buff.Invincible:
+                break;
+        }
+        _buffDict.Remove(buff);
+        _buffParamDict.Remove(buff);
+    }
+    
+    private void RenewDebuff(Define.Debuff debuff)
+    {
+        switch (debuff)
+        {
+            case Define.Debuff.AttackDecrease:
+                StopCoroutine(_debuffDict[debuff]);
+                Attack += (int)_debuffParamDict[debuff];
+                break;
+            case Define.Debuff.AttackSpeedDecrease:
+                StopCoroutine(_debuffDict[debuff]);
+                AttackSpeed += _debuffParamDict[debuff];
+                break;
+            case Define.Debuff.MoveSpeedDecrease:
+                StopCoroutine(_debuffDict[debuff]);
+                MoveSpeed += _debuffParamDict[debuff];
+                break;
+            case Define.Debuff.DefenceDecrease:
+                StopCoroutine(_debuffDict[debuff]);
+                Defense += (int)_debuffParamDict[debuff];
+                break;
+            case Define.Debuff.Addicted:
+                StopCoroutine(_debuffDict[debuff]);
+                break;
+            case Define.Debuff.Aggro:
+                StopCoroutine(_debuffDict[debuff]);
+                Aggro = false;
+                break;
+        }
+        _debuffDict.Remove(debuff);
+        _debuffParamDict.Remove(debuff);
     }
     
     public void RemoveDebuff(Define.Debuff debuff)
     {
-        // if (_debuffList.Contains(debuff))
-        // {
-        //     StopCoroutine(_debuffDict[debuff]);
-        //     _debuffList.Remove(debuff);   
-        // }
+        StopCoroutine(_debuffDict[debuff]);
+        switch (debuff)
+        {
+            case Define.Debuff.AttackDecrease:
+                Attack += (int)_debuffParamDict[debuff];
+                break;
+            case Define.Debuff.AttackSpeedDecrease:
+                AttackSpeed += _debuffParamDict[debuff];
+                break;
+            case Define.Debuff.MoveSpeedDecrease:
+                MoveSpeed += _debuffParamDict[debuff];
+                break;
+            case Define.Debuff.DefenceDecrease:
+                Defense += (int)_debuffParamDict[debuff];
+                break;
+            case Define.Debuff.Aggro:
+                Aggro = false;
+                break;
+            case Define.Debuff.Curse:
+            case Define.Debuff.DeadlyAddicted:
+                if (_debuffHashDict != null)
+                {
+                    Dictionary<int, Define.Debuff> toRemove = new Dictionary<int, Define.Debuff>();
+                    foreach (var hash in _debuffHashDict.Keys)
+                    {
+                        if (_debuffHashDict[hash] == debuff)
+                        {
+                            StopCoroutine(_debuffNestedDict[hash]);
+                            toRemove.Add(hash, _debuffHashDict[hash]);
+                        }
+                    }
+                    foreach (var hash in toRemove.Keys)
+                    {
+                        _debuffHashDict.Remove(hash);
+                        _debuffNestedDict.Remove(hash);
+                    }
+                }
+                break;
+        }
+        _debuffDict.Remove(debuff);
+        _debuffParamDict.Remove(debuff);
     }
+    
+    public void RemoveAllDebuff()
+    {
+        if (_debuffDict != null)
+        {
+            List<Define.Debuff> toRemove = new List<Define.Debuff>();
+            foreach (var debuff in _debuffDict.Keys)
+            {
+                toRemove.Add(debuff);
+            }
+            foreach (var debuff in toRemove)
+            {
+                RemoveDebuff(debuff);
+            }
+        }
 
+        if (_debuffHashDict != null)
+        {
+            List<int> toRemove = new List<int>();
+            foreach (var hash in _debuffHashDict.Keys)
+            {
+                toRemove.Add(hash);
+            }
+            foreach (var hash in toRemove)
+            {
+                RemoveDebuff(_debuffHashDict[hash]);
+            }
+        }
+    }
+    
     private IEnumerator AttackBuff()
     {
         float time = Time.time;
-        Debug.Log($"start {time}");
-        int p = (int)(Attack * _buffParam);
-        Attack += p;
+        Define.Buff buff = Define.Buff.AttackIncrease;
+        float p = Attack * _buffParam;
+        _buffParamDict.Add(buff, p);
+        Attack += (int)p;
         yield return new WaitForSeconds(_buffTime);
-        Attack -= p;
-        _debuffList.Remove(_buffDict[Define.Buff.AttackIncrease]);
-        Debug.Log($"end {time}");
+        Attack -= (int)p;
+        _buffDict.Remove(buff);
+        _buffParamDict.Remove(buff);
     }
 
     private IEnumerator AttackSpeedBuff()
     {
-        Debug.Log(gameObject.name);
+        Define.Buff buff = Define.Buff.AttackSpeedIncrease;
         float p = AttackSpeed * _buffParam;
+        _buffParamDict.Add(buff, p);
         AttackSpeed += p;
         yield return new WaitForSeconds(_buffTime);
         AttackSpeed -= p;
-        _debuffList.Remove(_buffDict[Define.Buff.AttackSpeedIncrease]);
+        _buffDict.Remove(buff);
+        _buffParamDict.Remove(buff);
     }
 
     private IEnumerator HealthBuff()
     {
-        int p = (int)(MaxHp * _buffParam);
-        Hp += p;
-        MaxHp += p;
+        Define.Buff buff = Define.Buff.HealthIncrease;
+        float p = MaxHp * _buffParam;
+        _buffParamDict.Add(buff, p);
+        Hp += (int)p;
+        MaxHp += (int)p;
         yield return new WaitForSeconds(_buffTime);
-        MaxHp -= p;
+        MaxHp -= (int)p;
         if (Hp > MaxHp) Hp = MaxHp;
-        _debuffList.Remove(_buffDict[Define.Buff.HealthIncrease]);
+        _buffDict.Remove(buff);
+        _buffParamDict.Remove(buff);
     }
 
     private IEnumerator DefenceBuff()
     {
-        int p = (int)_buffParam;
-        Defense += p;
+        Define.Buff buff = Define.Buff.DefenceIncrease;
+        float p = _buffParam;
+        _buffParamDict.Add(buff, p);
+        Defense += (int)p;
         yield return new WaitForSeconds(_buffTime);
-        Defense -= p;
-        _debuffList.Remove(_buffDict[Define.Buff.DefenceIncrease]);
+        Defense -= (int)p;
+        _buffDict.Remove(buff);
+        _buffParamDict.Remove(buff);
     }
 
     private IEnumerator MoveSpeedBuff()
     {
+        Define.Buff buff = Define.Buff.MoveSpeedIncrease;
         float p = MoveSpeed * _buffParam;
+        _buffParamDict.Add(buff, p);
         MoveSpeed += p;
         yield return new WaitForSeconds(_buffTime);
         MoveSpeed -= p;
-        _debuffList.Remove(_buffDict[Define.Buff.MoveSpeedIncrease]);
+        _buffDict.Remove(buff);
+        _buffParamDict.Remove(buff);
     }
 
     private IEnumerator Invincible()
     {
         GameObject effect = Managers.Resource.Instanciate("Effects/HolyAura", gameObject.transform);
+        Define.Buff buff = Define.Buff.Invincible;
         yield return new WaitForSeconds(_buffTime);
         Managers.Resource.Destroy(effect);
-        _debuffList.Remove(_buffDict[Define.Buff.Invincible]);
+        _buffDict.Remove(buff);
     }
 
     private IEnumerator AttackDebuff()
     {
-        int p = (int)(Attack * _buffParam);
-        Attack -= p;
+        Define.Debuff debuff = Define.Debuff.AttackDecrease;
+        float p = Attack * _buffParam;
+        _debuffParamDict.Add(debuff, p);
+        Attack -= (int)p;
         yield return new WaitForSeconds(_buffTime);
-        Attack += p;
-        _debuffList.Remove(_debuffDict[Define.Debuff.AttackDecrease]);
+        Attack += (int)p;
+        _debuffDict.Remove(debuff);
+        _debuffParamDict.Remove(debuff);
     }
 
     private IEnumerator AttackSpeedDebuff()
     {
+        Define.Debuff debuff = Define.Debuff.AttackSpeedDecrease;
         float p = AttackSpeed * _buffParam;
+        _debuffParamDict.Add(debuff, p);
         AttackSpeed -= p;
         yield return new WaitForSeconds(_buffTime);
         AttackSpeed += p;
-        _debuffList.Remove(_debuffDict[Define.Debuff.AttackSpeedDecrease]);
+        _debuffDict.Remove(debuff);
+        _debuffParamDict.Remove(debuff);
     }
 
     private IEnumerator DefenceDebuff()
     {
-        int p = (int)_buffParam;
-        Defense -= p;
+        Define.Debuff debuff = Define.Debuff.DefenceDecrease;
+        float p = _buffParam;
+        _debuffParamDict.Add(debuff, p);
+        Defense -= (int)p;
         yield return new WaitForSeconds(_buffTime);
-        Defense += p;
-        _debuffList.Remove(_debuffDict[Define.Debuff.DefenceDecrease]);
+        Defense += (int)p;
+        _debuffDict.Remove(debuff);
+        _debuffParamDict.Remove(debuff);
     }
 
     private IEnumerator MoveSpeedDebuff()
     {
+        Define.Debuff debuff = Define.Debuff.MoveSpeedDecrease;
         float p = MoveSpeed * _buffParam;
+        _debuffParamDict.Add(debuff, p);
         MoveSpeed -= p;
         yield return new WaitForSeconds(5f);
         MoveSpeed += p;
-        _debuffList.Remove(_debuffDict[Define.Debuff.MoveSpeedDecrease]);
+        _debuffDict.Remove(debuff);
+        _debuffParamDict.Remove(debuff);
     }
 
     private IEnumerator Curse()
     {
         yield return new WaitForSeconds(_buffTime);
         Hp /= 2;
-        _debuffList.Remove(_debuffDict[Define.Debuff.Curse]);
     }
 
     private IEnumerator Addicted()
     {
-        float time = Time.time;
-        Debug.Log($"start {time}");
+        Define.Debuff debuff = Define.Debuff.Addicted;
         float intervalTime = 1.0f;
         float startTime = Time.time;
         int poison = (int)(MaxHp * _buffParam);
@@ -409,33 +577,29 @@ public class Stat : MonoBehaviour
             Hp -= poison;
             yield return new WaitForSeconds(intervalTime);
         }
-        _debuffList.Remove(_debuffDict[Define.Debuff.Addicted]);
-        Debug.Log($"end {time}");
+        _debuffDict.Remove(debuff);
     }
 
     private IEnumerator DeadlyAddicted()
     {
         float intervalTime = 1.0f;
-        float time = Time.time;
+        float startTime = Time.time;
         int poison = (int)(MaxHp * _buffParam);
-        Hp -= poison;
-        for (int i = 0; i < (int)(_buffTime + 0.1); i++)
+        while (startTime + _buffTime >= Time.time)
         {
-            if (Time.time > time + intervalTime)
-            {
-                time = Time.time;
-                Hp -= poison;
-            }
+            Hp -= poison;
+            yield return new WaitForSeconds(intervalTime);
         }
-        yield return new WaitForSeconds(_buffTime);
-        _debuffList.Remove(_debuffDict[Define.Debuff.DeadlyAddicted]);
     }
 
     private IEnumerator AggroFunc()
     {
+        Define.Debuff debuff = Define.Debuff.Aggro;
         Aggro = true;
         yield return new WaitForSeconds(_buffTime);
         Aggro = false;
-        _debuffList.Remove(_debuffDict[Define.Debuff.Aggro]);
+        _debuffDict.Remove(debuff);
     }
+    
+    #endregion
 }

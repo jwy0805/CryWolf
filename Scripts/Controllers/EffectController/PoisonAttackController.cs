@@ -27,14 +27,12 @@ public class PoisonAttackController : ProjectileController
             if (go.TryGetComponent(out Stat targetStat))
             {
                 if (!targetStat.Targetable) HitEffect();
-                // targetStat.OnAttakced(_stat);
+                targetStat.OnAttakced(_stat);
                 if (transform.parent.gameObject.name == "Horror")
                 {
                     HorrorController horrorController = transform.parent.GetComponent<HorrorController>();
-                    targetStat.ApplyingBuff(horrorController.PoisonStack ? 5f : 10f, 0.03f,
+                    targetStat.ApplyingBuff(horrorController.PoisonStack ? 3f : 10f, 0.03f,
                         horrorController.PoisonStack ? Define.BuffList.DeadlyAddicted : Define.BuffList.Addicted);
-                    // _stat.ApplyingBuff(5f, 1f, Define.BuffList.AttackIncrease);
-                    // Debug.Log(_stat.Attack);
                 }
                 else
                 {
