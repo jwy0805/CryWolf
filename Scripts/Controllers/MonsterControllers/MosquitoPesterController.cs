@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -5,6 +6,39 @@ using UnityEngine;
 public class MosquitoPesterController : MonsterController
 {
     private float _height = 8.0f;
+    private bool _woolDown = false;
+    private bool _woolRate = false;
+    private bool _woolStop = false;
+    
+    protected override string NewSkill 
+    {
+        get => _newSkill;
+        set
+        {
+            _newSkill = value;
+            Define.Skill skill = (Define.Skill)Enum.Parse(typeof(Define.Skill), _newSkill);
+
+            switch (skill)
+            {
+                case Define.Skill.MosquitoPesterAttack:
+                    _stat.Attack += 4;
+                    break;
+                case Define.Skill.MosquitoPesterHealth:
+                    _stat.MaxHp += 25;
+                    _stat.Hp += 25;
+                    break;
+                case Define.Skill.MosquitoPesterWoolDown2:
+                    _woolDown = true;
+                    break;
+                case Define.Skill.MosquitoPesterWoolRate:
+                    _woolRate = true;
+                    break;
+                case Define.Skill.MosquitoPesterWoolStop:
+                    _woolStop = true;
+                    break;
+            }
+        } 
+    }
     
     protected override void Init()
     {
@@ -19,9 +53,11 @@ public class MosquitoPesterController : MonsterController
         _stat.Mp = 20;
         _stat.maxMp = 20;
         _stat.Attack = 20;
+        _stat.AttackSpeed = 0.85f;
         _stat.Defense = 0;
         _stat.MoveSpeed = 7.0f;
         _stat.AttackRange = 4.0f;
+        _stat.Evasion = 10;
     }
 
     protected override void UpdateIdle()
@@ -86,11 +122,28 @@ public class MosquitoPesterController : MonsterController
 
     protected override void UpdateAttack()
     {
+        if (_stat.Mp >= 20)
+        {
+            _stat.Mp = 0;
+            if (_woolDown || _woolRate) State = Define.State.Skill;
+        }
         base.UpdateAttack();
     }
 
-    protected override void OnHitEvent()
+    private void OnSkillEvent()
     {
-        base.OnHitEvent();
+        if (_lockTarget.CompareTag("Sheep"))
+        {
+            if (_lockTarget.TryGetComponent(out SheepController sheepController))
+            {
+                if (_woolDown) sheepController.DecreaseParam = 0.3f;
+                if (_woolRate) sheepController.InterruptParam = 30;
+                else if (_woolStop) sheepController.InterruptParam = 100;
+            }
+        }
+        else
+        {
+            OnHitEvent();
+        }
     }
 }

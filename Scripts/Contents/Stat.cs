@@ -170,6 +170,7 @@ public class Stat : MonoBehaviour
     private Dictionary<int, IEnumerator> _debuffNestedDict = new Dictionary<int, IEnumerator>(); 
     private Dictionary<Define.Buff, float> _buffParamDict = new Dictionary<Define.Buff, float>();
     private Dictionary<Define.Debuff, float> _debuffParamDict = new Dictionary<Define.Debuff, float>();
+    public Dictionary<Define.Debuff, IEnumerator> DebuffDict => _debuffDict;
     private Define.BuffList ApplyBuff
     {
         get => _applyBuff;

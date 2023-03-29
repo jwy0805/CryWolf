@@ -28,15 +28,34 @@ public class PoisonAttackController : ProjectileController
             {
                 if (!targetStat.Targetable) HitEffect();
                 targetStat.OnAttakced(_stat);
-                if (transform.parent.gameObject.name == "Horror")
+                switch (transform.parent.gameObject.name)
                 {
-                    HorrorController horrorController = transform.parent.GetComponent<HorrorController>();
-                    targetStat.ApplyingBuff(horrorController.PoisonStack ? 3f : 10f, 0.03f,
-                        horrorController.PoisonStack ? Define.BuffList.DeadlyAddicted : Define.BuffList.Addicted);
-                }
-                else
-                {
-                    targetStat.ApplyingBuff(10f, 0.03f, Define.BuffList.Addicted);
+                    case "Horror":
+                        HorrorController horrorController = transform.parent.GetComponent<HorrorController>();
+                        targetStat.ApplyingBuff(horrorController.PoisonStack ? 3f : 10f, 0.03f,
+                            horrorController.PoisonStack ? Define.BuffList.DeadlyAddicted : Define.BuffList.Addicted);
+                        break;
+                    case "MosquitoStinger":
+                        MosquitoStingerController controller =
+                            transform.parent.GetComponent<MosquitoStingerController>();
+                        targetStat.ApplyingBuff(10f, 0.03f, Define.BuffList.Addicted);
+                        if (targetStat.CompareTag("Sheep"))
+                        {
+                            if (controller.Infection)
+                            {
+                                SheepController sheepController = targetStat.GetComponent<SheepController>();
+                                sheepController.Infection = true;
+                            }
+                            if (controller.SheepDeath)
+                            {
+                                int num = Random.Range(0, 100);
+                                if (num >= controller.DeathRate) targetStat.Hp = 1;
+                            }
+                        }
+                        break;
+                    default:
+                        targetStat.ApplyingBuff(10f, 0.03f, Define.BuffList.Addicted);
+                        break;
                 }
                 GetMp();
             }

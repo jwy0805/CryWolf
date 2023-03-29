@@ -4,15 +4,9 @@ using UnityEngine;
 
 public class Spawner : MonoBehaviour
 {
-    [SerializeField] private int _wolfCount = 0;
-    [SerializeField] private int _snakeCount = 0;
-    [SerializeField] private int[] _spawnMonsterCntArr = GameData.SpawnMonsterCnt;
-
-    [SerializeField] private Vector3[] _spawnPosArr = GameData.SpawnerPos;
+    private int[] _spawnMonsterCntArr = GameData.SpawnMonsterCnt;
+    private Vector3[] _spawnPosArr = GameData.SpawnerPos;
     private Define.Way _spawnWay;
-
-    public void AddWolfCount(int value) { _wolfCount += value; }
-    public void AddSnakeCount(int value) { _snakeCount += value; }
     
     private int _spawnersCount = GameData.SpawnersCnt;
     
@@ -20,7 +14,6 @@ public class Spawner : MonoBehaviour
     private float _roundTime = 10f;
     private float _lastSpawnTime = 0.0f;
     
-
     private Define.MonsterId[] _monsterList =
     {
         Define.MonsterId.WolfPup,
@@ -143,7 +136,7 @@ public class Spawner : MonoBehaviour
         StorageLevel = 1;
         // 시작하면 양 3마리 주어짐
         for (int i = 0; i < GameData.SheepCapacity; i++) ReserveSpawnSheep();
-        StartCoroutine(ReserveSpawnMonster(Define.MonsterId.Horror, Define.Way.North));
+        StartCoroutine(ReserveSpawnMonster(Define.MonsterId.MosquitoBug, Define.Way.North));
     }
 
     void Update()

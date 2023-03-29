@@ -66,13 +66,8 @@ public class WerewolfController : MonsterController
     {
         // 스킬 업그레이드 완료
         if (_thunder)
-        {
             State = _count % 2 == 0 ? Define.State.Skill : Define.State.Skill2;
-        }
-        else
-        {
-            base.UpdateAttack();
-        }
+        else base.UpdateAttack();
     }
 
     private void AddAttackSpeed()

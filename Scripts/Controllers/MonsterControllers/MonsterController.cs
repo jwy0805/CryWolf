@@ -44,15 +44,9 @@ public class MonsterController : BaseController
     protected override void UpdateIdle()
     {
         if (GameData.FenceBounds.Contains(transform.position) || IsReachable(GameData.Center))
-        {
             Tags = new[] { "Sheep", "Tower" };
-            SetTarget(Tags);
-        }
-        else
-        {
-            Tags = new []{ "Tower", "Fence" };
-            SetTarget(Tags);
-        }
+        else Tags = new []{ "Tower", "Fence" };
+        SetTarget(Tags);
 
         if (_lockTarget == null) State = Define.State.Idle;
         State = Define.State.Moving;
@@ -68,23 +62,15 @@ public class MonsterController : BaseController
             if (GameData.FenceBounds.Contains(transform.position))
             {
                 Tags = new[] { "Sheep", "Tower" };
-                SetTarget(Tags);
             }
             else
             {
                 // Fence 안으로 들어갈 수 있는지?
-                if (IsReachable(GameData.Center))
-                {
-                    Tags = new[] { "Sheep", "Tower" };
-                    SetTarget(Tags);
-                }
-                // Fence 안으로 들어갈 수 없으면
-                else
-                {
-                    Tags = new[] { "Fence", "Tower" };
-                    SetTarget(Tags);
-                }
+                Tags = IsReachable(GameData.Center) ? new[] { "Sheep", "Tower" } :
+                    // Fence 안으로 들어갈 수 없으면
+                    new[] { "Fence", "Tower" };
             }
+            SetTarget(Tags);
         }
         
         // Attack
@@ -190,6 +176,7 @@ public class MonsterController : BaseController
         if (_lockTarget == null) return;
         Stat targetStat = _lockTarget.GetComponent<Stat>();
         targetStat.OnAttakced(_stat);
+        _stat.Mp += 4;
 
         if (_playerController != null) _playerController.Resource += _stat.Resource;
     }

@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -5,6 +6,52 @@ using UnityEngine;
 public class MosquitoStingerController : MonsterController
 {
     private float _height = 8.0f;
+    private bool _longAttack = false;
+    private bool _poison = false;
+    private bool _sheepDeath = false;
+    private bool _infection = false;
+    private int _deathRate = 0;
+    public bool SheepDeath => _sheepDeath;
+    public bool Infection => _infection;
+    public float DeathRate => _deathRate;
+
+    protected override string NewSkill 
+    {
+        get => _newSkill;
+        set
+        {
+            _newSkill = value;
+            Define.Skill skill = (Define.Skill)Enum.Parse(typeof(Define.Skill), _newSkill);
+
+            switch (skill)
+            {
+                case Define.Skill.MosquitoStingerAvoid:
+                    _stat.Evasion += 15;
+                    break;
+                case Define.Skill.MosquitoStingerHealth:
+                    _stat.MaxHp += 60;
+                    _stat.Hp += 60;
+                    break;
+                case Define.Skill.MosquitoStingerLongAttack:
+                    _longAttack = true;
+                    _stat.AttackRange += 3f;
+                    break;
+                case Define.Skill.MosquitoStingerPoison:
+                    _poison = true;
+                    break;
+                case Define.Skill.MosquitoStingerPoisonResist:
+                    _stat.PoisonResist = 20;
+                    break;
+                case Define.Skill.MosquitoStingerSheepDeath:
+                    _sheepDeath = true;
+                    _deathRate = 30;
+                    break;
+                case Define.Skill.MosquitoStingerInfection:
+                    _infection = true;
+                    break;
+            }
+        } 
+    }
     
     protected override void Init()
     {
@@ -19,9 +66,11 @@ public class MosquitoStingerController : MonsterController
         _stat.Mp = 20;
         _stat.maxMp = 20;
         _stat.Attack = 80;
+        _stat.AttackSpeed = 1f;
         _stat.Defense = 0;
         _stat.MoveSpeed = 7.0f;
-        _stat.AttackRange = 4.0f;
+        _stat.AttackRange = 3.0f;
+        _stat.Evasion = 15;
     }
 
     protected override void UpdateIdle()
@@ -86,43 +135,12 @@ public class MosquitoStingerController : MonsterController
 
     protected override void UpdateAttack()
     {
-        base.UpdateAttack();
+        if (_longAttack) State = Define.State.Skill;
+        else base.UpdateAttack();
     }
 
-    protected override void OnHitEvent()
+    private void OnSkillEvent()
     {
-        if (_lockTarget != null)
-        {
-            Stat targetStat = _lockTarget.GetComponent<Stat>();
-            Collider targetCollider = _lockTarget.GetComponent<Collider>();
-            Vector3 position = transform.position;
-            
-            if (targetStat.Hp > 0)
-            {
-                float distance = (targetCollider.ClosestPoint(position) - position).magnitude;
-                if (distance <= _stat.AttackRange)
-                {
-                    // 스킬 업그레이드
-                    if (true)
-                    {
-                        Managers.Resource.Instanciate("Effects/PoisonAttack", gameObject.transform);
-                    }
-                    State = Define.State.Attack;
-                }
-                else
-                {
-                    State = Define.State.Moving;
-                }
-            }
-            else
-            {
-                _lockTarget = null;
-                State = Define.State.Idle;
-            }
-        }
-        else
-        {
-            State = Define.State.Idle;
-        }
+        Managers.Resource.Instanciate(_poison ? "Effects/BasicAttack" : "Effects/PoisonAttack", gameObject.transform);
     }
 }

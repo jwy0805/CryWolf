@@ -83,14 +83,8 @@ public class CreeperController : MonsterController
     protected override void UpdateMoving()
     {
         // if: 스킬 업그레이드 && 생성된 후 최초 1번
-        if (_roll && _rush == false)
-        {
-            State = Define.State.Rush;
-        }
-        else
-        {
-            base.UpdateMoving();
-        }
+        if (_roll && _rush == false) State = Define.State.Rush;
+        else base.UpdateMoving();
     }
 
     protected override void UpdateRush()
@@ -132,11 +126,6 @@ public class CreeperController : MonsterController
         _navMesh.SetDestination(_destPos);
         _dir = _destPos - transform.position;
         if (_dir.magnitude < 0.1f) State = Define.State.Idle;
-    }
-
-    protected override void UpdateAttack()
-    {
-        base.UpdateAttack();
     }
 
     protected override void OnHitEvent()
