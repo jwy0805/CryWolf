@@ -59,7 +59,7 @@ public abstract class BaseController : MonoBehaviour, ISkillObserver
                 case Define.State.Jump:
                     _anim.CrossFade("JUMP", 0.1f);
                     break;
-                case Define.State.KnockBackCreeper:
+                case Define.State.KnockBack:
                     _anim.CrossFade("RUSH", 0.1f);
                     break;
                 case Define.State.Faint:
@@ -99,8 +99,8 @@ public abstract class BaseController : MonoBehaviour, ISkillObserver
             case Define.State.Skill2:
                 UpdateSkill2();
                 break;
-            case Define.State.KnockBackCreeper:
-                UpdateKnockBackCreeper();
+            case Define.State.KnockBack:
+                UpdateKnockBack();
                 break;
             case Define.State.Faint:
                 break;
@@ -122,7 +122,7 @@ public abstract class BaseController : MonoBehaviour, ISkillObserver
     protected virtual void UpdateAttack() { }
     protected virtual void UpdateSkill() { }
     protected virtual void UpdateSkill2() { }
-    protected virtual void UpdateKnockBackCreeper() { }
+    protected virtual void UpdateKnockBack() { }
     protected virtual void UpdateFaint() { }
 
     protected IEnumerator Despawn(GameObject go, float animPlayTime)

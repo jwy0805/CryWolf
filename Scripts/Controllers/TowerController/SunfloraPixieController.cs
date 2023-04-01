@@ -80,7 +80,13 @@ public class SunfloraPixieController : TowerController
 
         SkillInit();
     }
-
+    
+    protected override void Update()
+    {
+        base.Update();
+        if (Time.time > _lastMpTime + _mpTime) MpUp();
+    }
+    
     protected override void UpdateIdle()
     {
         if (_attack)
@@ -88,10 +94,7 @@ public class SunfloraPixieController : TowerController
             if (_lockTarget != null)
             {
                 float distance = (_lockTarget.transform.position - transform.position).magnitude;
-                if (distance <= _stat.AttackRange)
-                {
-                    State = Define.State.Attack;
-                }
+                if (distance <= _stat.AttackRange) State = Define.State.Attack;
             }
         
             if (Time.time > _lastTargetingTime + _targetingTime)
@@ -102,23 +105,14 @@ public class SunfloraPixieController : TowerController
         }
         else
         {
-            MpUp();
-        
-            if (_stat.Mp >= _stat.maxMp)
-            {
-                State = Define.State.Skill;
-            }
+            if (_stat.Mp >= _stat.maxMp) State = Define.State.Skill;
         }
     }
 
     protected override void UpdateAttack()
     {
         base.UpdateAttack();
-        MpUp();
-        if (_stat.Mp >= _stat.maxMp)
-        {
-            State = Define.State.Skill;
-        }
+        if (_stat.Mp >= _stat.maxMp) State = Define.State.Skill;
     }
 
     private void MpUp()

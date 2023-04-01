@@ -63,18 +63,20 @@ public class SunflowerFairyController : TowerController
         SkillInit();
     }
     
-    protected override void UpdateIdle()
+    protected override void Update()
     {
+        base.Update();
+
         if (Time.time > _lastMpTime + _mpTime)
         {
             _stat.Mp += 4;
             _lastMpTime = Time.time;
         }
-
-        if (_stat.Mp >= _stat.maxMp)
-        {
-            State = Define.State.Skill;
-        }
+    }
+    
+    protected override void UpdateIdle()
+    {
+        if (_stat.Mp >= _stat.maxMp) State = Define.State.Skill;
     }
 
     private List<Collider> PickUnits(int num, List<Collider> monsters)

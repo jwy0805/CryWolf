@@ -297,7 +297,7 @@ public class Define
         Skill2,
         Rush,
         Jump,
-        KnockBackCreeper,
+        KnockBack,
         Faint,
         None,
     }

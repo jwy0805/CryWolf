@@ -11,7 +11,7 @@ public class CreeperController : MonsterController
     private bool _rush;
     private bool _knockBack;
     private bool _poisonAttack = false;
-    private bool _roll = false;
+    private bool _roll = true;
     private float _moveSpeed = 3.5f;
     private float _rollingSpeed = 8.0f;
     private Vector3 _dir;
@@ -26,7 +26,7 @@ public class CreeperController : MonsterController
             {
                 _destPos = -(_dir.normalized * 10.0f);
                 _destPos.y = 6.0f;
-                State = Define.State.KnockBackCreeper;
+                State = Define.State.KnockBack;
             }
         }
     }
@@ -95,17 +95,10 @@ public class CreeperController : MonsterController
         if (Time.time > _lastTargetingTime + _targetingTime)
         {
             // Fence 안으로 들어갈 수 있는지?
-            if (IsReachable(GameData.Center))
-            {
-                Tags = new[] { "Sheep", "Tower" };
-                SetTarget(Tags);
-            }
-            // Fence 안으로 들어갈 수 없으면
-            else
-            {
-                Tags = new[] { "Fence", "Tower" };
-                SetTarget(Tags);
-            }
+            Tags = IsReachable(GameData.Center) ? new[] { "Sheep", "Tower" } :
+                // Fence 안으로 들어갈 수 없으면
+                new[] { "Fence", "Tower" };
+            SetTarget(Tags);
         }
         
         if (_lockTarget != null)
@@ -121,7 +114,7 @@ public class CreeperController : MonsterController
         _navMesh.speed = _stat.MoveSpeed;
     }
 
-    protected override void UpdateKnockBackCreeper()
+    protected override void UpdateKnockBack()
     {
         _navMesh.SetDestination(_destPos);
         _dir = _destPos - transform.position;

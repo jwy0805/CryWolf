@@ -49,21 +49,27 @@ public class SunBlossomController : TowerController
         _stat.Hp = 80;
         _stat.MaxHp = 80;
         _stat.Mp = 0;
-        _stat.maxMp = 50;
+        _stat.maxMp = 40;
         _stat.Defense = 0;
         _stat.AttackRange = 10;
 
+        _lastMpTime = Time.time;
         SkillInit();
     }
 
-    protected override void UpdateIdle()
+    protected override void Update()
     {
+        base.Update();
+
         if (Time.time > _lastMpTime + _mpTime)
         {
             _stat.Mp += 4;
             _lastMpTime = Time.time;
         }
+    }
 
+    protected override void UpdateIdle()
+    {
         if (_stat.Mp >= _stat.maxMp)
         {
             State = Define.State.Skill;
