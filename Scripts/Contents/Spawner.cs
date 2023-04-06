@@ -23,7 +23,7 @@ public class Spawner : MonoBehaviour
         Define.MonsterId.Wolf,
         Define.MonsterId.Creeper,
         Define.MonsterId.Snake,
-        Define.MonsterId.WereWolf,
+        Define.MonsterId.Werewolf,
         Define.MonsterId.SnakeNaga
     };
 
@@ -121,7 +121,7 @@ public class Spawner : MonoBehaviour
             if (Enum.IsDefined(typeof(Define.TowerId), unitName))
             {
                 Define.TowerId towerId = (Define.TowerId)Enum.Parse(typeof(Define.TowerId), unitName);
-                StartCoroutine(ReserveSpawnTower(towerId, _spawnWay, 1));
+                StartCoroutine(ReserveSpawnTower(towerId, _spawnWay, GameData.StorageLevel));
             }
             else
             {
@@ -136,7 +136,7 @@ public class Spawner : MonoBehaviour
         StorageLevel = 1;
         // 시작하면 양 3마리 주어짐
         for (int i = 0; i < GameData.SheepCapacity; i++) ReserveSpawnSheep();
-        StartCoroutine(ReserveSpawnMonster(Define.MonsterId.Shell, Define.Way.North));
+        StartCoroutine(ReserveSpawnMonster(Define.MonsterId.Spike, Define.Way.North));
         StartCoroutine(ReserveSpawnMonster(Define.MonsterId.WolfPup, Define.Way.North));
     }
 
@@ -184,10 +184,12 @@ public class Spawner : MonoBehaviour
         switch (way)
         {
             case Define.Way.West:
+                Debug.Log("a");
                 towerSpawnPos = new Vector3(-GameData.FenceSize[fenceLevel].x / 2, 6, 0);
                 break;
             
             case Define.Way.North:
+                Debug.Log("d");
                 towerSpawnPos = new Vector3(0, 6, GameData.FenceSize[fenceLevel].z / 2);
                 break;
             

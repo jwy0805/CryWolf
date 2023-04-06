@@ -265,6 +265,7 @@ public class UI_Game : UI_Scene
         _dictCommonBtn["CapacityButton"].BindEvent(OnCapacityClicked);
         _dictCommonBtn["WestSpawnButton"].BindEvent(OnWestSpawnClicked);
         _dictCommonBtn["NorthSpawnButton"].BindEvent(OnNorthSpawnClicked);
+        _dictCommonBtn["EastSpawnButton"].BindEvent(OnEastSpawnClicked);
 
         if (_side == "Sheep")
         {
@@ -431,7 +432,7 @@ public class UI_Game : UI_Scene
         float[] lineSizeWolf =
         {
             0.3f, 0.6f, 0.3f, 0.6f, 0.6f, 0.6f, 0.3f, 0.6f, 0.6f, 0.6f,
-            0.6f, 0.3f, 0.6f, 0.6f, 0.3f, 0.6f, 0.6f,
+            0.6f, 0.3f, 0.6f, 0.6f, 0.3f, 0.6f, 0.3f,
         };
         string[] lineName;
         float[] lineSize;
@@ -564,7 +565,7 @@ public class UI_Game : UI_Scene
     {
         // lock
         if (OnSelectedPortrait == null) return;
-        _dgo.Spawn = _onSelectedPortrait;
+        _dgo.Spawn = OnSelectedPortrait;
         _dgo.Way = Define.Way.East;
     }
     

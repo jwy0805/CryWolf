@@ -59,7 +59,6 @@ public class PoolManager
             // Initializing
             if (stat != null)
             {
-                stat.Hp = stat.MaxHp;
                 stat.Targetable = true;
                 baseController.State = Define.State.Idle;
             }

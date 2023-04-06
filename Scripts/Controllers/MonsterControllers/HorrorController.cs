@@ -7,7 +7,6 @@ using UnityEngine;
 public class HorrorController : MonsterController
 {
     private bool _rush;
-    private bool _crash = false;
     private bool _knockBack;
     private bool _rollPoison = false;
     private bool _poisonStack = true;
@@ -23,7 +22,7 @@ public class HorrorController : MonsterController
             _knockBack = value;
             if (_knockBack)
             {
-                _destPos = -(_dir.normalized * 5.0f);
+                _destPos = -(_dir.normalized * 8.0f);
                 _destPos.y = 6.0f;
                 State = Define.State.KnockBack;
             }
@@ -75,26 +74,20 @@ public class HorrorController : MonsterController
         
         _stat.Hp = 600;
         _stat.MaxHp = 600;
-        _stat.maxMp = 10;
+        _stat.maxMp = 20;
         _stat.Mp = 0;
-        _stat.Attack = 6;
-        _stat.Skill = 0;
+        _stat.Attack = 35;
+        _stat.Skill = 40;
         _stat.AttackSpeed = 0.75f;
         _stat.Defense = 7;
         _stat.MoveSpeed = 5.0f;
-        _stat.AttackRange = 3.0f;
+        _stat.AttackRange = 4.0f;
     }
     
     protected override void UpdateMoving()
     {
-        if (_rush == false)
-        {
-            State = Define.State.Rush;
-        }
-        else
-        {
-            base.UpdateMoving();
-        }
+        if (_rush == false) State = Define.State.Rush;
+        else base.UpdateMoving();
     }
     
     protected override void UpdateRush()
@@ -154,21 +147,25 @@ public class HorrorController : MonsterController
 
     private void OnCollisionEnter(Collision collision)
     {
-        if (!Tags.Contains(collision.gameObject.tag) || _crash) return;
-        // KnockBack = true;
-        if (collision.gameObject.TryGetComponent(out Stat targetStat))
+        if (Tags.Contains(collision.gameObject.tag) && State == Define.State.Rush)
         {
-            // 충돌음 재생
-            /* todo */
-            targetStat.OnSkilled(_stat);
-            if (_rollPoison)
+            KnockBack = true;
+            if (collision.gameObject.TryGetComponent(out Stat targetStat))
             {
-                targetStat.ApplyingBuff(_poisonStack? 5 : 10, 0.03f,
-                    _poisonStack ? Define.BuffList.DeadlyAddicted : Define.BuffList.Addicted);
+                // 충돌음 재생
+                /* todo */
+                targetStat.OnSkilled(_stat);
+                if (_rollPoison)
+                {
+                    targetStat.ApplyingBuff(_poisonStack ? 5 : 10, 0.03f,
+                        _poisonStack ? Define.BuffList.DeadlyAddicted : Define.BuffList.Addicted);
+                }
             }
         }
 
-        _crash = true;
-        State = Define.State.Idle;
+        if (KnockBack && State == Define.State.Rush)
+        {
+            State = Define.State.Idle;
+        }    
     }
 }

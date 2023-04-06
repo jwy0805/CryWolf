@@ -2,20 +2,24 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Numerics;
 using UnityEngine;
+using Vector3 = UnityEngine.Vector3;
 
-public class ShellController : MonsterController
+public class SpikeController : MonsterController
 {
-    private bool _roll = true;
     private bool _knockBack;
+    private bool _lostHeal = false;
+    private bool _attackBuff = false;
+    private bool _defenceBuff = false;
+    private bool _doubleBuff = false;
+    private float _sight;
+    private float _rollingSpeed;
     private float _mpTime = 1f;
     private float _lastMpTime = 0f;
     private float _crashTime;
     private float _rollCoolTime = 3f;
-    private float _rollingSpeed;
     private bool _start = false;
-    private bool _speedBuff = false;
-    private bool _attackSpeedBuff = false;
     private Vector3 _dir;
     
     private bool KnockBack
@@ -26,6 +30,7 @@ public class ShellController : MonsterController
             _knockBack = value;
             if (_knockBack)
             {
+                if (_lostHeal) _stat.Hp += (int)((_stat.MaxHp - _stat.Hp) * 0.2f);
                 _destPos = -(_dir.normalized * 8.0f);
                 _destPos.y = 6.0f;
                 State = Define.State.KnockBack;
@@ -33,7 +38,7 @@ public class ShellController : MonsterController
         }
     }
     
-    protected override string NewSkill 
+    protected override string NewSkill
     {
         get => _newSkill;
         set
@@ -43,37 +48,41 @@ public class ShellController : MonsterController
 
             switch (skill)
             {
-                case Define.Skill.ShellHealth:
-                    _stat.MaxHp += 35;
-                    _stat.Hp += 35;
+                case Define.Skill.SpikeSelfDefence:
+                    _stat.Defense += 10;
                     break;
-                case Define.Skill.ShellSpeed:
-                    _speedBuff = true;
+                case Define.Skill.SpikeLostHeal:
+                    _lostHeal = true;
                     break;
-                case Define.Skill.ShellAttackSpeed:
-                    _attackSpeedBuff = true;
+                case Define.Skill.SpikeAttack:
+                    _attackBuff = true;
                     break;
-                case Define.Skill.ShellRoll:
-                    _roll = true;
+                case Define.Skill.SpikeDefence:
+                    _defenceBuff = true;
+                    break;
+                case Define.Skill.SpikeDoubleBuff:
+                    _doubleBuff = true;
                     break;
             }
-        } 
+        }
     }
-
+    
     protected override void Init()
     {
         base.Init();
         
-        _stat.Hp = 100;
-        _stat.MaxHp = 100;
-        _stat.maxMp = 40;
+        _stat.Hp = 200;
+        _stat.MaxHp = 200;
+        _stat.maxMp = 50;
         _stat.Mp = 0;
-        _stat.Attack = 0;
-        _stat.Skill = 20;
-        _stat.Defense = 0;
+        _stat.Attack = 35;
+        _stat.Skill = 40;
+        _stat.AttackSpeed = 0.75f;
+        _stat.Defense = 7;
         _stat.MoveSpeed = 4.0f;
-        _stat.AttackRange = 2.5f;
-        _stat.CriticalChance = 0;
+        _stat.AttackRange = 4.0f;
+
+        _sight = 20.0f;
         
         _lastMpTime = Time.time;
         _crashTime = 0f;
@@ -100,65 +109,60 @@ public class ShellController : MonsterController
     
     protected override void UpdateMoving()
     {
-        if (_stat.Mp > _stat.maxMp) State = Define.State.Skill;
-        if (_roll) State = Define.State.Rush;
-        else
+        // Targeting
+        if (Time.time > _lastTargetingTime + _targetingTime)
         {
-            // Targeting
-            if (Time.time > _lastTargetingTime + _targetingTime)
+            _lastTargetingTime = Time.time;
+            // 이미 Fence 내부에 있으면
+            if (GameData.FenceBounds.Contains(transform.position))
             {
-                _lastTargetingTime = Time.time;
-                // 이미 Fence 내부에 있으면
-                if (GameData.FenceBounds.Contains(transform.position))
-                {
-                    Tags = new[] { "Sheep", "Tower" };
-                }
-                else
-                {
-                    // Fence 안으로 들어갈 수 있는지?
-                    Tags = IsReachable(GameData.Center) ? new[] { "Sheep", "Tower" } :
-                        // Fence 안으로 들어갈 수 없으면
-                        new[] { "Fence", "Tower" };
-                }
-                SetTarget(Tags);
-            }
-        
-            // Attack
-            if (_lockTarget != null)
-            {
-                Stat targetStat = _lockTarget.GetComponent<Stat>();
-                Collider targetCollider = _lockTarget.GetComponent<Collider>();
-                Vector3 position = transform.position;
-                if (targetStat.Targetable == false) return;
-            
-                _destPos = targetCollider.ClosestPoint(position);
-                float distance = (_destPos - position).magnitude;
-                if (distance < _stat.AttackRange)
-                {
-                    _navMesh.SetDestination(transform.position);
-                    State = Define.State.Idle;
-                    return;
-                }
-            }
-        
-            // Move
-            Vector3 dir= _destPos - transform.position;
-        
-            if (dir.magnitude < 0.1f)
-            {
-                State = Define.State.Idle;
+                Tags = new[] { "Sheep", "Tower" };
             }
             else
             {
-                _navMesh.SetDestination(_destPos);
-                _navMesh.speed = _stat.MoveSpeed;
+                // Fence 안으로 들어갈 수 있는지?
+                Tags = IsReachable(GameData.Center) ? new[] { "Sheep", "Tower" } :
+                    // Fence 안으로 들어갈 수 없으면
+                    new[] { "Fence", "Tower" };
             }
+            SetTarget(Tags);
+        }
+    
+        // Attack
+        if (_lockTarget != null)
+        {
+            Stat targetStat = _lockTarget.GetComponent<Stat>();
+            Collider targetCollider = _lockTarget.GetComponent<Collider>();
+            Vector3 position = transform.position;
+            if (targetStat.Targetable == false) return;
+        
+            _destPos = targetCollider.ClosestPoint(position);
+            float distance = (_destPos - position).magnitude;
+            if (distance < _sight)
+            {
+                _navMesh.SetDestination(transform.position);
+                State = Define.State.Rush;
+                return;
+            }
+        }
+    
+        // Move
+        Vector3 dir= _destPos - transform.position;
+    
+        if (dir.magnitude < 0.1f)
+        {
+            State = Define.State.Idle;
+        }
+        else
+        {
+            _navMesh.SetDestination(_destPos);
+            _navMesh.speed = _stat.MoveSpeed;
         }
     }
 
     protected override void UpdateRush()
     {
-        _rollingSpeed = _stat.MoveSpeed + 1.0f;
+        _rollingSpeed = _stat.MoveSpeed + 2.0f;
         
         if (_stat.Mp > _stat.maxMp) State = Define.State.Skill;
         if (Time.time > _lastTargetingTime + _targetingTime)
@@ -182,7 +186,7 @@ public class ShellController : MonsterController
         _navMesh.SetDestination(_destPos);
         _navMesh.speed = _rollingSpeed;
     }
-
+    
     protected override void UpdateKnockBack()
     {
         _navMesh.SetDestination(_destPos);
@@ -196,34 +200,43 @@ public class ShellController : MonsterController
         _navMesh.SetDestination(_destPos);
     }
 
-    private void OnSkillEvent()
+    private List<Collider> PickUnits(int num)
     {
-        _stat.Mp = 0;
-
         float height = 6f;
         Vector3 pos = transform.position;
         Vector3 pos1 = new Vector3(pos.x, pos.y - height, pos.z);
         Vector3 pos2 = new Vector3(pos.x, pos.y + height, pos.z);
         Collider[] colliders = Physics.OverlapCapsule(pos1, pos2, 20, 1 << (int)Define.Layer.Monster);
-        
-        GameObject nearestMonster = null;
-        float closestDist = 5000.0f;
-        for (int i = 0; i < colliders.Length; i++)
+        List<Collider> colliderList = new List<Collider>(colliders);
+        List<Collider> toRemove = new List<Collider>();
+        foreach (var collider in colliderList)
         {
-            Vector3 monsterPos = colliders[i].transform.position;
-            if (colliders[i].gameObject.name == "Shell") continue;
-            float dist = (monsterPos - transform.position).sqrMagnitude;
-            if (dist < closestDist)
-            {
-                closestDist = dist;
-                nearestMonster = colliders[i].gameObject;
-            }
+            if (collider.gameObject.name == gameObject.name) toRemove.Add(collider);
         }
 
-        if (nearestMonster == null) return;
-        Stat stat = nearestMonster.GetComponent<Stat>();
-        if (_speedBuff) stat.ApplyingBuff(10, 2.0f, Define.BuffList.MoveSpeedIncrease);
-        if (_attackSpeedBuff) stat.ApplyingBuff(10, 0.1f, Define.BuffList.AttackSpeedIncrease);
+        foreach (var collider in toRemove)
+        {
+            colliderList.RemoveAll(x => x == collider);
+        }
+        colliderList.Sort(new DistanceComparer(transform.position));
+        
+        return colliderList.Count == 0 ? colliderList : colliderList.GetRange(0, num);
+    }
+    
+    private void OnSkillEvent()
+    {
+        _stat.Mp = 0;
+
+        List<Collider> monsterList = new List<Collider>(PickUnits(_doubleBuff ? 2 : 1));
+        if (monsterList.Count == 0) return;
+        foreach (var monster in monsterList)
+        {
+            Stat stat = monster.GetComponent<Stat>();
+            stat.ApplyingBuff(10, 2.0f, Define.BuffList.MoveSpeedIncrease);
+            stat.ApplyingBuff(10, 0.1f, Define.BuffList.AttackSpeedIncrease);
+            if (_attackBuff) stat.ApplyingBuff(10, 0.25f, Define.BuffList.AttackIncrease);
+            if (_defenceBuff) stat.ApplyingBuff(10, 6, Define.BuffList.DefenceIncrease);
+        }
     }
     
     protected override void OnEndEvent()
@@ -237,7 +250,7 @@ public class ShellController : MonsterController
             if (targetStat.Hp > 0)
             {
                 float distance = (targetCollider.ClosestPoint(position) - position).magnitude;
-                State = distance <= _stat.AttackRange ? Define.State.Idle : Define.State.Moving;
+                State = distance <= _sight ? Define.State.Moving : Define.State.Rush;
             }
             else
             {

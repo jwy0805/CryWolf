@@ -19,7 +19,7 @@ public class GameData
         new Vector3(45.0f, 4.0f, 0.0f)  // East
     };
     
-    public static float RoundTime = 20.0f;
+    public static float RoundTime = 30.0f;
     
     #region FenceData
 

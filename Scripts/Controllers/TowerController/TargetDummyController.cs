@@ -86,7 +86,7 @@ public class TargetDummyController : TowerController
     
     private void OnSkillEvent()
     {
-        _colliders  = Physics.OverlapSphere(transform.position, 4.0f, (int)Define.Layer.Monster);
+        _colliders  = Physics.OverlapSphere(transform.position, 4.0f, 1 << (int)Define.Layer.Monster);
         int length = _colliders.Length;
         for (int i = 0; i < length; i++)
         {
@@ -94,7 +94,7 @@ public class TargetDummyController : TowerController
             BaseController baseController = go.GetComponent<BaseController>();
             baseController._lockTarget = gameObject;
             Stat stat = go.GetComponent<Stat>();
-            stat.ApplyingBuff(5, 0, Define.BuffList.Aggro);
+            stat.ApplyingBuff(5, 0, Define.BuffList.Aggro, gameObject);
         }
 
         if (_heal)

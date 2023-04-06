@@ -57,7 +57,7 @@ public class UI_UpgradePopup : UI_Popup
 
     private void SetCost()
     {
-        var ui = GameObject.FindWithTag("UI").GetComponent<UI_GameSheep>();
+        var ui = GameObject.FindWithTag("UI").GetComponent<UI_Game>();
         var currentSkillButton = ui.OnSelectedSkill;
         var skillName = currentSkillButton.name.Replace("Button", "");
 

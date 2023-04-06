@@ -33,6 +33,7 @@ public class Stat : MonoBehaviour
 
     private float _buffTime = 10f;
     private float _buffParam = 0f;
+    private GameObject _caller;
     private Define.BuffList _applyBuff;
 
     private static readonly int AnimAttackSpeed = Animator.StringToHash("AttackSpeed");
@@ -45,7 +46,10 @@ public class Stat : MonoBehaviour
         set
         {
             _hp = value;
-            if (_hp <= 0) OnDead();
+            if (_hp <= 0)
+            {
+                OnDead();
+            }
         }
     }
     public int MaxHp { get { return _maxHp; } set { _maxHp = value; } }
@@ -197,7 +201,7 @@ public class Stat : MonoBehaviour
         }
     }
 
-    public void ApplyingBuff(float time, float param, Define.BuffList buff)
+    public void ApplyingBuff(float time, float param, Define.BuffList buff, GameObject caller = null)
     {
         switch (gameObject.name)
         {
@@ -214,6 +218,7 @@ public class Stat : MonoBehaviour
                 _buffParam = param;
                 break;
         }
+        if (caller != null) _caller = caller;
         ApplyBuff = buff;
     }
     
@@ -596,8 +601,15 @@ public class Stat : MonoBehaviour
     private IEnumerator AggroFunc()
     {
         Define.Debuff debuff = Define.Debuff.Aggro;
+        float intervalTime = 0.5f;
+        float startTime = Time.time;
+        BaseController controller = GetComponent<BaseController>();
         Aggro = true;
-        yield return new WaitForSeconds(_buffTime);
+        while (startTime + _buffTime >= Time.time)
+        {
+            if (_caller != null) controller._lockTarget = _caller;
+            yield return new WaitForSeconds(intervalTime);
+        }
         Aggro = false;
         _debuffDict.Remove(debuff);
     }

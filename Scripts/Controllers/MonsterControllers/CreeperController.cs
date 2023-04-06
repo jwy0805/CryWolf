@@ -24,7 +24,7 @@ public class CreeperController : MonsterController
             _knockBack = value;
             if (_knockBack)
             {
-                _destPos = -(_dir.normalized * 10.0f);
+                _destPos = -(_dir.normalized * 8.0f);
                 _destPos.y = 6.0f;
                 State = Define.State.KnockBack;
             }
@@ -59,7 +59,7 @@ public class CreeperController : MonsterController
             }
         }
     }
-    
+
     protected override void Init()
     {
         base.Init();
@@ -72,12 +72,10 @@ public class CreeperController : MonsterController
         _stat.AttackSpeed = 0.7f;
         _stat.Defense = 5;
         _stat.MoveSpeed = _moveSpeed;
-        _stat.AttackRange = 6.0f;
+        _stat.AttackRange = 3.0f;
 
-        
         _rush = false;
         _knockBack = false;
-        _rigidbody.isKinematic = true;
     }
 
     protected override void UpdateMoving()
@@ -109,7 +107,7 @@ public class CreeperController : MonsterController
         }
         
         // Move
-        _dir= _destPos - transform.position;
+        _dir = _destPos - transform.position;
         _navMesh.SetDestination(_destPos);
         _navMesh.speed = _stat.MoveSpeed;
     }
@@ -133,12 +131,19 @@ public class CreeperController : MonsterController
 
     private void OnCollisionEnter(Collision collision)
     {
-        if (!Tags.Contains(collision.gameObject.tag)) return;
-        KnockBack = true;
-        if (collision.gameObject.TryGetComponent(out Stat targetStat))
+        if (Tags.Contains(collision.gameObject.tag) && State == Define.State.Rush)
         {
-            targetStat.OnSkilled(_stat);
-            // 충돌음 재생
+            if (collision.gameObject.TryGetComponent(out Stat targetStat))
+            {
+                targetStat.OnSkilled(_stat);
+                KnockBack = true;
+                // 충돌음 재생
+            }
+        }
+        
+        if (KnockBack && State == Define.State.Rush)
+        {
+            State = Define.State.Idle;
         }
     }
 }
